@@ -3,275 +3,307 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pelada Pro | Tactical Analysis</title>
+    <title>Pelada Pro | Tactical Command Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Biblioteca de Mapa de Calor -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/heatmap.js/2.0.2/heatmap.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
-        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
-        
-        /* Estilização do Campo de Futebol */
+        body { font-family: 'Outfit', sans-serif; background-color: #020617; color: #f8fafc; overflow-x: hidden; }
+        .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        .sidebar { height: 100vh; position: sticky; top: 0; }
         #field-container {
-            position: relative;
-            width: 100%;
-            height: 500px;
-            background: #1e293b;
-            border: 4px solid #334155;
-            border-radius: 12px;
-            overflow: hidden;
+            position: relative; width: 100%; height: 450px;
+            background: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155; border-radius: 20px; overflow: hidden;
         }
-        .field-lines {
-            position: absolute;
-            inset: 0;
-            border: 2px solid rgba(255,255,255,0.2);
-            margin: 15px;
-            pointer-events: none;
-        }
-        .field-center-line {
-            position: absolute;
-            left: 50%;
-            top: 15px;
-            bottom: 15px;
-            width: 2px;
-            background: rgba(255,255,255,0.2);
-        }
-        .field-center-circle {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 100px;
-            height: 100px;
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 50%;
-        }
-        .penalty-area-left {
-            position: absolute;
-            left: 15px;
-            top: 25%;
-            width: 15%;
-            height: 50%;
-            border: 2px solid rgba(255,255,255,0.2);
-        }
-        .penalty-area-right {
-            position: absolute;
-            right: 15px;
-            top: 25%;
-            width: 15%;
-            height: 50%;
-            border: 2px solid rgba(255,255,255,0.2);
-        }
-        .gradient-text { background: linear-gradient(90deg, #3b82f6, #2dd4bf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .field-overlay { position: absolute; inset: 0; border: 2px solid rgba(255,255,255,0.1); margin: 10px; pointer-events: none; }
+        .center-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; border: 2px solid rgba(255,255,255,0.1); border-radius: 50%; }
+        .gradient-blue { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+        .tab-active { border-bottom: 3px solid #3b82f6; color: #3b82f6; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8">
+<body class="flex">
 
-    <div class="max-w-7xl mx-auto">
-        <!-- Header -->
-        <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
-            <div>
-                <h1 class="text-4xl font-black tracking-tighter italic">PELADA <span class="gradient-text">TACTICAL</span></h1>
-                <p class="text-slate-400 text-xs uppercase tracking-[0.2em] font-bold">Elite Performance Tracking</p>
-            </div>
-            <label class="group flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-bold cursor-pointer hover:bg-blue-500 hover:text-white transition-all shadow-xl">
-                <span>IMPORTAR DADOS .CSV</span>
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="w-20 lg:w-64 sidebar glass border-r border-white/5 p-6 flex flex-col gap-10">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-black text-xl">P</div>
+            <span class="hidden lg:block font-black text-xl tracking-tighter">PELADA<span class="text-blue-500">PRO</span></span>
+        </div>
+        
+        <nav class="flex flex-col gap-4">
+            <button onclick="switchTab('dashboard')" class="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400 group-hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                <span class="hidden lg:block font-semibold">Dashboard</span>
+            </button>
+            <button onclick="switchTab('history')" class="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400 group-hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span class="hidden lg:block font-semibold">Histórico</span>
+            </button>
+        </nav>
+
+        <div class="mt-auto">
+            <label class="flex items-center justify-center lg:justify-start gap-3 bg-blue-600 hover:bg-blue-500 p-3 rounded-xl cursor-pointer transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                <span class="hidden lg:block font-bold text-sm">NOVO JOGO</span>
                 <input type="file" id="csvFileInput" accept=".csv" class="hidden">
             </label>
-        </header>
-
-        <!-- Stats Overview -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div class="glass p-5 rounded-2xl">
-                <p class="text-slate-500 text-xs font-bold uppercase">Distância Total</p>
-                <h2 class="text-3xl font-black" id="card-dist">0.0 <span class="text-sm text-slate-400 font-normal">km</span></h2>
-            </div>
-            <div class="glass p-5 rounded-2xl border-b-4 border-blue-500">
-                <p class="text-slate-500 text-xs font-bold uppercase">Velocidade Máxima</p>
-                <h2 class="text-3xl font-black" id="card-vel">0.0 <span class="text-sm text-slate-400 font-normal">km/h</span></h2>
-            </div>
-            <div class="glass p-5 rounded-2xl">
-                <p class="text-slate-500 text-xs font-bold uppercase">Sprints (>20km/h)</p>
-                <h2 class="text-3xl font-black" id="card-sprints">0</h2>
-            </div>
-            <div class="glass p-5 rounded-2xl">
-                <p class="text-slate-500 text-xs font-bold uppercase">Tempo de Jogo</p>
-                <h2 class="text-3xl font-black" id="card-tempo">00:00</h2>
-            </div>
         </div>
+    </aside>
 
-        <!-- Main Display -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- CAMPO TÁTICO -->
-            <div class="lg:col-span-2 space-y-4">
-                <div class="flex justify-between items-end">
-                    <h3 class="text-xl font-bold italic">MAPA DE CALOR TÁTICO</h3>
-                    <span class="text-[10px] bg-slate-800 px-2 py-1 rounded text-slate-400">NORMALIZAÇÃO GPS ATIVA</span>
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 p-6 lg:p-10">
+        
+        <!-- SECTION DASHBOARD -->
+        <section id="tab-dashboard" class="space-y-8 animate-in fade-in duration-500">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-black italic">ANÁLISE DE PERFORMANCE</h2>
+                    <p class="text-slate-400 font-medium" id="current-session-date">Aguardando importação...</p>
                 </div>
-                
-                <div id="field-container">
-                    <!-- Linhas do Campo -->
-                    <div class="field-lines"></div>
-                    <div class="field-center-line"></div>
-                    <div class="field-center-circle"></div>
-                    <div class="penalty-area-left"></div>
-                    <div class="penalty-area-right"></div>
-                    
-                    <!-- Camada do Heatmap -->
-                    <div id="heatmapContainer" class="absolute inset-0"></div>
+                <button onclick="saveCurrentPerformance()" id="btnSave" class="hidden bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded-full font-bold transition">SALVAR NA NUVEM</button>
+            </div>
+
+            <!-- KPI Row -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="glass p-6 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-blue-500/10 rounded-bl-full"></div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Volume Total</p>
+                    <h3 class="text-4xl font-black mt-2" id="kpi-dist">0.0<span class="text-sm font-normal ml-1">km</span></h3>
+                </div>
+                <div class="glass p-6 rounded-2xl border-l-4 border-orange-500">
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Pico de Velocidade</p>
+                    <h3 class="text-4xl font-black mt-2" id="kpi-vel">0.0<span class="text-sm font-normal ml-1">km/h</span></h3>
+                </div>
+                <div class="glass p-6 rounded-2xl">
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Sprints de Elite</p>
+                    <h3 class="text-4xl font-black mt-2" id="kpi-sprints">0</h3>
+                </div>
+                <div class="glass p-6 rounded-2xl">
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Tempo Ativo</p>
+                    <h3 class="text-4xl font-black mt-2" id="kpi-time">00:00</h3>
                 </div>
             </div>
 
-            <!-- LATERAL -->
-            <div class="space-y-6">
-                <!-- Gráfico de Velocidade -->
-                <div class="glass p-6 rounded-3xl h-64">
-                    <h3 class="text-sm font-bold mb-4 text-slate-400 uppercase tracking-widest">Intensidade</h3>
-                    <canvas id="speedChart"></canvas>
+            <!-- Analysis Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Tactical Field -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold text-slate-300">OCUPAÇÃO DE ESPAÇO (HEATMAP)</h4>
+                        <div class="flex gap-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                            <span class="text-[10px] text-slate-500 uppercase">Zonas de Alta Intensidade</span>
+                        </div>
+                    </div>
+                    <div id="field-container">
+                        <div class="field-overlay"></div>
+                        <div class="center-circle"></div>
+                        <div id="heatmapContainer" class="absolute inset-0"></div>
+                    </div>
                 </div>
 
-                <!-- Insights em tempo real -->
-                <div class="bg-gradient-to-br from-blue-600 to-emerald-500 p-6 rounded-3xl shadow-lg">
-                    <h3 class="text-white font-bold text-lg mb-2">Análise do Sistema</h3>
-                    <p class="text-blue-100 text-sm leading-relaxed" id="ai-insight">
-                        Aguardando importação de dados para gerar insights de posicionamento e queima calórica.
-                    </p>
+                <!-- Coach Insights -->
+                <div class="space-y-6">
+                    <div class="glass p-6 rounded-3xl h-fit border-t-4 border-blue-500">
+                        <h4 class="font-bold mb-4 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            RELATÓRIO DO TREINADOR
+                        </h4>
+                        <p id="coach-text" class="text-slate-400 text-sm leading-relaxed italic">
+                            O sistema está aguardando o upload do arquivo .csv do seu tracker para processar os insights táticos e físicos.
+                        </p>
+                    </div>
+
+                    <div class="glass p-6 rounded-3xl">
+                        <h4 class="font-bold mb-4 text-slate-400 text-xs">GRÁFICO DE CARGA ACUMULADA</h4>
+                        <div class="h-48">
+                            <canvas id="loadChart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+
+        <!-- SECTION HISTORY -->
+        <section id="tab-history" class="hidden space-y-8 animate-in slide-in-from-bottom-10 duration-500">
+            <div>
+                <h2 class="text-3xl font-black italic">HISTÓRICO DE TEMPORADA</h2>
+                <p class="text-slate-400 font-medium">Compare seu desempenho ao longo do tempo</p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4" id="history-list">
+                <!-- History Items go here -->
+                <div class="text-center py-20 text-slate-600">Nenhum jogo salvo no banco de dados local.</div>
+            </div>
+        </section>
+
+    </main>
 
     <script>
-        let speedChart;
         let heatmapInstance;
+        let loadChart;
+        let currentGameData = null;
 
-        // Inicializa o Heatmap
-        window.onload = function() {
-            heatmapInstance = h337.create({
-                container: document.getElementById('heatmapContainer'),
-                radius: 40,
-                maxOpacity: 0.6,
-                blur: 0.85,
-                gradient: {
-                    '.2': 'blue',
-                    '.4': 'cyan',
-                    '.6': 'lime',
-                    '.8': 'yellow',
-                    '.95': 'red'
-                }
-            });
+        window.onload = () => {
+            initHeatmap();
+            renderHistory();
         };
 
+        function initHeatmap() {
+            heatmapInstance = h337.create({
+                container: document.getElementById('heatmapContainer'),
+                radius: 35, blur: .8, maxOpacity: .5,
+                gradient: {'.4': 'blue', '.6': 'cyan', '.8': 'yellow', '.95': 'red'}
+            });
+        }
+
+        // NAVIGATION
+        function switchTab(tab) {
+            document.getElementById('tab-dashboard').classList.add('hidden');
+            document.getElementById('tab-history').classList.add('hidden');
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+        }
+
+        // CSV PROCESSING
         document.getElementById('csvFileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = e => processCSV(e.target.result);
+            reader.onload = e => processCSV(e.target.result, file.name);
             reader.readAsText(file);
         });
 
-        function processCSV(csv) {
+        function processCSV(csv, filename) {
             const lines = csv.split('\n');
-            const dataPoints = [];
-            const speeds = [];
-            const times = [];
-            
-            let lats = [], lngs = [];
-            let totalDist = 0, maxVel = 0, moveTime = 0, sprints = 0;
+            let lats = [], lngs = [], speeds = [], times = [];
+            let stats = { dist: 0, velMax: 0, sprints: 0, time: 0 };
 
             lines.forEach(line => {
+                if(line.includes('TOTAL_DISTANCIA=')) stats.dist = parseFloat(line.split('=')[1]);
+                if(line.includes('VEL_MAX=')) stats.velMax = parseFloat(line.split('=')[1]);
+                if(line.includes('TEMPO_CORRENDO=')) stats.time += parseInt(line.split('=')[1]);
+                if(line.includes('TEMPO_ANDANDO=')) stats.time += parseInt(line.split('=')[1]);
+
                 const cols = line.split(',');
-
-                // Metadados do rodapé
-                if (line.includes('TOTAL_DISTANCIA=')) totalDist = parseFloat(line.split('=')[1]);
-                if (line.includes('VEL_MAX=')) maxVel = parseFloat(line.split('=')[1]);
-                if (line.includes('TEMPO_CORRENDO=')) moveTime += parseInt(line.split('=')[1]);
-                if (line.includes('TEMPO_ANDANDO=')) moveTime += parseInt(line.split('=')[1]);
-
-                // Telemetria
                 if (cols.length > 10 && !isNaN(cols[0])) {
                     const lat = parseFloat(cols[3]);
                     const lng = parseFloat(cols[4]);
                     const vel = parseFloat(cols[5]);
-                    const fix = parseInt(cols[13]);
-
-                    if (fix === 1 && lat !== 0) {
-                        lats.push(lat);
-                        lngs.push(lng);
-                        speeds.push(vel);
-                        times.push(cols[2]);
-                        if (vel > 20) sprints++;
+                    if (parseInt(cols[13]) === 1 && lat !== 0) {
+                        lats.push(lat); lngs.push(lng); speeds.push(vel); times.push(cols[2]);
+                        if(vel > 21) stats.sprints++;
                     }
                 }
             });
 
-            // Normalização das coordenadas para caber no campo (0 a 100%)
-            const minLat = Math.min(...lats);
-            const maxLat = Math.max(...lats);
-            const minLng = Math.min(...lngs);
-            const maxLng = Math.max(...lngs);
+            // Normalization for Field
+            const fieldW = document.getElementById('field-container').offsetWidth;
+            const fieldH = document.getElementById('field-container').offsetHeight;
+            const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+            const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
 
-            const fieldWidth = document.getElementById('field-container').offsetWidth;
-            const fieldHeight = document.getElementById('field-container').offsetHeight;
+            const points = lats.map((lat, i) => ({
+                x: Math.floor(((lngs[i] - minLng) / (maxLng - minLng)) * fieldW),
+                y: Math.floor(((lat - minLat) / (maxLat - minLat)) * fieldH),
+                value: 1
+            }));
 
-            const points = lats.map((lat, i) => {
-                // Mapeia Lat/Lng para X/Y do container do campo
-                const x = ((lngs[i] - minLng) / (maxLng - minLng)) * fieldWidth;
-                const y = ((lat - minLat) / (maxLat - minLat)) * fieldHeight;
-                return { x: Math.floor(x), y: Math.floor(y), value: 1 };
-            });
+            currentGameData = {
+                date: new Date().toLocaleString('pt-BR'),
+                stats: stats,
+                points: points,
+                speeds: speeds,
+                times: times
+            };
 
-            updateDashboard(totalDist, maxVel, moveTime, sprints, points, speeds, times);
+            updateDashboard(currentGameData);
+            document.getElementById('btnSave').classList.remove('hidden');
+            switchTab('dashboard');
         }
 
-        function updateDashboard(dist, vel, time, sprints, points, speeds, times) {
-            // Atualizar UI
-            document.getElementById('card-dist').innerHTML = `${(dist/1000).toFixed(2)} <span class="text-sm text-slate-400 font-normal">km</span>`;
-            document.getElementById('card-vel').innerHTML = `${vel.toFixed(1)} <span class="text-sm text-slate-400 font-normal">km/h</span>`;
-            document.getElementById('card-sprints').innerText = sprints;
+        function updateDashboard(data) {
+            document.getElementById('kpi-dist').innerHTML = `${(data.stats.dist/1000).toFixed(2)}<span class="text-sm font-normal ml-1">km</span>`;
+            document.getElementById('kpi-vel').innerHTML = `${data.stats.velMax.toFixed(1)}<span class="text-sm font-normal ml-1">km/h</span>`;
+            document.getElementById('kpi-sprints').innerText = data.stats.sprints;
+            document.getElementById('current-session-date').innerText = `Sessão: ${data.date}`;
             
-            const m = Math.floor(time / 60);
-            const s = time % 60;
-            document.getElementById('card-tempo').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+            const m = Math.floor(data.stats.time/60), s = data.stats.time%60;
+            document.getElementById('kpi-time').innerText = `${m}:${s<10?'0'+s:s}`;
 
-            // Atualizar Insight
-            document.getElementById('ai-insight').innerText = `Seu mapa de calor mostra maior ocupação no setor ofensivo. Você percorreu ${(dist/1000).toFixed(2)}km com uma intensidade de ${sprints} sprints de alta explosão.`;
+            heatmapInstance.setData({ max: 40, data: data.points });
+            updateCoachInsight(data.stats);
+            renderChart(data.speeds, data.times);
+        }
 
-            // Atualizar Heatmap
-            heatmapInstance.setData({
-                max: 50,
-                data: points
-            });
+        function updateCoachInsight(stats) {
+            let text = "";
+            if(stats.sprints > 10) text = "Excelente volume de sprints. Sua transição ofensiva foi o ponto forte hoje. ";
+            else text = "Volume de alta intensidade abaixo do esperado. Foque em explosões curtas no próximo terço. ";
+            
+            text += `Você percorreu ${(stats.dist/1000).toFixed(2)}km. Mantenha a hidratação, sua carga de trabalho foi moderada/alta.`;
+            document.getElementById('coach-text').innerText = text;
+        }
 
-            // Atualizar Gráfico
-            if (speedChart) speedChart.destroy();
-            speedChart = new Chart(document.getElementById('speedChart'), {
+        function renderChart(speeds, labels) {
+            if (loadChart) loadChart.destroy();
+            const ctx = document.getElementById('loadChart').getContext('2d');
+            loadChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: times,
+                    labels: labels.filter((_,i) => i % 10 === 0),
                     datasets: [{
-                        data: speeds,
-                        borderColor: '#3b82f6',
-                        borderWidth: 2,
-                        fill: true,
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        pointRadius: 0,
-                        tension: 0.4
+                        data: speeds.filter((_,i) => i % 10 === 0),
+                        borderColor: '#3b82f6', fill: true, tension: 0.4, pointRadius: 0,
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)'
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { display: false },
-                        y: { grid: { display: false }, ticks: { color: '#475569'} }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: {legend: {display:false}}, scales: { x:{display:false}, y:{grid:{color:'#1e293b'}} } }
             });
+        }
+
+        // HISTORY SYSTEM (LocalStorage)
+        function saveCurrentPerformance() {
+            let history = JSON.parse(localStorage.getItem('pelada_pro_history') || '[]');
+            history.unshift(currentGameData);
+            localStorage.setItem('pelada_pro_history', JSON.stringify(history));
+            alert('Jogo salvo com sucesso no seu histórico!');
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const history = JSON.parse(localStorage.getItem('pelada_pro_history') || '[]');
+            const container = document.getElementById('history-list');
+            
+            if(history.length === 0) return;
+
+            container.innerHTML = history.map((game, index) => `
+                <div class="glass p-5 rounded-2xl flex flex-wrap justify-between items-center gap-4 hover:border-blue-500/50 transition cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-blue-600/20 p-3 rounded-xl text-blue-500 font-bold">#${history.length - index}</div>
+                        <div>
+                            <h4 class="font-bold">${game.date}</h4>
+                            <p class="text-xs text-slate-500 uppercase tracking-widest">Partida Monitorada</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-6 text-sm">
+                        <div><p class="text-slate-500 text-[10px]">DISTÂNCIA</p><p class="font-bold">${(game.stats.dist/1000).toFixed(2)}km</p></div>
+                        <div><p class="text-slate-500 text-[10px]">VEL. MÁX</p><p class="font-bold text-orange-400">${game.stats.velMax}km/h</p></div>
+                        <div><p class="text-slate-500 text-[10px]">SPRINTS</p><p class="font-bold text-emerald-400">${game.stats.sprints}</p></div>
+                    </div>
+                    <button onclick="loadFromHistory(${index})" class="bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg text-xs font-bold transition">REVISAR</button>
+                </div>
+            `).join('');
+        }
+
+        function loadFromHistory(index) {
+            const history = JSON.parse(localStorage.getItem('pelada_pro_history'));
+            currentGameData = history[index];
+            updateDashboard(currentGameData);
+            switchTab('dashboard');
         }
     </script>
 </body>
