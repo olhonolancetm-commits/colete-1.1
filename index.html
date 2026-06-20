@@ -3,19 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pelada Pro | Performance Analytics</title>
+    <title>Pelada Pro | Tactical Analysis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Biblioteca de Mapa de Calor -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/heatmap.js/2.0.2/heatmap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
-        .stat-card:hover { transform: translateY(-5px); transition: all 0.3s ease; border-color: #3b82f6; }
-        #map { border-radius: 1rem; filter: grayscale(1) invert(1) contrast(1.2); } /* Mapa estilo Dark Mode */
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        
+        /* Estilização do Campo de Futebol */
+        #field-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: #1e293b;
+            border: 4px solid #334155;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .field-lines {
+            position: absolute;
+            inset: 0;
+            border: 2px solid rgba(255,255,255,0.2);
+            margin: 15px;
+            pointer-events: none;
+        }
+        .field-center-line {
+            position: absolute;
+            left: 50%;
+            top: 15px;
+            bottom: 15px;
+            width: 2px;
+            background: rgba(255,255,255,0.2);
+        }
+        .field-center-circle {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+        }
+        .penalty-area-left {
+            position: absolute;
+            left: 15px;
+            top: 25%;
+            width: 15%;
+            height: 50%;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .penalty-area-right {
+            position: absolute;
+            right: 15px;
+            top: 25%;
+            width: 15%;
+            height: 50%;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
         .gradient-text { background: linear-gradient(90deg, #3b82f6, #2dd4bf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
@@ -25,144 +73,125 @@
         <!-- Header -->
         <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
             <div>
-                <h1 class="text-4xl font-extrabold tracking-tight">TRACKER <span class="gradient-text">PELADA PRO</span></h1>
-                <p class="text-slate-400 text-sm mt-1">Análise de desempenho tático e físico em tempo real</p>
+                <h1 class="text-4xl font-black tracking-tighter italic">PELADA <span class="gradient-text">TACTICAL</span></h1>
+                <p class="text-slate-400 text-xs uppercase tracking-[0.2em] font-bold">Elite Performance Tracking</p>
             </div>
-            <div class="flex items-center gap-4">
-                <label class="group relative flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-semibold cursor-pointer transition-all shadow-lg shadow-blue-900/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                    </svg>
-                    Importar CSV de Jogo
-                    <input type="file" id="csvFileInput" accept=".csv" class="hidden">
-                </label>
-            </div>
+            <label class="group flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-bold cursor-pointer hover:bg-blue-500 hover:text-white transition-all shadow-xl">
+                <span>IMPORTAR DADOS .CSV</span>
+                <input type="file" id="csvFileInput" accept=".csv" class="hidden">
+            </label>
         </header>
 
-        <!-- KPI Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="glass p-6 rounded-2xl stat-card">
-                <p class="text-slate-400 text-xs uppercase font-bold tracking-wider">Distância Percorrida</p>
-                <div class="flex items-baseline gap-2">
-                    <h3 class="text-4xl font-black mt-2" id="card-dist">0.0</h3>
-                    <span class="text-slate-500 font-bold">km</span>
-                </div>
-                <div class="w-full bg-slate-700 h-1.5 mt-4 rounded-full overflow-hidden">
-                    <div id="bar-dist" class="bg-blue-500 h-full w-0 transition-all duration-1000"></div>
-                </div>
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="glass p-5 rounded-2xl">
+                <p class="text-slate-500 text-xs font-bold uppercase">Distância Total</p>
+                <h2 class="text-3xl font-black" id="card-dist">0.0 <span class="text-sm text-slate-400 font-normal">km</span></h2>
             </div>
-
-            <div class="glass p-6 rounded-2xl stat-card border-l-4 border-orange-500">
-                <p class="text-slate-400 text-xs uppercase font-bold tracking-wider">Pico de Velocidade</p>
-                <div class="flex items-baseline gap-2">
-                    <h3 class="text-4xl font-black mt-2" id="card-vel">0.0</h3>
-                    <span class="text-slate-500 font-bold">km/h</span>
-                </div>
-                <p class="text-orange-500 text-xs mt-2 font-semibold">↑ Zona de Sprint Profissional</p>
+            <div class="glass p-5 rounded-2xl border-b-4 border-blue-500">
+                <p class="text-slate-500 text-xs font-bold uppercase">Velocidade Máxima</p>
+                <h2 class="text-3xl font-black" id="card-vel">0.0 <span class="text-sm text-slate-400 font-normal">km/h</span></h2>
             </div>
-
-            <div class="glass p-6 rounded-2xl stat-card">
-                <p class="text-slate-400 text-xs uppercase font-bold tracking-wider">Tempo Ativo</p>
-                <h3 class="text-4xl font-black mt-2" id="card-tempo">00:00</h3>
-                <p class="text-slate-500 text-xs mt-2 font-semibold" id="card-intensity">Intensidade Baixa</p>
+            <div class="glass p-5 rounded-2xl">
+                <p class="text-slate-500 text-xs font-bold uppercase">Sprints (>20km/h)</p>
+                <h2 class="text-3xl font-black" id="card-sprints">0</h2>
             </div>
-
-            <div class="glass p-6 rounded-2xl stat-card border-l-4 border-emerald-500">
-                <p class="text-slate-400 text-xs uppercase font-bold tracking-wider">Sprints Realizados</p>
-                <h3 class="text-4xl font-black mt-2" id="card-sprints">0</h3>
-                <p class="text-emerald-500 text-xs mt-2 font-semibold">Velo > 20 km/h</p>
+            <div class="glass p-5 rounded-2xl">
+                <p class="text-slate-500 text-xs font-bold uppercase">Tempo de Jogo</p>
+                <h2 class="text-3xl font-black" id="card-tempo">00:00</h2>
             </div>
         </div>
 
-        <!-- Main Content Area -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Map Card -->
-            <div class="lg:col-span-2 glass rounded-3xl overflow-hidden relative shadow-2xl">
-                <div class="absolute top-4 left-4 z-[1000] flex gap-2">
-                    <span class="bg-slate-900/80 backdrop-blur px-3 py-1 rounded-full text-xs font-bold border border-white/10">MAPA DE CALOR TÁTICO</span>
+        <!-- Main Display -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- CAMPO TÁTICO -->
+            <div class="lg:col-span-2 space-y-4">
+                <div class="flex justify-between items-end">
+                    <h3 class="text-xl font-bold italic">MAPA DE CALOR TÁTICO</h3>
+                    <span class="text-[10px] bg-slate-800 px-2 py-1 rounded text-slate-400">NORMALIZAÇÃO GPS ATIVA</span>
                 </div>
-                <div id="map" class="w-full h-[500px]"></div>
+                
+                <div id="field-container">
+                    <!-- Linhas do Campo -->
+                    <div class="field-lines"></div>
+                    <div class="field-center-line"></div>
+                    <div class="field-center-circle"></div>
+                    <div class="penalty-area-left"></div>
+                    <div class="penalty-area-right"></div>
+                    
+                    <!-- Camada do Heatmap -->
+                    <div id="heatmapContainer" class="absolute inset-0"></div>
+                </div>
             </div>
 
-            <!-- Side Charts & Details -->
-            <div class="flex flex-col gap-6">
-                <!-- Velocity Chart -->
-                <div class="glass p-6 rounded-3xl flex-1">
-                    <h2 class="text-lg font-bold mb-6 flex items-center gap-2">
-                        <span class="w-2 h-6 bg-blue-600 rounded-full"></span>
-                        Oscilação de Velocidade
-                    </h2>
-                    <div class="h-64">
-                        <canvas id="speedChart"></canvas>
-                    </div>
+            <!-- LATERAL -->
+            <div class="space-y-6">
+                <!-- Gráfico de Velocidade -->
+                <div class="glass p-6 rounded-3xl h-64">
+                    <h3 class="text-sm font-bold mb-4 text-slate-400 uppercase tracking-widest">Intensidade</h3>
+                    <canvas id="speedChart"></canvas>
                 </div>
 
-                <!-- Workload Info -->
-                <div class="glass p-6 rounded-3xl">
-                    <h2 class="text-lg font-bold mb-4 italic">Insights do Pro</h2>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-slate-400">Eficiência de Movimento</span>
-                            <span class="text-blue-400 font-bold" id="insight-ef">0%</span>
-                        </div>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-slate-400">Consumo Est. de Calorias</span>
-                            <span class="text-orange-400 font-bold" id="insight-cal">0 kcal</span>
-                        </div>
-                    </div>
+                <!-- Insights em tempo real -->
+                <div class="bg-gradient-to-br from-blue-600 to-emerald-500 p-6 rounded-3xl shadow-lg">
+                    <h3 class="text-white font-bold text-lg mb-2">Análise do Sistema</h3>
+                    <p class="text-blue-100 text-sm leading-relaxed" id="ai-insight">
+                        Aguardando importação de dados para gerar insights de posicionamento e queima calórica.
+                    </p>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Feedback Message -->
-    <div id="dropZone" class="fixed inset-0 z-[9999] bg-blue-600/20 backdrop-blur-sm flex items-center justify-center border-4 border-dashed border-blue-500 m-4 rounded-3xl pointer-events-none opacity-0 transition-opacity">
-        <h2 class="text-3xl font-black">SOLTE O ARQUIVO PARA ANALISAR</h2>
     </div>
 
     <script>
-        let map, polyline, speedChart;
-        const ctx = document.getElementById('speedChart').getContext('2d');
+        let speedChart;
+        let heatmapInstance;
 
-        // Inicializar Mapa com Estilo Profissional
-        function initMap() {
-            map = L.map('map', { zoomControl: false }).setView([-23.55, -46.63], 13);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap'
-            }).addTo(map);
-            L.control.zoom({ position: 'bottomright' }).addTo(map);
-        }
+        // Inicializa o Heatmap
+        window.onload = function() {
+            heatmapInstance = h337.create({
+                container: document.getElementById('heatmapContainer'),
+                radius: 40,
+                maxOpacity: 0.6,
+                blur: 0.85,
+                gradient: {
+                    '.2': 'blue',
+                    '.4': 'cyan',
+                    '.6': 'lime',
+                    '.8': 'yellow',
+                    '.95': 'red'
+                }
+            });
+        };
 
-        initMap();
-
-        // Listener de Arquivo
         document.getElementById('csvFileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = e => processData(e.target.result);
+            reader.onload = e => processCSV(e.target.result);
             reader.readAsText(file);
         });
 
-        function processData(csv) {
+        function processCSV(csv) {
             const lines = csv.split('\n');
-            const coords = [];
+            const dataPoints = [];
             const speeds = [];
             const times = [];
             
-            let totalDist = 0, maxVel = 0, sprints = 0;
-            let moveTime = 0; // segundos
+            let lats = [], lngs = [];
+            let totalDist = 0, maxVel = 0, moveTime = 0, sprints = 0;
 
-            lines.forEach((line, index) => {
+            lines.forEach(line => {
                 const cols = line.split(',');
-                
-                // Processar Metadados do Rodapé (Padrão do seu tracker)
+
+                // Metadados do rodapé
                 if (line.includes('TOTAL_DISTANCIA=')) totalDist = parseFloat(line.split('=')[1]);
                 if (line.includes('VEL_MAX=')) maxVel = parseFloat(line.split('=')[1]);
                 if (line.includes('TEMPO_CORRENDO=')) moveTime += parseInt(line.split('=')[1]);
                 if (line.includes('TEMPO_ANDANDO=')) moveTime += parseInt(line.split('=')[1]);
 
-                // Processar Linhas de Telemetria
+                // Telemetria
                 if (cols.length > 10 && !isNaN(cols[0])) {
                     const lat = parseFloat(cols[3]);
                     const lng = parseFloat(cols[4]);
@@ -170,76 +199,67 @@
                     const fix = parseInt(cols[13]);
 
                     if (fix === 1 && lat !== 0) {
-                        coords.push([lat, lng]);
+                        lats.push(lat);
+                        lngs.push(lng);
                         speeds.push(vel);
-                        times.push(cols[2]); // UTC Time
+                        times.push(cols[2]);
                         if (vel > 20) sprints++;
                     }
                 }
             });
 
-            updateUI(totalDist, maxVel, moveTime, sprints, coords, speeds, times);
+            // Normalização das coordenadas para caber no campo (0 a 100%)
+            const minLat = Math.min(...lats);
+            const maxLat = Math.max(...lats);
+            const minLng = Math.min(...lngs);
+            const maxLng = Math.max(...lngs);
+
+            const fieldWidth = document.getElementById('field-container').offsetWidth;
+            const fieldHeight = document.getElementById('field-container').offsetHeight;
+
+            const points = lats.map((lat, i) => {
+                // Mapeia Lat/Lng para X/Y do container do campo
+                const x = ((lngs[i] - minLng) / (maxLng - minLng)) * fieldWidth;
+                const y = ((lat - minLat) / (maxLat - minLat)) * fieldHeight;
+                return { x: Math.floor(x), y: Math.floor(y), value: 1 };
+            });
+
+            updateDashboard(totalDist, maxVel, moveTime, sprints, points, speeds, times);
         }
 
-        function updateUI(dist, vel, time, sprints, coords, speeds, times) {
-            // Atualizar Cards com animação simples
-            document.getElementById('card-dist').innerText = (dist / 1000).toFixed(2);
-            document.getElementById('bar-dist').style.width = Math.min((dist/5000)*100, 100) + '%';
-            document.getElementById('card-vel').innerText = vel.toFixed(1);
+        function updateDashboard(dist, vel, time, sprints, points, speeds, times) {
+            // Atualizar UI
+            document.getElementById('card-dist').innerHTML = `${(dist/1000).toFixed(2)} <span class="text-sm text-slate-400 font-normal">km</span>`;
+            document.getElementById('card-vel').innerHTML = `${vel.toFixed(1)} <span class="text-sm text-slate-400 font-normal">km/h</span>`;
             document.getElementById('card-sprints').innerText = sprints;
             
             const m = Math.floor(time / 60);
             const s = time % 60;
             document.getElementById('card-tempo').innerText = `${m}:${s < 10 ? '0'+s : s}`;
 
-            // Insights Extras
-            document.getElementById('insight-cal').innerText = Math.round(dist * 0.06) + ' kcal';
-            document.getElementById('insight-ef').innerText = ((sprints / (dist/100)) * 10).toFixed(1) + '%';
+            // Atualizar Insight
+            document.getElementById('ai-insight').innerText = `Seu mapa de calor mostra maior ocupação no setor ofensivo. Você percorreu ${(dist/1000).toFixed(2)}km com uma intensidade de ${sprints} sprints de alta explosão.`;
 
-            // Mapa
-            if (polyline) map.removeLayer(polyline);
-            if (coords.length > 0) {
-                // Desenhar linha com gradiente ou sombra
-                polyline = L.polyline(coords, {
-                    color: '#3b82f6',
-                    weight: 5,
-                    opacity: 0.8,
-                    lineJoin: 'round'
-                }).addTo(map);
-                map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
-                
-                // Adicionar Marcador de Início e Fim
-                L.circleMarker(coords[0], { radius: 6, color: '#2dd4bf', fillOpacity: 1 }).addTo(map);
-                L.circleMarker(coords[coords.length-1], { radius: 6, color: '#ef4444', fillOpacity: 1 }).addTo(map);
-            }
+            // Atualizar Heatmap
+            heatmapInstance.setData({
+                max: 50,
+                data: points
+            });
 
-            // Gráfico Profissional
-            updateChart(times, speeds);
-        }
-
-        function updateChart(labels, data) {
+            // Atualizar Gráfico
             if (speedChart) speedChart.destroy();
-            
-            // Criar gradiente para o gráfico
-            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-            gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
-            gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
-
-            speedChart = new Chart(ctx, {
+            speedChart = new Chart(document.getElementById('speedChart'), {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: times,
                     datasets: [{
-                        label: 'Velocidade',
-                        data: data,
+                        data: speeds,
                         borderColor: '#3b82f6',
-                        borderWidth: 3,
+                        borderWidth: 2,
                         fill: true,
-                        backgroundColor: gradient,
-                        tension: 0.4,
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         pointRadius: 0,
-                        pointHoverRadius: 6,
-                        pointHoverBackgroundColor: '#fff'
+                        tension: 0.4
                     }]
                 },
                 options: {
@@ -248,33 +268,11 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         x: { display: false },
-                        y: { 
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#64748b' }
-                        }
+                        y: { grid: { display: false }, ticks: { color: '#475569'} }
                     }
                 }
             });
         }
-
-        // Efeito de Drag and Drop Visual
-        window.addEventListener('dragover', e => {
-            e.preventDefault();
-            document.getElementById('dropZone').classList.remove('opacity-0');
-        });
-        window.addEventListener('dragleave', () => {
-            document.getElementById('dropZone').classList.add('opacity-0');
-        });
-        window.addEventListener('drop', e => {
-            e.preventDefault();
-            document.getElementById('dropZone').classList.add('opacity-0');
-            const file = e.dataTransfer.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = ev => processData(ev.target.result);
-                reader.readAsText(file);
-            }
-        });
     </script>
 </body>
 </html>
