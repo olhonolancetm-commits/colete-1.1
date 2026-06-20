@@ -12,15 +12,22 @@
         body { font-family: 'Outfit', sans-serif; background-color: #020617; color: #f8fafc; overflow-x: hidden; }
         .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
         .sidebar { height: 100vh; position: sticky; top: 0; }
+        
+        /* Estilização do Campo de Futebol */
         #field-container {
             position: relative; width: 100%; height: 450px;
-            background: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
-            border: 2px solid #334155; border-radius: 20px; overflow: hidden;
+            background: #166534; /* Verde grama escuro */
+            border: 4px solid #f8fafc; border-radius: 4px; overflow: hidden;
         }
-        .field-overlay { position: absolute; inset: 0; border: 2px solid rgba(255,255,255,0.1); margin: 10px; pointer-events: none; }
-        .center-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; border: 2px solid rgba(255,255,255,0.1); border-radius: 50%; }
+        .field-line { position: absolute; border: 2px solid rgba(255,255,255,0.5); pointer-events: none; }
+        .center-line { top: 0; bottom: 0; left: 50%; width: 0; transform: translateX(-50%); }
+        .center-circle { top: 50%; left: 50%; width: 90px; height: 90px; border-radius: 50%; transform: translate(-50%, -50%); }
+        .penalty-area-top { top: 0; left: 25%; right: 25%; height: 60px; border-top: 0; }
+        .penalty-area-bot { bottom: 0; left: 25%; right: 25%; height: 60px; border-bottom: 0; }
+        .goal-area-top { top: 0; left: 38%; right: 38%; height: 25px; border-top: 0; }
+        .goal-area-bot { bottom: 0; left: 38%; right: 38%; height: 25px; border-bottom: 0; }
+        
         .gradient-blue { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
-        .tab-active { border-bottom: 3px solid #3b82f6; color: #3b82f6; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
@@ -31,7 +38,7 @@
     <aside class="w-20 lg:w-64 sidebar glass border-r border-white/5 p-6 flex flex-col gap-10">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-black text-xl">P</div>
-            <span class="hidden lg:block font-black text-xl tracking-tighter">PELADA<span class="text-blue-500">PRO</span></span>
+            <span class="hidden lg:block font-black text-xl tracking-tighter text-white">PELADA<span class="text-blue-500">PRO</span></span>
         </div>
         
         <nav class="flex flex-col gap-4">
@@ -47,8 +54,8 @@
 
         <div class="mt-auto">
             <label class="flex items-center justify-center lg:justify-start gap-3 bg-blue-600 hover:bg-blue-500 p-3 rounded-xl cursor-pointer transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                <span class="hidden lg:block font-bold text-sm">NOVO JOGO</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                <span class="hidden lg:block font-bold text-sm text-white">IMPORTAR CSV</span>
                 <input type="file" id="csvFileInput" accept=".csv" class="hidden">
             </label>
         </div>
@@ -62,29 +69,28 @@
             <div class="flex justify-between items-center">
                 <div>
                     <h2 class="text-3xl font-black italic">ANÁLISE DE PERFORMANCE</h2>
-                    <p class="text-slate-400 font-medium" id="current-session-date">Aguardando importação...</p>
+                    <p class="text-slate-400 font-medium" id="current-session-date">Aguardando importação de dados GPS...</p>
                 </div>
-                <button onclick="saveCurrentPerformance()" id="btnSave" class="hidden bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded-full font-bold transition">SALVAR NA NUVEM</button>
+                <button onclick="saveCurrentPerformance()" id="btnSave" class="hidden bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded-full font-bold transition text-white">SALVAR NO HISTÓRICO</button>
             </div>
 
             <!-- KPI Row -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div class="glass p-6 rounded-2xl relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 w-20 h-20 bg-blue-500/10 rounded-bl-full"></div>
+                <div class="glass p-6 rounded-2xl relative overflow-hidden">
                     <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Volume Total</p>
-                    <h3 class="text-4xl font-black mt-2" id="kpi-dist">0.0<span class="text-sm font-normal ml-1">km</span></h3>
+                    <h3 class="text-4xl font-black mt-2 text-white" id="kpi-dist">0.0<span class="text-sm font-normal ml-1">km</span></h3>
                 </div>
                 <div class="glass p-6 rounded-2xl border-l-4 border-orange-500">
                     <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Pico de Velocidade</p>
-                    <h3 class="text-4xl font-black mt-2" id="kpi-vel">0.0<span class="text-sm font-normal ml-1">km/h</span></h3>
+                    <h3 class="text-4xl font-black mt-2 text-white" id="kpi-vel">0.0<span class="text-sm font-normal ml-1">km/h</span></h3>
                 </div>
                 <div class="glass p-6 rounded-2xl">
-                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Sprints de Elite</p>
-                    <h3 class="text-4xl font-black mt-2" id="kpi-sprints">0</h3>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Sprints Realizados</p>
+                    <h3 class="text-4xl font-black mt-2 text-white" id="kpi-sprints">0</h3>
                 </div>
                 <div class="glass p-6 rounded-2xl">
-                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Tempo Ativo</p>
-                    <h3 class="text-4xl font-black mt-2" id="kpi-time">00:00</h3>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Tempo em Campo</p>
+                    <h3 class="text-4xl font-black mt-2 text-white" id="kpi-time">00:00:00</h3>
                 </div>
             </div>
 
@@ -93,15 +99,20 @@
                 <!-- Tactical Field -->
                 <div class="lg:col-span-2 space-y-4">
                     <div class="flex items-center justify-between">
-                        <h4 class="font-bold text-slate-300">OCUPAÇÃO DE ESPAÇO (HEATMAP)</h4>
+                        <h4 class="font-bold text-slate-300">MAPA DE CALOR TÁTICO</h4>
                         <div class="flex gap-2">
-                            <span class="w-3 h-3 rounded-full bg-red-500"></span>
-                            <span class="text-[10px] text-slate-500 uppercase">Zonas de Alta Intensidade</span>
+                            <span class="text-[10px] text-slate-500 uppercase font-bold">Posicionamento Médio</span>
                         </div>
                     </div>
                     <div id="field-container">
-                        <div class="field-overlay"></div>
-                        <div class="center-circle"></div>
+                        <!-- Marcações do Campo -->
+                        <div class="field-line center-line"></div>
+                        <div class="field-line center-circle"></div>
+                        <div class="field-line penalty-area-top"></div>
+                        <div class="field-line penalty-area-bot"></div>
+                        <div class="field-line goal-area-top"></div>
+                        <div class="field-line goal-area-bot"></div>
+                        <!-- Container do Heatmap -->
                         <div id="heatmapContainer" class="absolute inset-0"></div>
                     </div>
                 </div>
@@ -109,17 +120,20 @@
                 <!-- Coach Insights -->
                 <div class="space-y-6">
                     <div class="glass p-6 rounded-3xl h-fit border-t-4 border-blue-500">
-                        <h4 class="font-bold mb-4 flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            RELATÓRIO DO TREINADOR
-                        </h4>
+                        <div class="flex justify-between items-start mb-4">
+                            <h4 class="font-bold flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                PERFIL DO ATLETA
+                            </h4>
+                            <span id="player-tag" class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 rounded-md font-bold uppercase">---</span>
+                        </div>
                         <p id="coach-text" class="text-slate-400 text-sm leading-relaxed italic">
-                            O sistema está aguardando o upload do arquivo .csv do seu tracker para processar os insights táticos e físicos.
+                            Importe um arquivo CSV para gerar o diagnóstico de perfil e performance tática.
                         </p>
                     </div>
 
                     <div class="glass p-6 rounded-3xl">
-                        <h4 class="font-bold mb-4 text-slate-400 text-xs">GRÁFICO DE CARGA ACUMULADA</h4>
+                        <h4 class="font-bold mb-4 text-slate-400 text-xs">GRÁFICO DE INTENSIDADE (VELOCIDADE)</h4>
                         <div class="h-48">
                             <canvas id="loadChart"></canvas>
                         </div>
@@ -130,14 +144,16 @@
 
         <!-- SECTION HISTORY -->
         <section id="tab-history" class="hidden space-y-8 animate-in slide-in-from-bottom-10 duration-500">
-            <div>
-                <h2 class="text-3xl font-black italic">HISTÓRICO DE TEMPORADA</h2>
-                <p class="text-slate-400 font-medium">Compare seu desempenho ao longo do tempo</p>
+            <div class="flex justify-between items-end">
+                <div>
+                    <h2 class="text-3xl font-black italic text-white">HISTÓRICO LOCAL</h2>
+                    <p class="text-slate-400 font-medium">Últimas 100 sessões armazenadas neste navegador.</p>
+                </div>
+                <button onclick="clearAllHistory()" class="text-red-500 text-xs font-bold hover:underline">LIMPAR TUDO</button>
             </div>
 
             <div class="grid grid-cols-1 gap-4" id="history-list">
-                <!-- History Items go here -->
-                <div class="text-center py-20 text-slate-600">Nenhum jogo salvo no banco de dados local.</div>
+                <!-- Preenchido via JS -->
             </div>
         </section>
 
@@ -156,59 +172,68 @@
         function initHeatmap() {
             heatmapInstance = h337.create({
                 container: document.getElementById('heatmapContainer'),
-                radius: 35, blur: .8, maxOpacity: .5,
+                radius: 30, blur: .8, maxOpacity: .6,
                 gradient: {'.4': 'blue', '.6': 'cyan', '.8': 'yellow', '.95': 'red'}
             });
         }
 
-        // NAVIGATION
         function switchTab(tab) {
             document.getElementById('tab-dashboard').classList.add('hidden');
             document.getElementById('tab-history').classList.add('hidden');
             document.getElementById(`tab-${tab}`).classList.remove('hidden');
         }
 
-        // CSV PROCESSING
         document.getElementById('csvFileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = e => processCSV(e.target.result, file.name);
+            reader.onload = e => processCSV(e.target.result);
             reader.readAsText(file);
         });
 
-        function processCSV(csv, filename) {
+        function processCSV(csv) {
             const lines = csv.split('\n');
             let lats = [], lngs = [], speeds = [], times = [];
             let stats = { dist: 0, velMax: 0, sprints: 0, time: 0 };
 
             lines.forEach(line => {
+                // Parse simplificado para o exemplo (ajustar conforme colunas reais do seu CSV)
                 if(line.includes('TOTAL_DISTANCIA=')) stats.dist = parseFloat(line.split('=')[1]);
                 if(line.includes('VEL_MAX=')) stats.velMax = parseFloat(line.split('=')[1]);
-                if(line.includes('TEMPO_CORRENDO=')) stats.time += parseInt(line.split('=')[1]);
-                if(line.includes('TEMPO_ANDANDO=')) stats.time += parseInt(line.split('=')[1]);
+                if(line.includes('TEMPO_TOTAL=')) stats.time = parseInt(line.split('=')[1]);
 
                 const cols = line.split(',');
-                if (cols.length > 10 && !isNaN(cols[0])) {
+                if (cols.length > 5 && !isNaN(cols[0])) {
                     const lat = parseFloat(cols[3]);
                     const lng = parseFloat(cols[4]);
                     const vel = parseFloat(cols[5]);
-                    if (parseInt(cols[13]) === 1 && lat !== 0) {
-                        lats.push(lat); lngs.push(lng); speeds.push(vel); times.push(cols[2]);
+                    
+                    if (lat !== 0 && !isNaN(lat)) {
+                        lats.push(lat); lngs.push(lng); speeds.push(vel);
+                        times.push(cols[2] || "00:00");
                         if(vel > 21) stats.sprints++;
                     }
                 }
             });
 
-            // Normalization for Field
+            // VALIDAÇÃO (Melhoria 4)
+            if (lats.length === 0) {
+                alert('Erro: Arquivo CSV inválido ou sem coordenadas GPS reconhecíveis.');
+                return;
+            }
+
             const fieldW = document.getElementById('field-container').offsetWidth;
             const fieldH = document.getElementById('field-container').offsetHeight;
             const minLat = Math.min(...lats), maxLat = Math.max(...lats);
             const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
 
+            // PROTEÇÃO DIVISÃO POR ZERO (Melhoria 1)
+            const latRange = (maxLat - minLat) || 1;
+            const lngRange = (maxLng - minLng) || 1;
+
             const points = lats.map((lat, i) => ({
-                x: Math.floor(((lngs[i] - minLng) / (maxLng - minLng)) * fieldW),
-                y: Math.floor(((lat - minLat) / (maxLat - minLat)) * fieldH),
+                x: Math.floor(((lngs[i] - minLng) / lngRange) * fieldW),
+                y: Math.floor(((lat - minLat) / latRange) * fieldH),
                 value: 1
             }));
 
@@ -222,7 +247,6 @@
 
             updateDashboard(currentGameData);
             document.getElementById('btnSave').classList.remove('hidden');
-            switchTab('dashboard');
         }
 
         function updateDashboard(data) {
@@ -231,21 +255,46 @@
             document.getElementById('kpi-sprints').innerText = data.stats.sprints;
             document.getElementById('current-session-date').innerText = `Sessão: ${data.date}`;
             
-            const m = Math.floor(data.stats.time/60), s = data.stats.time%60;
-            document.getElementById('kpi-time').innerText = `${m}:${s<10?'0'+s:s}`;
+            // FORMATAÇÃO DE TEMPO HH:MM:SS (Melhoria 5)
+            const h = Math.floor(data.stats.time / 3600);
+            const m = Math.floor((data.stats.time % 3600) / 60);
+            const s = data.stats.time % 60;
+            document.getElementById('kpi-time').innerText = 
+                `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 
-            heatmapInstance.setData({ max: 40, data: data.points });
+            heatmapInstance.setData({ max: 30, data: data.points });
             updateCoachInsight(data.stats);
             renderChart(data.speeds, data.times);
         }
 
         function updateCoachInsight(stats) {
-            let text = "";
-            if(stats.sprints > 10) text = "Excelente volume de sprints. Sua transição ofensiva foi o ponto forte hoje. ";
-            else text = "Volume de alta intensidade abaixo do esperado. Foque em explosões curtas no próximo terço. ";
+            // SCORE COMPOSTO (Melhoria 8)
+            const distScore = Math.min((stats.dist / 5000) * 10, 10); // 5km = nota 10
+            const velScore = Math.min((stats.velMax / 30) * 10, 10);  // 30kmh = nota 10
+            const sprintScore = Math.min((stats.sprints / 15) * 10, 10); // 15 sprints = nota 10
             
-            text += `Você percorreu ${(stats.dist/1000).toFixed(2)}km. Mantenha a hidratação, sua carga de trabalho foi moderada/alta.`;
-            document.getElementById('coach-text').innerText = text;
+            const totalScore = (distScore * 0.4) + (velScore * 0.3) + (sprintScore * 0.3);
+            
+            let profile = "Jogador Equilibrado";
+            let tag = "Box-to-Box";
+            let advice = "Bom equilíbrio entre volume e intensidade.";
+
+            if (totalScore < 3) {
+                profile = "Baixa Intensidade";
+                tag = "Reserva";
+                advice = "Aumente a participação ativa e o volume de corridas.";
+            } else if (velScore > 8 && sprintScore > 7) {
+                profile = "Atacante Explosivo";
+                tag = "Velocista";
+                advice = "Sua velocidade de ponta é elite. Use isso para quebrar linhas.";
+            } else if (distScore > 8) {
+                profile = "Motor do Time";
+                tag = "Maratonista";
+                advice = "Excelente cobertura de terreno. Foco na recuperação pós-jogo.";
+            }
+
+            document.getElementById('player-tag').innerText = tag;
+            document.getElementById('coach-text').innerText = `${profile}. ${advice} (Score Geral: ${totalScore.toFixed(1)}/10)`;
         }
 
         function renderChart(speeds, labels) {
@@ -254,23 +303,32 @@
             loadChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: labels.filter((_,i) => i % 10 === 0),
+                    labels: labels.filter((_,i) => i % 20 === 0),
                     datasets: [{
-                        data: speeds.filter((_,i) => i % 10 === 0),
+                        data: speeds.filter((_,i) => i % 20 === 0),
                         borderColor: '#3b82f6', fill: true, tension: 0.4, pointRadius: 0,
                         backgroundColor: 'rgba(59, 130, 246, 0.1)'
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: {legend: {display:false}}, scales: { x:{display:false}, y:{grid:{color:'#1e293b'}} } }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: {legend: {display:false}}, 
+                    scales: { x:{display:false}, y:{grid:{color:'#1e293b'}, ticks:{color:'#64748b'}} } 
+                }
             });
         }
 
-        // HISTORY SYSTEM (LocalStorage)
         function saveCurrentPerformance() {
+            if(!currentGameData) return;
             let history = JSON.parse(localStorage.getItem('pelada_pro_history') || '[]');
+            
+            // LIMITAR HISTÓRICO A 100 (Melhoria 3)
             history.unshift(currentGameData);
+            history = history.slice(0, 100);
+            
             localStorage.setItem('pelada_pro_history', JSON.stringify(history));
-            alert('Jogo salvo com sucesso no seu histórico!');
+            alert('Desempenho salvo no histórico local!');
             renderHistory();
         }
 
@@ -278,23 +336,29 @@
             const history = JSON.parse(localStorage.getItem('pelada_pro_history') || '[]');
             const container = document.getElementById('history-list');
             
-            if(history.length === 0) return;
+            // MENSAGEM DE HISTÓRICO VAZIO (Melhoria 2)
+            if(history.length === 0) {
+                container.innerHTML = '<div class="text-center py-20 text-slate-600 font-bold border-2 border-dashed border-slate-800 rounded-3xl">Nenhum jogo salvo no banco de dados local.</div>';
+                return;
+            }
 
             container.innerHTML = history.map((game, index) => `
-                <div class="glass p-5 rounded-2xl flex flex-wrap justify-between items-center gap-4 hover:border-blue-500/50 transition cursor-pointer">
+                <div class="glass p-5 rounded-2xl flex flex-wrap justify-between items-center gap-4 hover:border-blue-500/50 transition group">
                     <div class="flex items-center gap-4">
-                        <div class="bg-blue-600/20 p-3 rounded-xl text-blue-500 font-bold">#${history.length - index}</div>
+                        <div class="bg-blue-600/20 p-3 rounded-xl text-blue-500 font-black">#${history.length - index}</div>
                         <div>
-                            <h4 class="font-bold">${game.date}</h4>
-                            <p class="text-xs text-slate-500 uppercase tracking-widest">Partida Monitorada</p>
+                            <h4 class="font-bold text-white">${game.date}</h4>
+                            <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">GPS Data Session</p>
                         </div>
                     </div>
                     <div class="flex gap-6 text-sm">
-                        <div><p class="text-slate-500 text-[10px]">DISTÂNCIA</p><p class="font-bold">${(game.stats.dist/1000).toFixed(2)}km</p></div>
-                        <div><p class="text-slate-500 text-[10px]">VEL. MÁX</p><p class="font-bold text-orange-400">${game.stats.velMax}km/h</p></div>
-                        <div><p class="text-slate-500 text-[10px]">SPRINTS</p><p class="font-bold text-emerald-400">${game.stats.sprints}</p></div>
+                        <div><p class="text-slate-500 text-[10px] font-bold">DIST</p><p class="font-bold text-white">${(game.stats.dist/1000).toFixed(2)}km</p></div>
+                        <div><p class="text-slate-500 text-[10px] font-bold">VEL. MÁX</p><p class="font-bold text-orange-400">${game.stats.velMax.toFixed(1)}km/h</p></div>
+                        <div><p class="text-slate-500 text-[10px] font-bold">SPRINTS</p><p class="font-bold text-emerald-400">${game.stats.sprints}</p></div>
                     </div>
-                    <button onclick="loadFromHistory(${index})" class="bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg text-xs font-bold transition">REVISAR</button>
+                    <div class="flex gap-2">
+                        <button onclick="loadFromHistory(${index})" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition">VER ANÁLISE</button>
+                    </div>
                 </div>
             `).join('');
         }
@@ -304,6 +368,14 @@
             currentGameData = history[index];
             updateDashboard(currentGameData);
             switchTab('dashboard');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function clearAllHistory() {
+            if(confirm("Deseja apagar permanentemente todo o histórico local?")) {
+                localStorage.removeItem('pelada_pro_history');
+                renderHistory();
+            }
         }
     </script>
 </body>
