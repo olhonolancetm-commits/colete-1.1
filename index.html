@@ -3,177 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pelada Pro | Tactical Card & Analysis</title>
+    <title>Pelada Pro v2 | Tactical Analysis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/heatmap.js/2.0.2/heatmap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Outfit', sans-serif; background-color: #020617; color: #f8fafc; }
+        body { font-family: 'Outfit', sans-serif; background-color: #020617; color: #f8fafc; overflow: hidden; }
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
         
-        /* ESTILO DO CAMPO 3D (Baseado na imagem enviada) */
-        .field-perspective-container {
-            perspective: 1200px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            padding: 40px 0;
-            background: radial-gradient(circle, #1e293b 0%, #020617 100%);
+        /* CAMPO 3D */
+        .field-container { perspective: 1000px; width: 100%; height: 450px; display: flex; justify-content: center; align-items: center; }
+        #field-3d { 
+            width: 500px; height: 350px; background: #15803d; border: 4px solid white; position: relative;
+            transform: rotateX(40deg); box-shadow: 0 30px 60px rgba(0,0,0,0.5);
         }
-        #field-3d {
-            width: 800px;
-            height: 500px;
-            background: #14532d; /* Verde grama */
-            background-image: 
-                linear-gradient(rgba(255,255,255,0.1) 2px, transparent 2px),
-                linear-gradient(90deg, rgba(255,255,255,0.1) 2px, transparent 2px);
-            background-size: 50px 50px;
-            border: 5px solid white;
-            position: relative;
-            transform: rotateX(45deg) rotateZ(0deg);
-            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
-        }
-        .field-line-3d { position: absolute; border: 2px solid white; pointer-events: none; }
-        .center-circle-3d { top: 50%; left: 50%; width: 120px; height: 120px; border-radius: 50%; transform: translate(-50%, -50%); border: 2px solid white; }
-        .center-line-3d { top: 0; bottom: 0; left: 50%; width: 0; border: 1px solid white; }
-        .penalty-3d-top { top: 0; left: 20%; right: 20%; height: 100px; border-top: 0; }
-        .penalty-3d-bot { bottom: 0; left: 20%; right: 20%; height: 100px; border-bottom: 0; }
+        .line { position: absolute; border: 1px solid white; pointer-events: none; }
+        .mid-line { top: 50%; left: 0; right: 0; height: 0; }
 
-        /* ESTILO DO CARD (ESTILO ULTIMATE TEAM) */
-        .player-card {
-            width: 280px;
-            height: 400px;
-            background: linear-gradient(135deg, #fde68a 0%, #f59e0b 50%, #b45309 100%);
-            border-radius: 15px;
-            position: relative;
-            color: #451a03;
-            clip-path: polygon(0% 15%, 50% 0%, 100% 15%, 100% 85%, 50% 100%, 0% 85%);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            transition: transform 0.3s ease;
+        /* CARD FIFA */
+        .card-fifa {
+            width: 260px; height: 380px; background: linear-gradient(135deg, #fcd34d 0%, #b45309 100%);
+            clip-path: polygon(0% 12%, 50% 0%, 100% 12%, 100% 88%, 50% 100%, 0% 88%);
+            position: relative; color: #451a03; box-shadow: 0 15px 30px rgba(0,0,0,0.5);
         }
-        .player-card:hover { transform: scale(1.05); }
-        .card-photo {
-            width: 180px;
-            height: 180px;
-            position: absolute;
-            top: 40px;
-            right: 10px;
-            object-fit: cover;
-            mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-        }
-        .card-rating { position: absolute; top: 45px; left: 25px; font-size: 48px; font-weight: 900; line-height: 1; }
-        .card-pos { position: absolute; top: 90px; left: 25px; font-size: 20px; font-weight: 600; }
-        .card-info { position: absolute; top: 220px; width: 100%; text-align: center; }
-        .card-name { font-size: 24px; font-weight: 900; text-transform: uppercase; border-bottom: 1px solid rgba(0,0,0,0.1); margin: 0 30px 10px 30px; }
-        .card-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 0 30px; font-size: 16px; font-weight: 700; }
-        
-        .glass-panel { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .card-img { width: 160px; height: 160px; position: absolute; top: 40px; right: 5px; object-fit: cover; mask-image: linear-gradient(to bottom, black 80%, transparent 100%); }
+        .card-ovr { position: absolute; top: 40px; left: 25px; font-size: 44px; font-weight: 900; }
+        .card-pos-text { position: absolute; top: 85px; left: 25px; font-size: 18px; font-weight: 700; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
-<body class="flex flex-col lg:flex-row min-h-screen">
+<body class="flex h-screen overflow-hidden">
 
-    <!-- SIDEBAR -->
-    <aside class="w-full lg:w-72 glass-panel p-8 flex flex-col gap-8 z-10">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-yellow-500 rounded-2xl flex items-center justify-center font-black text-2xl text-black">P</div>
-            <h1 class="font-black text-2xl italic tracking-tighter">PELADA<span class="text-yellow-500">PRO</span></h1>
+    <!-- SIDEBAR DE CONFIGURAÇÃO -->
+    <aside class="w-80 glass p-6 flex flex-col gap-6 z-20 border-r border-white/5">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-yellow-500 rounded-xl flex items-center justify-center font-black text-black">P</div>
+            <h1 class="font-black text-xl italic tracking-tighter">PELADA<span class="text-yellow-500">PRO</span></h1>
         </div>
 
         <div class="space-y-4">
-            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Configurar Perfil</p>
-            <div class="flex flex-col gap-3">
-                <input type="text" id="playerNameInput" placeholder="Nome do Jogador" class="bg-white/5 border border-white/10 rounded-lg p-2 text-sm outline-none focus:border-yellow-500">
-                <label class="block text-xs text-slate-400">Foto do Jogador:</label>
-                <input type="file" id="playerPhotoInput" accept="image/*" class="text-xs text-slate-500">
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Perfil do Atleta</p>
+            <input type="text" id="nameInput" placeholder="Seu Nome" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none focus:border-yellow-500">
+            
+            <select id="roleInput" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none">
+                <option value="ATA" class="bg-slate-900">Atacante</option>
+                <option value="MEI" class="bg-slate-900">Meio-Campo</option>
+                <option value="DEF" class="bg-slate-900">Zagueiro/Lateral</option>
+            </select>
+
+            <select id="sideInput" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none">
+                <option value="up" class="bg-slate-900">Atacando p/ Cima</option>
+                <option value="down" class="bg-slate-900">Atacando p/ Baixo</option>
+            </select>
+
+            <div class="space-y-2">
+                <label class="text-[10px] text-slate-500 uppercase font-bold">Foto de Perfil</label>
+                <input type="file" id="photoInput" accept="image/*" class="text-xs">
             </div>
         </div>
 
-        <div class="space-y-4 pt-6 border-t border-white/10">
-            <label class="flex items-center justify-center gap-3 bg-white text-black p-4 rounded-2xl font-black cursor-pointer hover:bg-yellow-500 transition">
-                <span>IMPORTAR JOGO (CSV)</span>
+        <div class="mt-auto space-y-3">
+            <label class="flex items-center justify-center gap-2 bg-yellow-500 text-black p-4 rounded-2xl font-black cursor-pointer hover:scale-105 transition">
+                IMPORTAR CSV
                 <input type="file" id="csvFileInput" accept=".csv" class="hidden">
             </label>
-            <button onclick="switchTab('history')" class="w-full py-3 text-sm font-bold text-slate-400 hover:text-white transition">Ver Histórico de Cards</button>
+            <button onclick="switchTab('history')" class="w-full py-3 text-xs font-bold text-slate-400 hover:text-white transition">VER MINHA COLEÇÃO</button>
         </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 overflow-y-auto">
-        <section id="tab-dashboard" class="p-6 lg:p-10 space-y-10">
-            
-            <!-- HEADER INFO -->
-            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+    <!-- ÁREA PRINCIPAL -->
+    <main class="flex-1 overflow-y-auto relative">
+        
+        <!-- DASHBOARD TAB -->
+        <section id="tab-dashboard" class="p-10 space-y-8 animate-in fade-in duration-500">
+            <div class="flex justify-between items-center">
                 <div>
-                    <h2 id="display-player-name" class="text-4xl font-black italic uppercase">NOVO ATLETA</h2>
-                    <p id="current-session-date" class="text-slate-500 font-medium tracking-wide">Aguardando dados da partida...</p>
+                    <h2 class="text-4xl font-black italic uppercase">Análise de Jogo</h2>
+                    <p id="dateDisplay" class="text-slate-500">Aguardando dados...</p>
                 </div>
-                <button onclick="saveCurrentPerformance()" id="btnSave" class="hidden bg-emerald-600 hover:bg-emerald-500 px-8 py-3 rounded-full font-black text-sm transition">SALVAR CARD NA COLEÇÃO</button>
+                <button onclick="saveCard()" id="saveBtn" class="hidden bg-emerald-600 hover:bg-emerald-500 px-8 py-3 rounded-full font-black text-sm transition">SALVAR NO HISTÓRICO</button>
             </div>
 
-            <div class="grid grid-cols-1 xl:grid-cols-12 gap-10">
-                
-                <!-- ANALYTIC CARD (FIFA STYLE) -->
-                <div class="xl:col-span-4 flex justify-center">
-                    <div id="player-card-ui" class="player-card">
-                        <div class="card-rating" id="card-rating">--</div>
-                        <div class="card-pos">AD</div>
-                        <img id="card-img" src="https://via.placeholder.com/200" class="card-photo">
-                        <div class="card-info">
-                            <div class="card-name" id="card-name-display">PLAYER</div>
-                            <div class="card-stats">
-                                <div><span id="stat-pac">--</span> PAC</div>
-                                <div><span id="stat-dri">--</span> DRI</div>
-                                <div><span id="stat-sho">--</span> SHO</div>
-                                <div><span id="stat-def">--</span> DEF</div>
-                                <div><span id="stat-pas">--</span> PAS</div>
-                                <div><span id="stat-phy">--</span> PHY</div>
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-10">
+                <!-- CARD PREVIEW -->
+                <div class="flex flex-col items-center gap-6">
+                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Seu Card de Atleta</h3>
+                    <div id="card-preview" class="card-fifa">
+                        <div class="card-ovr" id="ovrText">--</div>
+                        <div class="card-pos-text" id="posText">POS</div>
+                        <img id="cardImg" src="https://via.placeholder.com/150" class="card-img">
+                        <div class="absolute top-[210px] w-full text-center">
+                            <div class="text-xl font-black uppercase tracking-tighter mx-4 border-b border-black/20 pb-1" id="nameText">JOGADOR</div>
+                            <div class="grid grid-cols-2 gap-x-2 px-8 pt-2 text-[14px] font-black">
+                                <div class="text-left">VEL <span id="stat-vel" class="float-right text-black/60">--</span></div>
+                                <div class="text-left">ATA <span id="stat-ata" class="float-right text-black/60">--</span></div>
+                                <div class="text-left">PAS <span id="stat-pas" class="float-right text-black/60">--</span></div>
+                                <div class="text-left">DEF <span id="stat-def" class="float-right text-black/60">--</span></div>
+                                <div class="text-left">FIS <span id="stat-fis" class="float-right text-black/60">--</span></div>
+                                <div class="text-left">POS <span id="stat-pos" class="float-right text-black/60">--</span></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 3D FIELD VIEW -->
-                <div class="xl:col-span-8 space-y-4">
-                    <h3 class="font-bold text-slate-400 text-xs tracking-[0.2em]">DISTRIBUIÇÃO TÁTICA (VISÃO DO ESTÁDIO)</h3>
-                    <div class="field-perspective-container">
+                <!-- CAMPO HEATMAP -->
+                <div class="space-y-4">
+                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Mapa de Posicionamento</h3>
+                    <div class="field-container">
                         <div id="field-3d">
-                            <div class="field-line-3d center-line-3d"></div>
-                            <div class="field-line-3d center-circle-3d"></div>
-                            <div class="field-line-3d penalty-3d-top"></div>
-                            <div class="field-line-3d penalty-3d-bot"></div>
+                            <div class="line mid-line"></div>
                             <div id="heatmapContainer" class="absolute inset-0"></div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- PERFORMANCE CHARTS -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 glass-panel p-6 rounded-3xl h-64">
-                    <h4 class="text-xs font-bold text-slate-500 mb-4 uppercase">Gráfico de Velocidade</h4>
-                    <canvas id="loadChart"></canvas>
-                </div>
-                <div class="glass-panel p-6 rounded-3xl flex flex-col justify-center border-l-4 border-yellow-500">
-                    <h4 class="text-xs font-bold text-slate-500 mb-2 uppercase">Diagnóstico da IA</h4>
-                    <p id="coach-text" class="text-sm italic text-slate-300">"Aguardando dados para gerar o card de atributos..."</p>
-                </div>
-            </div>
         </section>
 
-        <!-- HISTORY SECTION -->
-        <section id="tab-history" class="hidden p-10">
-            <h2 class="text-3xl font-black italic mb-10">MINHA COLEÇÃO DE CARDS</h2>
-            <div id="history-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                <!-- Cards salvos aqui -->
+        <!-- HISTORY TAB -->
+        <section id="tab-history" class="hidden p-10 animate-in slide-in-from-right duration-500">
+            <div class="flex justify-between items-center mb-10">
+                <h2 class="text-4xl font-black italic uppercase">Minha Coleção</h2>
+                <button onclick="switchTab('dashboard')" class="bg-white/10 hover:bg-white/20 px-6 py-2 rounded-xl text-sm font-bold transition">← VOLTAR</button>
+            </div>
+            <div id="historyGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                <!-- Injetado por JS -->
             </div>
         </section>
     </main>
 
     <script>
         let heatmapInstance;
-        let loadChart;
-        let currentGameData = null;
-        let playerPhotoBase64 = "https://via.placeholder.com/200";
+        let currentData = null;
+        let photoBase64 = "https://via.placeholder.com/150";
 
         window.onload = () => {
             initHeatmap();
@@ -183,26 +147,18 @@
         function initHeatmap() {
             heatmapInstance = h337.create({
                 container: document.getElementById('heatmapContainer'),
-                radius: 25, blur: .7, maxOpacity: .5,
-                gradient: {'.4': 'blue', '.6': 'cyan', '.8': 'yellow', '.95': 'red'}
+                radius: 20, blur: .8, maxOpacity: .6
             });
         }
 
-        // Atualizar Nome e Foto em Tempo Real
-        document.getElementById('playerNameInput').addEventListener('input', (e) => {
-            const val = e.target.value || "PLAYER";
-            document.getElementById('card-name-display').innerText = val;
-            document.getElementById('display-player-name').innerText = val;
-        });
-
-        document.getElementById('playerPhotoInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
+        // Preview da Foto
+        document.getElementById('photoInput').addEventListener('change', function(e) {
             const reader = new FileReader();
-            reader.onload = (event) => {
-                playerPhotoBase64 = event.target.result;
-                document.getElementById('card-img').src = playerPhotoBase64;
+            reader.onload = (ev) => {
+                photoBase64 = ev.target.result;
+                document.getElementById('cardImg').src = photoBase64;
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(e.target.files[0]);
         });
 
         function switchTab(tab) {
@@ -212,157 +168,150 @@
 
         document.getElementById('csvFileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
-            if (!file) return;
             const reader = new FileReader();
-            reader.onload = e => processCSV(e.target.result);
+            reader.onload = (ev) => processCSV(ev.target.result);
             reader.readAsText(file);
         });
 
         function processCSV(csv) {
             const lines = csv.split('\n');
-            let lats = [], lngs = [], speeds = [], times = [];
-            let stats = { dist: 0, velMax: 0, sprints: 0, time: 0 };
+            let lats = [], lngs = [], speeds = [];
+            let totalDist = 0, velMax = 0, sumVel = 0;
 
             lines.forEach(line => {
-                if(line.includes('TOTAL_DISTANCIA=')) stats.dist = parseFloat(line.split('=')[1]);
-                if(line.includes('VEL_MAX=')) stats.velMax = parseFloat(line.split('=')[1]);
-                if(line.includes('TEMPO_TOTAL=')) stats.time = parseInt(line.split('=')[1]);
-
+                if(line.includes('TOTAL_DISTANCIA=')) totalDist = parseFloat(line.split('=')[1]);
+                if(line.includes('VEL_MAX=')) velMax = parseFloat(line.split('=')[1]);
+                
                 const cols = line.split(',');
                 if (cols.length > 5 && !isNaN(cols[0])) {
                     const lat = parseFloat(cols[3]), lng = parseFloat(cols[4]), vel = parseFloat(cols[5]);
                     if (lat !== 0) {
                         lats.push(lat); lngs.push(lng); speeds.push(vel);
-                        times.push(cols[2]);
-                        if(vel > 20) stats.sprints++;
+                        sumVel += vel;
                     }
                 }
             });
 
-            if (lats.length === 0) { alert('CSV inválido!'); return; }
+            if (lats.length === 0) return alert("Arquivo inválido");
 
-            // Melhoria 1: Proteção Divisão por Zero
             const minLat = Math.min(...lats), maxLat = Math.max(...lats);
             const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
             const latRange = (maxLat - minLat) || 1;
             const lngRange = (maxLng - minLng) || 1;
 
             const points = lats.map((lat, i) => ({
-                x: Math.floor(((lngs[i] - minLng) / lngRange) * 800),
-                y: Math.floor(((lat - minLat) / latRange) * 500),
+                x: Math.floor(((lngs[i] - minLng) / lngRange) * 500),
+                y: Math.floor(((lat - minLat) / latRange) * 350),
                 value: 1
             }));
 
-            currentGameData = {
-                date: new Date().toLocaleDateString('pt-BR'),
-                stats: stats,
-                points: points,
-                speeds: speeds,
-                times: times,
-                playerName: document.getElementById('playerNameInput').value || "PLAYER",
-                photo: playerPhotoBase64
-            };
-
-            updateUI(currentGameData);
-        }
-
-        function updateUI(data) {
-            document.getElementById('current-session-date').innerText = `Sessão realizada em ${data.date}`;
-            document.getElementById('btnSave').classList.remove('hidden');
-            
-            // Gerar Atributos do Card (0-99)
-            const pac = Math.min(Math.round((data.stats.velMax / 34) * 99), 99);
-            const phy = Math.min(Math.round((data.stats.dist / 7000) * 99), 99);
-            const sho = Math.min(Math.round((data.stats.sprints / 15) * 99), 99);
-            const dri = Math.min(Math.round(pac * 0.9), 99);
-            const pas = 75; // Placeholder
-            const def = 60; // Placeholder
-            const rating = Math.round((pac + phy + sho + dri + pas + def) / 6);
-
-            document.getElementById('stat-pac').innerText = pac;
-            document.getElementById('stat-phy').innerText = phy;
-            document.getElementById('stat-sho').innerText = sho;
-            document.getElementById('stat-dri').innerText = dri;
-            document.getElementById('stat-pas').innerText = pas;
-            document.getElementById('stat-def').innerText = def;
-            document.getElementById('card-rating').innerText = rating;
-
-            heatmapInstance.setData({ max: 30, data: data.points });
-            renderChart(data.speeds, data.times);
-            document.getElementById('coach-text').innerText = `Atleta com perfil ${pac > 85 ? 'Explosivo' : 'Box-to-Box'}. Rating de elite baseado no volume de ${ (data.stats.dist/1000).toFixed(1) }km percorridos.`;
-        }
-
-        function renderChart(speeds, labels) {
-            if (loadChart) loadChart.destroy();
-            const ctx = document.getElementById('loadChart').getContext('2d');
-            loadChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels.filter((_,i) => i % 30 === 0),
-                    datasets: [{
-                        data: speeds.filter((_,i) => i % 30 === 0),
-                        borderColor: '#f59e0b', fill: true, backgroundColor: 'rgba(245, 158, 11, 0.1)', tension: 0.4, pointRadius: 0
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: {legend: {display:false}}, scales: { x:{display:false}, y:{grid:{color:'#1e293b'}} } }
+            // LÓGICA DE POSICIONAMENTO (ATAQUE vs DEFESA)
+            const side = document.getElementById('sideInput').value;
+            let attackPoints = 0;
+            points.forEach(p => {
+                if(side === 'up' && p.y < 175) attackPoints++;
+                if(side === 'down' && p.y > 175) attackPoints++;
             });
+
+            const attackPercent = Math.round((attackPoints / points.length) * 100);
+            const defensePercent = 100 - attackPercent;
+            const avgSpeed = (sumVel / speeds.length).toFixed(1);
+
+            currentData = {
+                name: document.getElementById('nameInput').value || "JOGADOR",
+                role: document.getElementById('roleInput').value,
+                date: new Date().toLocaleDateString('pt-BR'),
+                stats: {
+                    vel: Math.round((velMax / 33) * 99),
+                    ata: attackPercent,
+                    def: defensePercent,
+                    pas: Math.round((totalDist / 6000) * 85),
+                    fis: Math.round((totalDist / 7000) * 99),
+                    avgSpeed: avgSpeed
+                },
+                points: points,
+                photo: photoBase64
+            };
+
+            calculateOverall();
+            updateUI();
         }
 
-        function saveCurrentPerformance() {
+        function calculateOverall() {
+            const s = currentData.stats;
+            const role = currentData.role;
+            let ovr = 0;
+
+            if(role === 'ATA') ovr = (s.ata * 0.5) + (s.vel * 0.3) + (s.fis * 0.2);
+            else if(role === 'DEF') ovr = (s.def * 0.5) + (s.fis * 0.3) + (s.vel * 0.2);
+            else ovr = (s.fis * 0.4) + (s.ata * 0.3) + (s.def * 0.3);
+
+            currentData.ovr = Math.min(Math.round(ovr), 99);
+        }
+
+        function updateUI() {
+            document.getElementById('nameText').innerText = currentData.name;
+            document.getElementById('posText').innerText = currentData.role;
+            document.getElementById('ovrText').innerText = currentData.ovr;
+            document.getElementById('stat-vel').innerText = currentData.stats.vel;
+            document.getElementById('stat-ata').innerText = currentData.stats.ata;
+            document.getElementById('stat-def').innerText = currentData.stats.def;
+            document.getElementById('stat-pas').innerText = currentData.stats.pas;
+            document.getElementById('stat-fis').innerText = currentData.stats.fis;
+            document.getElementById('stat-pos').innerText = currentData.stats.avgSpeed;
+            
+            document.getElementById('dateDisplay').innerText = `Sessão: ${currentData.date}`;
+            document.getElementById('saveBtn').classList.remove('hidden');
+            
+            heatmapInstance.setData({ max: 20, data: currentData.points });
+        }
+
+        function saveCard() {
             let history = JSON.parse(localStorage.getItem('pelada_pro_history') || '[]');
-            const cardStats = {
-                pac: document.getElementById('stat-pac').innerText,
-                sho: document.getElementById('stat-sho').innerText,
-                pas: document.getElementById('stat-pas').innerText,
-                dri: document.getElementById('stat-dri').innerText,
-                def: document.getElementById('stat-def').innerText,
-                phy: document.getElementById('stat-phy').innerText,
-                rating: document.getElementById('card-rating').innerText
-            };
-            
-            const itemToSave = { ...currentGameData, cardStats: cardStats };
-            history.unshift(itemToSave);
-            // Melhoria 3: Limite de 100 jogos
+            history.unshift(currentData);
             localStorage.setItem('pelada_pro_history', JSON.stringify(history.slice(0, 100)));
-            
-            alert('Card salvo na sua coleção!');
+            alert("Card adicionado à sua coleção!");
             renderHistory();
         }
 
         function renderHistory() {
             const history = JSON.parse(localStorage.getItem('pelada_pro_history') || '[]');
-            const container = document.getElementById('history-list');
+            const container = document.getElementById('historyGrid');
             
-            // Melhoria 2: Histórico vazio limpa a mensagem
             if(history.length === 0) {
-                container.innerHTML = '<p class="col-span-full text-center py-20 text-slate-600">Nenhum card na sua coleção ainda.</p>';
+                container.innerHTML = `<div class="col-span-full text-center py-20 text-slate-700 font-bold border-2 border-dashed border-slate-800 rounded-3xl">Coleção vazia. Importe um CSV e salve seu primeiro card!</div>`;
                 return;
             }
 
-            container.innerHTML = history.map((game, i) => `
-                <div class="glass-panel p-6 rounded-3xl flex flex-col items-center gap-4">
-                    <div class="player-card scale-75 -my-10">
-                        <div class="card-rating">${game.cardStats.rating}</div>
-                        <div class="card-pos">AD</div>
-                        <img src="${game.photo}" class="card-photo">
-                        <div class="card-info">
-                            <div class="card-name">${game.playerName}</div>
-                            <div class="card-stats">
-                                <div>${game.cardStats.pac} PAC</div>
-                                <div>${game.cardStats.dri} DRI</div>
-                                <div>${game.cardStats.sho} SHO</div>
-                                <div>${game.cardStats.def} DEF</div>
-                                <div>${game.cardStats.pas} PAS</div>
-                                <div>${game.cardStats.phy} PHY</div>
+            container.innerHTML = history.map((card, index) => `
+                <div class="glass p-6 rounded-3xl flex flex-col items-center gap-4 hover:border-yellow-500/50 transition">
+                    <div class="card-fifa scale-75 -my-10">
+                        <div class="card-ovr">${card.ovr}</div>
+                        <div class="card-pos-text">${card.role}</div>
+                        <img src="${card.photo}" class="card-img">
+                        <div class="absolute top-[210px] w-full text-center">
+                            <div class="text-xl font-black uppercase tracking-tighter mx-4 border-b border-black/20 pb-1">${card.name}</div>
+                            <div class="grid grid-cols-2 gap-x-2 px-8 pt-2 text-[14px] font-black">
+                                <div class="text-left">VEL <span class="float-right text-black/60">${card.stats.vel}</span></div>
+                                <div class="text-left">ATA <span class="float-right text-black/60">${card.stats.ata}</span></div>
+                                <div class="text-left">PAS <span class="float-right text-black/60">${card.stats.pas}</span></div>
+                                <div class="text-left">DEF <span class="float-right text-black/60">${card.stats.def}</span></div>
                             </div>
                         </div>
                     </div>
-                    <div class="text-center">
-                        <p class="font-bold">${game.date}</p>
-                        <p class="text-xs text-slate-500">${(game.stats.dist/1000).toFixed(2)}km percorridos</p>
+                    <div class="text-center mt-2">
+                        <p class="font-bold text-white">${card.date}</p>
+                        <button onclick="loadCard(${index})" class="text-yellow-500 text-xs font-bold uppercase mt-2">Ver Detalhes</button>
                     </div>
                 </div>
             `).join('');
+        }
+
+        function loadCard(index) {
+            const history = JSON.parse(localStorage.getItem('pelada_pro_history'));
+            currentData = history[index];
+            updateUI();
+            switchTab('dashboard');
         }
     </script>
 </body>
