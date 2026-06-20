@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracker Pelada Pro - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans p-6">
+
+    <div class="max-w-6xl mx-auto">
+        <header class="flex justify-between items-center bg-white p-4 rounded-lg shadow mb-6">
+            <h1 class="text-2xl font-bold text-blue-600">⚽ Tracker Pelada Pro</h1>
+            <div>
+                <label class="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-700 transition">
+                    Carregar Jogo (.csv)
+                    <input type="file" id="csvFileInput" accept=".csv" class="hidden">
+                </label>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="bg-white p-6 rounded-lg shadow border-l-4 border-green-500">
+                <h3 class="text-sm text-gray-500 uppercase font-bold">Distância Total</h3>
+                <p class="text-3xl font-black mt-2" id="card-dist">0.0 m</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow border-l-4 border-red-500">
+                <h3 class="text-sm text-gray-500 uppercase font-bold">Velocidade Máxima</h3>
+                <p class="text-3xl font-black mt-2" id="card-vel">0.0 km/h</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow border-l-4 border-yellow-500">
+                <h3 class="text-sm text-gray-500 uppercase font-bold">Tempo em Movimento</h3>
+                <p class="text-3xl font-black mt-2" id="card-tempo">0 min</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-lg font-bold mb-4">Mapa de Calor (Trajeto)</h2>
+                <div id="map" class="w-full h-80 bg-gray-200 rounded"></div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-lg font-bold mb-4">Gráfico de Velocidade</h2>
+                <canvas id="speedChart" class="w-full h-80"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inicializa o Mapa
+        let map = L.map('map').setView([-23.5505, -46.6333], 15); // SP default
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+        let polyline;
+
+        // Variável do Gráfico
+        let speedChart;
+
+        // Listener para leitura do arquivo
+        document.getElementById('csvFileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                processCSV(event.target.result);
+            };
+            reader.readAsText(file);
+        });
+
+        // Processamento dos Dados
+        function processCSV(csvText) {
+            const lines = csvText.split('\n');
+            const pathCoordinates = [];
+            const timeLabels = [];
+            const speedData = [];
+            
+            let tempoAndando = 0;
+            let tempoCorrendo = 0;
+
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line) return;
+
+                // 1. LER RODAPÉ (Estatísticas do Tracker)
+                if (line.startsWith('TOTAL_DISTANCIA=')) {
+                    document.getElementById('card-dist').innerText = parseFloat(line.split('=')[1]).toFixed(1) + ' m';
+                } else if (line.startsWith('VEL_MAX=')) {
+                    document.getElementById('card-vel').innerText = parseFloat(line.split('=')[1]).toFixed(1) + ' km/h';
+                } else if (line.startsWith('TEMPO_ANDANDO=')) {
+                    tempoAndando = parseInt(line.split('=')[1]);
+                } else if (line.startsWith('TEMPO_CORRENDO=')) {
+                    tempoCorrendo = parseInt(line.split('=')[1]);
+                    // Atualiza o card somando andando + correndo
+                    let min = Math.floor((tempoAndando + tempoCorrendo) / 60);
+                    let seg = (tempoAndando + tempoCorrendo) % 60;
+                    document.getElementById('card-tempo').innerText = `${min}m ${seg}s`;
+                }
+
+                // 2. LER DADOS DE TELEMETRIA (As linhas de dados começam com números)
+                const cols = line.split(',');
+                if (cols.length > 15 && !isNaN(cols[0])) {
+                    let lat = parseFloat(cols[3]);
+                    let lng = parseFloat(cols[4]);
+                    let vel = parseFloat(cols[5]);
+                    let fix = parseInt(cols[13]); // GPS_FIX
+
+                    // Extrai hora e velocidade para o gráfico
+                    timeLabels.push(cols[2]); // Hora_UTC
+                    speedData.push(vel);
+
+                    // Só desenha no mapa se o GPS estiver válido e não for coordenada zero
+                    if (fix === 1 && lat !== 0 && lng !== 0) {
+                        pathCoordinates.push([lat, lng]);
+                    }
+                }
+            });
+
+            atualizarDashboard(pathCoordinates, timeLabels, speedData);
+        }
+
+        // Atualizar Interface
+        function atualizarDashboard(path, labels, data) {
+            // Atualizar Mapa
+            if (polyline) map.removeLayer(polyline);
+            if (path.length > 0) {
+                polyline = L.polyline(path, {color: 'red', weight: 4}).addTo(map);
+                map.fitBounds(polyline.getBounds());
+            }
+
+            // Atualizar Gráfico
+            if (speedChart) speedChart.destroy();
+            const ctx = document.getElementById('speedChart').getContext('2d');
+            speedChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Velocidade (km/h)',
+                        data: data,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3, // Suaviza a curva
+                        pointRadius: 0 // Remove as bolinhas para não poluir
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
