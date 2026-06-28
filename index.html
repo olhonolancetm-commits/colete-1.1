@@ -23,7 +23,8 @@
 
     /* Heatmap “canvas” transparente por cima do SVG */
     #heatmapLayer {
-      position:absolute; inset:0;
+      position:absolute;
+      inset:0;
       pointer-events:none;
     }
 
@@ -39,7 +40,8 @@
     }
     .card-photo {
       width:150px; height:150px; position:absolute; top:44px; right:14px;
-      object-fit:cover; border-radius:18px;
+      object-fit:cover;
+      border-radius:18px;
       mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
       box-shadow: 0 20px 40px rgba(0,0,0,.35);
       border: 1px solid rgba(0,0,0,.08);
@@ -67,7 +69,6 @@
 </head>
 
 <body class="flex h-screen overflow-hidden">
-  <!-- Mobile top bar -->
   <header class="md:hidden absolute top-0 left-0 right-0 z-50 p-3">
     <div class="glass rounded-2xl flex items-center justify-between px-3 py-2">
       <div class="flex items-center gap-2">
@@ -83,7 +84,6 @@
     </div>
   </header>
 
-  <!-- SIDEBAR (desktop) -->
   <aside id="sidebar"
          class="w-80 glass border-r border-white/10 p-6 flex flex-col gap-6 z-30 hidden md:flex">
     <div class="flex items-center gap-3">
@@ -141,10 +141,8 @@
     </div>
   </aside>
 
-  <!-- Mobile Drawer -->
   <div id="mobileOverlay" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden"></div>
   <aside id="mobileDrawer" class="fixed top-0 left-0 bottom-0 w-80 z-50 glass border-r border-white/10 p-6 flex flex-col gap-6 translate-x-[-110%] transition md:hidden">
-    <!-- reaproveita o mesmo conteúdo do sidebar (duplicado simples) -->
     <div class="flex items-center gap-3">
       <div class="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center font-black text-2xl text-black">P</div>
       <div>
@@ -200,9 +198,7 @@
     </div>
   </aside>
 
-  <!-- MAIN -->
   <main class="flex-1 overflow-y-auto">
-    <!-- DASHBOARD -->
     <section id="tab-dashboard" class="p-4 md:p-8 space-y-6 md:space-y-8 animate-in fade-in duration-700">
       <div class="flex justify-between items-end gap-3 flex-wrap">
         <div>
@@ -223,9 +219,7 @@
         </button>
       </div>
 
-      <!-- TOP ROW -->
       <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 xl:gap-8">
-        <!-- CARD -->
         <div class="xl:col-span-4 flex justify-center py-3">
           <div class="card-container">
             <div class="card-bg"></div>
@@ -251,7 +245,6 @@
           </div>
         </div>
 
-        <!-- AI REPORT + CHART + HEATMAP -->
         <div class="xl:col-span-8 flex flex-col gap-5 md:gap-6">
           <div class="glass p-5 md:p-6 rounded-3xl border-l-4 border-amber-500">
             <h4 class="text-amber-500 font-bold text-xs uppercase mb-3 flex items-center gap-2">
@@ -270,18 +263,15 @@
               <canvas id="loadChart"></canvas>
             </div>
 
-            <!-- HEATMAP / MAPA - MELHORADO PARA PERSPECTIVA DATA FACTORY -->
             <div class="mt-5 md:mt-6">
               <h4 class="text-slate-500 font-bold text-xs uppercase text-center mb-3">Visualização Tática de Estádio (GPS Centralizado)</h4>
 
               <div class="pitch-wrap floaty mx-auto"
                    style="height: 350px; max-width: 850px;">
-                <!-- SVG do campo top -->
                 <div class="relative h-full w-full">
                   <svg viewBox="0 0 920 560" preserveAspectRatio="xMidYMid meet"
                        class="absolute inset-0 w-full h-full" aria-hidden="true">
                     <defs>
-                      <!-- Tapete Azul escuro conforme imagem -->
                       <linearGradient id="pitchGrad" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stop-color="#0d254a"/>
                         <stop offset="100%" stop-color="#081830"/>
@@ -296,29 +286,22 @@
                       </filter>
                     </defs>
 
-                    <!-- Campo com “perspectiva” (trapézio azul) -->
                     <g transform="translate(0,0)">
                       <path d="M110,510 L810,510 L660,100 L260,100 Z"
                             fill="url(#pitchGrad)" opacity="1" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
 
-                      <!-- Linha do Meio -->
                       <line x1="185" y1="305" x2="735" y2="305" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
                       
-                      <!-- Círculo Central -->
                       <ellipse cx="460" cy="305" rx="80" ry="35" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
 
-                      <!-- Gols brancos destacados -->
                       <rect x="410" y="85" width="100" height="15" fill="none" stroke="white" stroke-width="2" filter="url(#lineGlow)"/>
                       <rect x="410" y="510" width="100" height="15" fill="none" stroke="white" stroke-width="2" filter="url(#lineGlow)"/>
 
-                      <!-- Grande Área Top -->
                       <path d="M280,100 L640,100 L600,200 L320,200 Z" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                      <!-- Grande Área Bottom -->
                       <path d="M280,510 L640,510 L600,410 L320,410 Z" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
                     </g>
                   </svg>
 
-                  <!-- Heatmap canvas por cima -->
                   <div id="heatmapContainer" class="absolute inset-0" aria-hidden="true"></div>
                 </div>
               </div>
@@ -332,7 +315,6 @@
       </div>
     </section>
 
-    <!-- HISTORY -->
     <section id="tab-history" class="hidden p-4 md:p-8 animate-in slide-in-from-right duration-500">
       <div class="flex justify-between items-center mb-6 md:mb-10 gap-3 flex-wrap">
         <h2 class="text-3xl md:text-4xl font-black italic uppercase">Coleção de Elite</h2>
@@ -342,8 +324,7 @@
       </div>
 
       <div id="historyGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-10">
-        <!-- Injetado via JS -->
-      </div>
+        </div>
     </section>
   </main>
 
@@ -441,12 +422,17 @@
         document.getElementById('cardName').innerText = n;
       });
 
+      // --- ATUALIZADO PARA FUNCIONAR BEM NO DESKTOP TAMBÉM ---
       document.getElementById('csvFileInput').addEventListener('change', (e) => {
         const file = e.target.files && e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = (ev) => processCSV(ev.target.result);
-        reader.readAsText(file);
+        reader.onload = (ev) => {
+          processCSV(ev.target.result);
+          switchTab('dashboard'); // Pula para a aba do gráfico sozinho
+        };
+        reader.readAsText(file, "UTF-8"); // Força leitura UTF-8
+        e.target.value = ''; // Limpa o input
       });
     }
 
@@ -483,12 +469,21 @@
         reader.readAsDataURL(f);
       });
 
+      // --- ATUALIZADO: FECHA O MENU NO CELULAR E ABRE O DASHBOARD ---
       csvM?.addEventListener('change', (e) => {
         const file = e.target.files && e.target.files[0];
         if (!file) return;
+        
         const reader = new FileReader();
-        reader.onload = (ev) => processCSV(ev.target.result);
-        reader.readAsText(file);
+        
+        reader.onload = (ev) => {
+          processCSV(ev.target.result);
+          closeDrawer(); // Fecha o menu lateral
+          switchTab('dashboard'); // Garante que a tela do dashboard apareça
+        };
+        
+        reader.readAsText(file, "UTF-8"); // Força leitura segura
+        e.target.value = ''; // Limpa o input
       });
     }
 
@@ -581,7 +576,7 @@
       const CY = SVG_H / 2;
 
       // Escala para GPS converter para pixels do SVG
-      const scale = 520000; 
+      const scale = 520000;
 
       const dx = (lng - originLng) * scale;
       const dy = (lat - originLat) * scale;
@@ -610,6 +605,7 @@
     function processCSV(text) {
       const parsed = parsePeladaExcelLike(text);
       if (parsed.error) return alert(parsed.error);
+
       const rows = parsed.dataRows;
       if (rows.length < 5) return alert("Arquivo com dados insuficientes (mínimo 5 linhas de GPS).");
 
@@ -646,6 +642,7 @@
       const role = document.getElementById('posIn').value;
       const vMax = parsed.stats.velMax || Math.max(...speeds);
       const vMean = vSum / rows.length;
+
       const attRatio = points.length ? (getAttCount(points, side) / points.length) : 0;
 
       const stats = {
@@ -672,12 +669,14 @@
            dist: parsed.stats.distTotal || 0
         }
       };
+
       updateDashboard();
     }
 
     function updateDashboard() {
       const d = currentData;
       if (!d) return;
+
       document.getElementById('cardOvr').innerText = d.ovr;
       document.getElementById('cardPos').innerText = d.role;
       document.getElementById('cardName').innerText = d.name;
@@ -691,7 +690,7 @@
       document.getElementById('dateShow').innerText = d.date;
       document.getElementById('posShow').innerText = `POSIÇÃO: ${d.role}`;
       document.getElementById('btnSave').classList.remove('hidden');
-      
+
       heatmapInstance.setData({ max: 20, data: d.points });
       renderChart(d.speeds, d.times);
       
@@ -714,7 +713,7 @@
             <ul class="list-disc ml-4 opacity-80">
               <li>Piques (Sprints > 15km/h): ${d.mIA.sprints}</li>
               <li>Velocidade Pico: ${(d.vMaxHW * 3.6).toFixed(1)} km/h</li>
-            </ul>
+             </ul>
           </div>
         </div>
         <div class="mt-3 pt-3 border-t border-white/10">
@@ -723,14 +722,17 @@
           Volume total de ${(d.mIA.dist).toFixed(1)} metros percorridos.</p>
         </div>
       `;
+
       document.getElementById('aiReport').innerHTML = report;
     }
 
     function renderChart(speeds, times) {
       if (loadChart) loadChart.destroy();
+
       const ctx = document.getElementById('loadChart').getContext('2d');
       const step = Math.ceil(speeds.length / 40);
       const idxs = speeds.map((_, i) => i).filter(i => i % step === 0);
+
       loadChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -750,6 +752,7 @@
 
     function saveSession() {
       if (!currentData) return;
+
       let h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
       h.unshift(currentData);
       localStorage.setItem('pelada_elite_h', JSON.stringify(h.slice(0, 100)));
@@ -762,6 +765,7 @@
       const h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
       const g = document.getElementById('historyGrid');
       if (!h.length) { g.innerHTML = "<p class='col-span-full text-center py-20'>Nenhum registro.</p>"; return; }
+
       g.innerHTML = h.map((card, i) => `
         <div class="glass p-6 rounded-3xl flex flex-col items-center">
           <div class="card-container scale-[0.75] -my-6">
