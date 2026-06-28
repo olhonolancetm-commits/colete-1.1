@@ -424,14 +424,13 @@
     }
 
     function formatTimePTBR(horaUTC, fallbackMs) {
-      // No seu CSV: Hora_UTC é "19:24:52"
       if (typeof horaUTC === 'string' && horaUTC.includes(':')) return horaUTC;
       if (typeof fallbackMs === 'number' && fallbackMs > 0) return new Date(fallbackMs).toLocaleTimeString('pt-BR');
       return '--:--:--';
     }
 
     // =========================
-    // Tabs (sem event global)
+    // Tabs
     // =========================
     function switchTab(tab) {
       document.querySelectorAll('[data-tab]').forEach(btn => {
@@ -441,7 +440,6 @@
       document.getElementById('tab-history').classList.toggle('hidden', tab !== 'history');
     }
 
-    // Botões tabs (desktop e mobile)
     document.querySelectorAll('[data-tab]').forEach(btn => {
       btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab')));
     });
@@ -465,9 +463,6 @@
     mobileMenuBtn?.addEventListener('click', openDrawer);
     overlay?.addEventListener('click', closeDrawer);
 
-    // =========================
-    // Heatmap (no container)
-    // =========================
     function initHeatmap() {
       const container = document.getElementById('heatmapContainer');
       heatmapInstance = h337.create({
@@ -477,9 +472,6 @@
         maxOpacity: 0.55,
         backgroundColor: 'rgba(0,0,0,0)'
       });
-
-      // Garante que o canvas preenche o container (heatmap.js às vezes precisa “dar tamanho”)
-      // (Semântica: o container é absolute inset-0, então ok.)
     }
 
     // =========================
@@ -513,7 +505,6 @@
     }
 
     function bindMobileInputs() {
-      // sincroniza inputs mobile -> inputs desktop reais (para o cálculo reaproveitar IDs existentes)
       const nameM = document.getElementById('nameIn_m');
       const posM = document.getElementById('posIn_m');
       const sideM = document.getElementById('sideIn_m');
@@ -556,125 +547,122 @@
     }
 
     // =========================
-    // Parser CSV (robusto para o SEU arquivo)
-    // Seu arquivo chega como um JSON em string (array com { d: [ [CONFIG...], [header], [rows...], ... ]})
+    // MELHORIA DO PARSER (JSON + TXT/CSV)
     // =========================
     function parsePeladaExcelLike(text) {
-      // tenta JSON primeiro
-      let parsed;
-      try { parsed = JSON.parse(text); } catch { parsed = null; }
+      // TENTA FORMATO 1: JSON (Cópia do Excel)
+      let parsedJSON;
+      try { parsedJSON = JSON.parse(text); } catch { parsedJSON = null; }
 
-      if (!parsed) {
-        // fallback: tenta CSV “normal”
-        // mas como você mostrou o arquivo, o normal provavelmente não é usado.
-        return { error: "Formato não reconhecido (esperado JSON do Excel)." };
-      }
+      if (parsedJSON) {
+        const sheet = parsedJSON?.[0]?.d;
+        if (!Array.isArray(sheet)) return { error: "Estrutura JSON inválida." };
 
-      // Estrutura esperada:
-      // parsed[0].d = [ [ "CONFIG", "FW_VERSION=...", ...],
-      //                [ header ...],
-      //                [ row1 ...],
-      //                ...
-      //                [ "STOP"... ],
-      //                [ "TOTAL_DISTANCIA=59.1", ...],
-      //                [ "VEL_MAX=4.6", ...], ...]
-      const sheet = parsed?.[0]?.d;
-      if (!Array.isArray(sheet)) return { error: "Estrutura inválida no CSV." };
+        const header = sheet.find(row => Array.isArray(row) && row[0] === "Tempo_ms" && row.includes("Latitude"));
+        const headerIndex = sheet.indexOf(header);
+        if (headerIndex < 0) return { error: "Header não encontrado no JSON." };
 
-      // header line pode ser sheet[1], e rows a partir de sheet[2]
-      const header = sheet.find(row => Array.isArray(row) && row[0] === "Tempo_ms" && row.includes("Latitude") && row.includes("Longitude"));
-      const headerIndex = sheet.indexOf(header);
-      if (headerIndex < 0) return { error: "Header de colunas não encontrado." };
+        const idxTempo = header.indexOf("Tempo_ms");
+        const idxHora = header.indexOf("Hora_UTC");
+        const idxLat = header.indexOf("Latitude");
+        const idxLng = header.indexOf("Longitude");
+        const idxVel = header.indexOf("Velocidade");
 
-      const idxTempo = header.indexOf("Tempo_ms");
-      const idxHora = header.indexOf("Hora_UTC");
-      const idxLat = header.indexOf("Latitude");
-      const idxLng = header.indexOf("Longitude");
-      const idxVel = header.indexOf("Velocidade");
-
-      // Busca linhas de dados até encontrar STOP/config de resumo
-      const dataRows = [];
-      for (let i = headerIndex + 1; i < sheet.length; i++) {
-        const row = sheet[i];
-        if (!Array.isArray(row)) continue;
-
-        // começa com STOP?
-        if (typeof row[0] === 'string' && row[0].toUpperCase().includes('STOP')) break;
-
-        // tenta extrair valores numéricos
-        const t = safeToNumber(row[idxTempo]);
-        const lat = safeToNumber(row[idxLat]);
-        const lng = safeToNumber(row[idxLng]);
-        const vel = safeToNumber(row[idxVel]);
-        const hora = row[idxHora];
-
-        if (t === null && lat === null && lng === null && vel === null) continue;
-
-        // filtra GPS inválido (se lat==0 ou lat null)
-        if (lat !== null && lng !== null && vel !== null && lat !== 0 && lng !== 0) {
-          dataRows.push({
-            timeMs: t,
-            horaUTC: hora,
-            lat, lng, vel
-          });
+        const dataRows = [];
+        for (let i = headerIndex + 1; i < sheet.length; i++) {
+          const row = sheet[i];
+          if (!Array.isArray(row) || (typeof row[0] === 'string' && row[0].toUpperCase().includes('STOP'))) break;
+          const lat = safeToNumber(row[idxLat]);
+          if (lat !== null && lat !== 0) {
+            dataRows.push({
+              timeMs: safeToNumber(row[idxTempo]),
+              horaUTC: row[idxHora],
+              lat: lat,
+              lng: safeToNumber(row[idxLng]),
+              vel: safeToNumber(row[idxVel])
+            });
+          }
         }
+
+        const findKV = (key) => {
+          const line = sheet.find(r => Array.isArray(r) && typeof r[0] === 'string' && r[0].includes(key));
+          return line ? safeToNumber(line[0].split('=')[1]) : null;
+        };
+
+        return {
+          dataRows,
+          stats: {
+            distTotal: findKV("TOTAL_DISTANCIA"),
+            velMax: findKV("VEL_MAX"),
+            velMedia: findKV("VEL_MEDIA")
+          }
+        };
       }
 
-      // Resumos: linhas do tipo ["TOTAL_DISTANCIA=59.1", ...]
-      const findKV = (key) => {
-        const line = sheet.find(r => Array.isArray(r) && typeof r[0] === 'string' && r[0].includes(key));
-        if (!line) return null;
-        const s = line[0];
-        const v = s.split('=').slice(1).join('=');
-        const n = safeToNumber(v);
-        return n;
-      };
+      // TENTA FORMATO 2: TXT PURO (Hardware/Colete)
+      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      const headerLine = lines.find(l => l.includes("Tempo_ms") && l.includes("Latitude"));
+      
+      if (headerLine) {
+        const header = headerLine.split(',');
+        const headerIndex = lines.indexOf(headerLine);
+        const idxTempo = header.indexOf("Tempo_ms");
+        const idxHora = header.indexOf("Hora_UTC");
+        const idxLat = header.indexOf("Latitude");
+        const idxLng = header.indexOf("Longitude");
+        const idxVel = header.indexOf("Velocidade");
 
-      return {
-        dataRows,
-        stats: {
-          distTotal: findKV("TOTAL_DISTANCIA"),
-          velMax: findKV("VEL_MAX"),
-          velMedia: findKV("VEL_MEDIA")
-        },
-        raw: parsed
-      };
+        const dataRows = [];
+        let stats = { distTotal: 0, velMax: 0, velMedia: 0 };
+
+        for (let i = headerIndex + 1; i < lines.length; i++) {
+          const line = lines[i];
+          if (line === "STOP") break;
+          const row = line.split(',');
+          if (row.length < header.length) continue;
+
+          const lat = parseFloat(row[idxLat]);
+          if (!isNaN(lat) && lat !== 0) {
+            dataRows.push({
+              timeMs: parseInt(row[idxTempo]),
+              horaUTC: row[idxHora],
+              lat: lat,
+              lng: parseFloat(row[idxLng]),
+              vel: parseFloat(row[idxVel])
+            });
+          }
+        }
+
+        // Busca stats no final do TXT
+        lines.forEach(l => {
+          if (l.startsWith("TOTAL_DISTANCIA=")) stats.distTotal = parseFloat(l.split('=')[1]);
+          if (l.startsWith("VEL_MAX=")) stats.velMax = parseFloat(l.split('=')[1]);
+          if (l.startsWith("VEL_MEDIA=")) stats.velMedia = parseFloat(l.split('=')[1]);
+        });
+
+        return { dataRows, stats };
+      }
+
+      return { error: "Formato de arquivo não reconhecido (use o CSV do colete ou JSON do Excel)." };
     }
 
     function projectToPitch(lat, lng, minLat, maxLat, minLng, maxLng) {
-      // Pitch viewBox: 920x560
-      // Campo “perspectiva” principal: trapézio aproximado:
-      // topo: y~150 com largura 260..660
-      // base: y~510 com largura 110..810
-      const wTopLeft = 260, wTopRight = 660;
-      const wBotLeft = 110, wBotRight = 810;
+      const wTopLeft = 260, wTopRight = 660, wBotLeft = 110, wBotRight = 810;
       const yTop = 150, yBot = 510;
-
       const latRange = (maxLat - minLat) || 1;
       const lngRange = (maxLng - minLng) || 1;
-
-      // normalizados
-      const u = (lng - minLng) / lngRange; // 0..1 esquerda->direita
-      const v = (lat - minLat) / latRange; // 0..1 base->top (depende do dataset)
-      // Vamos mapear v para y com inversão suave (para ficar “de frente”)
+      const u = (lng - minLng) / lngRange; 
+      const v = (lat - minLat) / latRange; 
       const vInv = 1 - clamp(v, 0, 1);
-
-      // y na perspectiva
       const y = yBot + (yTop - yBot) * vInv;
-
-      // x na perspectiva (largura diminui conforme vai para o topo)
       const widthAtV = (wBotRight - wBotLeft) + ((wTopRight - wTopLeft) - (wBotRight - wBotLeft)) * vInv;
       const xLeftAtV = (wBotLeft) + ((wTopLeft) - (wBotLeft)) * vInv;
       const x = xLeftAtV + widthAtV * clamp(u, 0, 1);
-
       return { x, y };
     }
 
     function getAttCount(points, side) {
-      // “up” = ataca para cima (ou seja, lado “top” do campo)
-      // Nosso eixo y do SVG: topo ~150, base ~510
-      // então: “up” considera pontos no topo (y menor)
-      const mid = 325; // aproximadamente o meio no viewBox 920x560
+      const mid = 325;
       let count = 0;
       for (const p of points) {
         if (side === 'up') { if (p.y < mid) count++; }
@@ -683,197 +671,100 @@
       return count;
     }
 
-    // =========================
-    // Dashboard update + chart
-    // =========================
     function updateDashboard() {
       const d = currentData;
       if (!d) return;
-
       document.getElementById('cardOvr').innerText = d.ovr;
       document.getElementById('cardPos').innerText = d.role;
-
       document.getElementById('s-vel').innerText = d.stats.vel;
       document.getElementById('s-dri').innerText = d.stats.dri;
       document.getElementById('s-ata').innerText = d.stats.ata;
       document.getElementById('s-def').innerText = d.stats.def;
       document.getElementById('s-pas').innerText = d.stats.pas;
       document.getElementById('s-fis').innerText = d.stats.fis;
-
       document.getElementById('dateShow').innerText = d.date;
       document.getElementById('posShow').innerText = `POSIÇÃO: ${d.role}`;
       document.getElementById('btnSave').classList.remove('hidden');
-
-      // Heatmap: heatmap.js usa valores em pixels relativos ao container
       heatmapInstance.setData({ max: 25, data: d.points });
-
       renderChart(d.speeds, d.times);
-
-      // IA REPORT
       let msg = `Performance de nível ${d.ovr >= 86 ? 'Elite' : (d.ovr >= 74 ? 'Avançado' : 'Desenvolvendo')}. `;
-      if (d.role === 'ATA' && d.stats.ata >= 70) msg += "Excelente presença de área, mantendo o time agressivo no terço ofensivo. ";
-      else if (d.role === 'DEF' && d.stats.def >= 70) msg += "Muralha defensiva: baixo índice de exposição atrás e controle territorial. ";
-      else if (d.role === 'MEI' && d.stats.pas >= 70) msg += "Transição inteligente: visão de jogo e volume de distribuição com impacto. ";
-      else msg += "Volume de jogo consistente com boa leitura tática e eficiência nas movimentações. ";
-
-      const vMaxKmH = d.stats.vel * 0.32; // mantém sua regra, só deixando claro
-      document.getElementById('aiReport').innerText = msg + `Velocidade máxima registrada: ${vMaxKmH.toFixed(1)} km/h.`;
+      msg += d.role === 'ATA' ? "Ataque agressivo. " : d.role === 'DEF' ? "Defesa sólida. " : "Meio campo inteligente. ";
+      document.getElementById('aiReport').innerText = msg + `Velocidade máxima: ${(d.vMaxHardware * 3.6).toFixed(1)} km/h.`;
     }
 
     function renderChart(speeds, times) {
       if (loadChart) loadChart.destroy();
-      const canvas = document.getElementById('loadChart');
-      const ctx = canvas.getContext('2d');
-
-      // downsample para performance
-      const step = 25;
+      const ctx = document.getElementById('loadChart').getContext('2d');
+      const step = Math.ceil(speeds.length / 50);
       const idxs = speeds.map((_, i) => i).filter(i => i % step === 0);
-
-      const labels = idxs.map(i => times[i] ?? '');
-      const data = idxs.map(i => speeds[i] ?? 0);
-
       loadChart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels,
+          labels: idxs.map(i => times[i]),
           datasets: [{
             label: 'Km/h',
-            data,
+            data: idxs.map(i => speeds[i]),
             borderColor: '#f59e0b',
-            backgroundColor: 'rgba(245, 158, 11, 0.12)',
             fill: true,
-            tension: 0.38,
+            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+            tension: 0.4,
             pointRadius: 0
           }]
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { display: false },
-            y: { grid: { color: 'rgba(30,41,59,.8)' } }
-          }
-        }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false } } }
       });
     }
 
-    // =========================
-    // processCSV (robusto)
-    // =========================
     function processCSV(text) {
       const parsed = parsePeladaExcelLike(text);
-      if (parsed.error) {
-        alert("Erro ao ler CSV: " + parsed.error);
-        return;
-      }
-      const rows = parsed.dataRows || [];
-      if (!rows.length) {
-        alert("Erro no CSV: nenhum ponto GPS válido encontrado.");
-        return;
-      }
-
-      // bounds
-      const lats = rows.map(r => r.lat);
-      const lngs = rows.map(r => r.lng);
+      if (parsed.error) return alert(parsed.error);
+      const rows = parsed.dataRows;
+      const lats = rows.map(r => r.lat), lngs = rows.map(r => r.lng);
       const minLat = Math.min(...lats), maxLat = Math.max(...lats);
       const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
 
-      // pontos (para heatmap.js)
-      // Convertendo para coordenadas do viewBox: 920x560
-      // Depois o heatmap canvas é 100% do container e seguirá esses pixels via CSS.
-      const points = [];
-      const speeds = [];
-      const times = [];
+      const points = [], speeds = [], times = [];
       let vSum = 0;
-      let vCount = 0;
-
-      // “valor” para heatmap.js (intensidade)
-      for (const r of rows) {
+      rows.forEach(r => {
         const proj = projectToPitch(r.lat, r.lng, minLat, maxLat, minLng, maxLng);
-
-        // Heatmap precisa de x/y dentro do container.
-        // Como o container escala visualmente, manter relativo em viewBox ajuda.
-        // Aqui usamos x/y “do viewBox” e let heatmap.js escale no canvas.
-        const vel = r.vel ?? 0;
-        // intensidade: pode usar vel; se quiser, normalizamos depois
-        const value = clamp(vel, 0, 50) / 2; // 0..25-ish
-
-        points.push({ x: proj.x, y: proj.y, value: value });
-
-        speeds.push(vel);
+        points.push({ x: proj.x, y: proj.y, value: clamp(r.vel, 0, 50) });
+        speeds.push(r.vel);
         times.push(formatTimePTBR(r.horaUTC, r.timeMs));
+        vSum += r.vel;
+      });
 
-        vSum += vel;
-        vCount++;
-      }
-
-      // Atributos: recalibrados para evitar saturar sempre em 99
-      const side = (document.getElementById('sideIn').value || 'up');
-      const role = (document.getElementById('posIn').value || 'MEI');
-
-      const attCount = getAttCount(points, side);
-      const attRatio = points.length ? (attCount / points.length) : 0;
-
-      const distTotal = parsed.stats.distTotal ?? 0;
-      const velMax = parsed.stats.velMax ?? Math.max(...speeds, 0);
-      const vMaxSafe = Math.max(velMax, 0.1);
-
-      // Vel (0..99) baseado em velMax do próprio arquivo
-      const velScore = clamp(Math.round((vMaxSafe / 6.0) * 99), 0, 99); // 6m/s (~21.6km/h) ajustável
-      // Drible/controle: usa proporção do velMax vs média
-      const vMean = vCount ? (vSum / vCount) : 0;
-      const driScore = clamp(Math.round(((vMaxSafe + vMean) / (vMaxSafe + 0.0001)) * 70 + (vMean*3) ), 0, 99);
-
-      // ATA/DEF
-      const ataScore = clamp(Math.round(attRatio * 99), 0, 99);
-      const defScore = clamp(Math.round((1 - attRatio) * 99), 0, 99);
-
-      // FIS: baseada em distância total relativa
-      const fisScore = clamp(Math.round((distTotal / 70) * 99), 0, 99);
-
-      // PAS: aproxima com “volume de velocidade”
-      const pasScore = clamp(Math.round((vMean / 2.0) * 40 + (velScore * 0.35)), 0, 99);
+      const side = document.getElementById('sideIn').value;
+      const role = document.getElementById('posIn').value;
+      const attRatio = points.length ? (getAttCount(points, side) / points.length) : 0;
+      const vMaxHardware = parsed.stats.velMax || Math.max(...speeds);
+      const vMean = vSum / rows.length;
 
       const stats = {
-        vel: velScore,
-        dri: driScore,
-        ata: ataScore,
-        def: defScore,
-        fis: fisScore,
-        pas: pasScore
+        vel: clamp(Math.round((vMaxHardware / 6.0) * 99), 0, 99),
+        dri: clamp(Math.round(vMean * 15 + 30), 0, 99),
+        ata: clamp(Math.round(attRatio * 99), 0, 99),
+        def: clamp(Math.round((1 - attRatio) * 99), 0, 99),
+        fis: clamp(Math.round((parsed.stats.distTotal / 60) * 99), 0, 99),
+        pas: clamp(Math.round(vMean * 10 + 40), 0, 99)
       };
 
-      // OVR (você tinha regra por role; mantenho, só garantindo coerência)
-      let ovr;
-      if (role === 'ATA') ovr = stats.ata*0.42 + stats.vel*0.38 + stats.fis*0.20;
-      else if (role === 'DEF') ovr = stats.def*0.42 + stats.fis*0.38 + stats.vel*0.20;
-      else ovr = stats.fis*0.30 + stats.pas*0.42 + stats.ata*0.28;
+      let ovr = role === 'ATA' ? (stats.ata*0.5 + stats.vel*0.5) : role === 'DEF' ? (stats.def*0.5 + stats.fis*0.5) : (stats.pas*0.5 + stats.fis*0.5);
 
       currentData = {
         name: document.getElementById('nameIn').value || "PLAYER",
-        role: role,
-        date: new Date().toLocaleDateString('pt-BR'),
-        ovr: Math.round(ovr),
-        stats,
-        points,
-        speeds,
-        times,
-        photo: photoData
+        role, date: new Date().toLocaleDateString('pt-BR'),
+        ovr: Math.round(ovr), stats, points, speeds, times, photo: photoData,
+        vMaxHardware
       };
-
       updateDashboard();
     }
 
-    // =========================
-    // Save/Load history
-    // =========================
     function saveSession() {
-      if (!currentData) return alert("Nenhum card processado ainda.");
+      if (!currentData) return alert("Sem dados.");
       let h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
       h.unshift(currentData);
       localStorage.setItem('pelada_elite_h', JSON.stringify(h.slice(0, 100)));
-      alert("Card Masterizado e Salvo! ✅");
+      alert("Salvo!");
       renderHistory();
       switchTab('history');
     }
@@ -881,35 +772,25 @@
     function renderHistory() {
       const h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
       const g = document.getElementById('historyGrid');
-
-      if (!h.length) {
-        g.innerHTML = "<p class='col-span-full text-center py-16 text-slate-600'>Coleção Vazia.</p>";
-        return;
-      }
-
+      if (!h.length) { g.innerHTML = "<p class='col-span-full text-center py-16'>Vazio</p>"; return; }
       g.innerHTML = h.map((card, i) => `
-        <div class="glass p-5 md:p-6 rounded-3xl flex flex-col items-center gap-4 group">
-          <div class="card-container scale-[0.78] -my-2">
+        <div class="glass p-6 rounded-3xl flex flex-col items-center">
+          <div class="card-container scale-[0.75] -my-4">
             <div class="card-bg"></div>
-            <img src="${card.photo}" class="card-photo" alt="${card.name}">
+            <img src="${card.photo}" class="card-photo">
             <div class="card-content">
               <div class="text-5xl font-black">${card.ovr}</div>
-              <div class="text-lg font-bold opacity-70">${card.role}</div>
-              <div class="mt-auto pt-5">
+              <div class="text-lg font-bold">${card.role}</div>
+              <div class="mt-auto">
                 <div class="text-2xl font-black uppercase text-center border-b-2 border-black/10 mb-2">${card.name}</div>
                 <div class="grid grid-cols-2 gap-x-4 text-sm font-black">
-                  <div>VEL ${card.stats.vel}</div>
-                  <div>DRI ${card.stats.dri}</div>
-                  <div>ATA ${card.stats.ata}</div>
-                  <div>DEF ${card.stats.def}</div>
+                  <div>VEL ${card.stats.vel}</div><div>DRI ${card.stats.dri}</div>
+                  <div>ATA ${card.stats.ata}</div><div>DEF ${card.stats.def}</div>
                 </div>
-                <button onclick="loadCard(${i})"
-                  class="mt-4 bg-amber-500 text-black px-5 py-2 rounded-full font-black text-xs hover:scale-105 transition">
-                  REVISAR TÁTICA
-                </button>
               </div>
             </div>
           </div>
+          <button onclick="loadCard(${i})" class="mt-4 bg-amber-500 text-black px-6 py-2 rounded-xl font-bold">REVISAR</button>
         </div>
       `).join('');
     }
@@ -920,23 +801,15 @@
       currentData = h[i];
       updateDashboard();
       switchTab('dashboard');
-      // mantém foto no cartão
-      document.getElementById('cardPhoto').src = currentData.photo || photoData;
     }
 
-    // =========================
-    // Init
-    // =========================
     window.onload = () => {
       initHeatmap();
       renderHistory();
       bindDesktopInputs();
       bindMobileInputs();
-      // seta tab inicial consistente
-      switchTab('dashboard');
     };
 
-    // Expondo para inline handlers (seu HTML usa)
     window.switchTab = switchTab;
     window.saveSession = saveSession;
     window.loadCard = loadCard;
