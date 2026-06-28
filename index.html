@@ -258,9 +258,9 @@
               <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
               Análise Tática da IA
             </h4>
-            <p id="aiReport" class="text-slate-300 italic leading-relaxed">
+            <div id="aiReport" class="text-slate-300 italic leading-relaxed text-sm">
               O sistema está aguardando o upload do CSV para cruzar os dados de GPS com sua posição definida e gerar o diagnóstico de performance.
-            </p>
+            </div>
           </div>
 
           <div class="glass p-5 md:p-6 rounded-3xl flex-1 min-h-[280px]">
@@ -613,17 +613,33 @@
       const rows = parsed.dataRows;
       if (rows.length < 5) return alert("Arquivo com dados insuficientes (mínimo 5 linhas de GPS).");
 
-      // ORIGEM: 5ª Posição GPS conforme solicitado
       const origin = rows[4];
-
       const points = [], speeds = [], times = [];
       let vSum = 0;
+
+      // MÉTRICAS DE IA (ANÁLISE DETALHADA)
+      let standingCount = 0;
+      let runningCount = 0;
+      let sprintCount = 0;
+      let inSprint = false;
+
       rows.forEach(r => {
         const proj = projectToPitch(r.lat, r.lng, origin.lat, origin.lng);
         points.push({ x: proj.x, y: proj.y, value: clamp(r.vel, 5, 25) });
         speeds.push(r.vel);
         times.push(formatTimePTBR(r.horaUTC, r.timeMs));
         vSum += r.vel;
+
+        // Lógica de Estado (Considerando velocidades em m/s comuns em GPS)
+        // Parado: < 0.5 m/s | Correndo: > 2.5 m/s | Sprint: > 4.2 m/s
+        if (r.vel < 0.5) standingCount++;
+        else runningCount++;
+
+        if (r.vel > 4.2) {
+          if (!inSprint) { sprintCount++; inSprint = true; }
+        } else {
+          inSprint = false;
+        }
       });
 
       const side = document.getElementById('sideIn').value;
@@ -647,7 +663,14 @@
         name: document.getElementById('nameIn').value || "PLAYER",
         role, date: new Date().toLocaleDateString('pt-BR'),
         ovr: Math.round(ovr), stats, points, speeds, times, photo: photoData,
-        vMaxHW: vMax
+        vMaxHW: vMax,
+        // Novas métricas salvas
+        mIA: {
+           standing: standingCount,
+           running: runningCount,
+           sprints: sprintCount,
+           dist: parsed.stats.distTotal || 0
+        }
       };
       updateDashboard();
     }
@@ -672,9 +695,35 @@
       heatmapInstance.setData({ max: 20, data: d.points });
       renderChart(d.speeds, d.times);
       
-      let msg = `Performance tática nível ${d.ovr >= 85 ? 'Elite' : 'Competitivo'}. Atleta centralizado na origem GPS. `;
-      msg += `Velocidade Máxima: ${(d.vMaxHW * 3.6).toFixed(1)} km/h.`;
-      document.getElementById('aiReport').innerText = msg;
+      // RELATÓRIO IA DETALHADO (MELHORIA SOLICITADA)
+      const totalS = d.mIA.standing + d.mIA.running;
+      const pParado = ((d.mIA.standing / totalS) * 100).toFixed(1);
+      const pAtivo = ((d.mIA.running / totalS) * 100).toFixed(1);
+
+      let report = `
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <p>🚦 <b>Distribuição de Estado:</b></p>
+            <ul class="list-disc ml-4 opacity-80">
+              <li>Tempo Total Parado: ${d.mIA.standing}s (${pParado}%)</li>
+              <li>Tempo em Movimento: ${d.mIA.running}s (${pAtivo}%)</li>
+            </ul>
+          </div>
+          <div>
+            <p>⚡ <b>Análise de Explosão:</b></p>
+            <ul class="list-disc ml-4 opacity-80">
+              <li>Piques (Sprints > 15km/h): ${d.mIA.sprints}</li>
+              <li>Velocidade Pico: ${(d.vMaxHW * 3.6).toFixed(1)} km/h</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mt-3 pt-3 border-t border-white/10">
+          <p>🧠 <b>Diagnóstico Tático:</b> Atleta de nível <b>${d.ovr >= 85 ? 'Elite' : 'Competitivo'}</b>. 
+          ${d.mIA.sprints > 5 ? 'Apresenta alta capacidade de transição ofensiva com piques repetidos.' : 'Demonstra jogo posicional cadenciado com baixo desgaste explosivo.'} 
+          Volume total de ${(d.mIA.dist).toFixed(1)} metros percorridos.</p>
+        </div>
+      `;
+      document.getElementById('aiReport').innerHTML = report;
     }
 
     function renderChart(speeds, times) {
@@ -704,7 +753,7 @@
       let h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
       h.unshift(currentData);
       localStorage.setItem('pelada_elite_h', JSON.stringify(h.slice(0, 100)));
-      alert("Salvo!");
+      alert("Card Salvo!");
       renderHistory();
       switchTab('history');
     }
