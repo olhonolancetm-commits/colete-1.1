@@ -27,17 +27,6 @@
       pointer-events:none;
     }
 
-    /* FIX: Mapa de calor dentro do campo e com corte de borda */
-    #heatmapContainer {
-      position:absolute; inset:0;
-      pointer-events:none;
-      width: 100%;
-      height: 100%;
-      /* Corta o calor exatamente no desenho do campo azul */
-      clip-path: polygon(11.9% 91%, 88.1% 91%, 71.7% 17.8%, 28.3% 17.8%);
-      z-index: 10;
-    }
-
     /* Card profissional sem “tremedeira” no mobile */
     .card-container { width:280px; height:420px; position:relative; filter: drop-shadow(0 22px 34px rgba(0,0,0,.55)); }
     .card-container:hover { transform: translateY(-6px); }
@@ -96,7 +85,7 @@
 
   <!-- SIDEBAR (desktop) -->
   <aside id="sidebar"
-         class="w-80 glass border-r border-white/10 p-6 flex flex-col gap-6 z-30 hidden md:flex overflow-y-auto">
+         class="w-80 glass border-r border-white/10 p-6 flex flex-col gap-6 z-30 hidden md:flex">
     <div class="flex items-center gap-3">
       <div class="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center font-black text-2xl text-black">P</div>
       <div>
@@ -104,17 +93,6 @@
           PELADA<span class="text-amber-500">PRO</span>
         </h1>
         <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Elite Tactical Unit</p>
-      </div>
-    </div>
-
-    <!-- AJUSTE DE CAMPO (MARCO ZERO) -->
-    <div class="bg-amber-500/10 p-4 rounded-2xl border border-amber-500/20 space-y-3">
-      <label class="text-[10px] font-bold text-amber-500 uppercase px-1">Calibragem do Estádio</label>
-      <input type="text" id="centerLat" placeholder="Latitude Centro" class="w-full bg-black/40 border border-white/10 p-2 rounded-lg text-xs outline-none focus:border-amber-500">
-      <input type="text" id="centerLng" placeholder="Longitude Centro" class="w-full bg-black/40 border border-white/10 p-2 rounded-lg text-xs outline-none focus:border-amber-500">
-      <div class="flex flex-col gap-1">
-        <label class="text-[9px] text-slate-500 uppercase px-1">Escala/Zoom GPS</label>
-        <input type="range" id="zoomScale" min="100000" max="1500000" step="50000" value="520000" class="w-full accent-amber-500">
       </div>
     </div>
 
@@ -166,6 +144,7 @@
   <!-- Mobile Drawer -->
   <div id="mobileOverlay" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden"></div>
   <aside id="mobileDrawer" class="fixed top-0 left-0 bottom-0 w-80 z-50 glass border-r border-white/10 p-6 flex flex-col gap-6 translate-x-[-110%] transition md:hidden">
+    <!-- reaproveita o mesmo conteúdo do sidebar (duplicado simples) -->
     <div class="flex items-center gap-3">
       <div class="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center font-black text-2xl text-black">P</div>
       <div>
@@ -177,12 +156,6 @@
     </div>
 
     <div class="space-y-4">
-      <!-- CALIBRAGEM MOBILE -->
-      <div class="bg-amber-500/10 p-4 rounded-2xl border border-amber-500/20 space-y-2">
-        <input type="text" id="centerLat_m" placeholder="Latitude Centro" class="w-full bg-black/40 border border-white/10 p-2 rounded-lg text-xs">
-        <input type="text" id="centerLng_m" placeholder="Longitude Centro" class="w-full bg-black/40 border border-white/10 p-2 rounded-lg text-xs">
-      </div>
-
       <div>
         <label class="text-[10px] font-bold text-slate-500 uppercase px-1">Nome do Atleta</label>
         <input type="text" id="nameIn_m" placeholder="Ex: Neymar Jr"
@@ -252,36 +225,29 @@
 
       <!-- TOP ROW -->
       <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 xl:gap-8">
-        <!-- CARD + RADAR -->
-        <div class="xl:col-span-4 space-y-6">
-          <div class="flex justify-center py-3">
-            <div class="card-container">
-              <div class="card-bg"></div>
-              <img id="cardPhoto" src="https://via.placeholder.com/200" class="card-photo">
-              <div class="card-content">
-                <div class="text-5xl font-black" id="cardOvr">--</div>
-                <div class="text-lg font-bold opacity-70" id="cardPos">POS</div>
+        <!-- CARD -->
+        <div class="xl:col-span-4 flex justify-center py-3">
+          <div class="card-container">
+            <div class="card-bg"></div>
+            <img id="cardPhoto" src="https://via.placeholder.com/200" class="card-photo">
+            <div class="card-content">
+              <div class="text-5xl font-black" id="cardOvr">--</div>
+              <div class="text-lg font-bold opacity-70" id="cardPos">POS</div>
 
-                <div class="mt-auto pt-6">
-                  <div class="text-2xl font-black uppercase text-center border-b-2 border-black/10 mb-2" id="cardName">PLAYER</div>
+              <div class="mt-auto pt-6">
+                <div class="text-2xl font-black uppercase text-center border-b-2 border-black/10 mb-2" id="cardName">PLAYER</div>
 
-                  <div class="grid grid-cols-2 gap-x-4 text-sm font-black">
-                    <div>VEL <span class="float-right" id="s-vel">--</span></div>
-                    <div>DRI <span class="float-right" id="s-dri">--</span></div>
-                    <div>ATA <span class="float-right" id="s-ata">--</span></div>
-                    <div>DEF <span class="float-right" id="s-def">--</span></div>
-                    <div>PAS <span class="float-right" id="s-pas">--</span></div>
-                    <div>FIS <span class="float-right" id="s-fis">--</span></div>
-                  </div>
+                <div class="grid grid-cols-2 gap-x-4 text-sm font-black">
+                  <div>VEL <span class="float-right" id="s-vel">--</span></div>
+                  <div>DRI <span class="float-right" id="s-dri">--</span></div>
+                  <div>ATA <span class="float-right" id="s-ata">--</span></div>
+                  <div>DEF <span class="float-right" id="s-def">--</span></div>
+                  <div>PAS <span class="float-right" id="s-pas">--</span></div>
+                  <div>FIS <span class="float-right" id="s-fis">--</span></div>
                 </div>
               </div>
+
             </div>
-          </div>
-          
-          <!-- NOVO: GRÁFICO DE RADAR -->
-          <div class="glass p-5 rounded-3xl h-64">
-            <h4 class="text-slate-500 font-bold text-[10px] uppercase mb-3">Equilíbrio de Atributos</h4>
-            <canvas id="radarChart"></canvas>
           </div>
         </div>
 
@@ -293,47 +259,73 @@
               Análise Tática da IA
             </h4>
             <div id="aiReport" class="text-slate-300 italic leading-relaxed text-sm">
-              O sistema está aguardando o upload do CSV.
+              O sistema está aguardando o upload do CSV para cruzar os dados de GPS com sua posição definida e gerar o diagnóstico de performance.
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="glass p-5 md:p-6 rounded-3xl h-64">
-              <h4 class="text-slate-500 font-bold text-xs uppercase mb-4">Gráfico de Intensidade (Km/h)</h4>
+          <div class="glass p-5 md:p-6 rounded-3xl flex-1 min-h-[280px]">
+            <h4 class="text-slate-500 font-bold text-xs uppercase mb-4">Gráfico de Intensidade (Km/h)</h4>
+
+            <div class="h-[180px] md:h-[220px]">
               <canvas id="loadChart"></canvas>
             </div>
-            <!-- NOVO: GRÁFICO DE ZONAS -->
-            <div class="glass p-5 md:p-6 rounded-3xl h-64">
-              <h4 class="text-slate-500 font-bold text-xs uppercase mb-4">Zonas de Esforço</h4>
-              <canvas id="zonesChart"></canvas>
-            </div>
-          </div>
 
-          <!-- HEATMAP / MAPA -->
-          <div class="glass p-5 md:p-6 rounded-3xl">
-            <h4 class="text-slate-500 font-bold text-xs uppercase text-center mb-3">Visualização Tática de Estádio (GPS Clip-Protected)</h4>
+            <!-- HEATMAP / MAPA - MELHORADO PARA PERSPECTIVA DATA FACTORY -->
+            <div class="mt-5 md:mt-6">
+              <h4 class="text-slate-500 font-bold text-xs uppercase text-center mb-3">Visualização Tática de Estádio (GPS Centralizado)</h4>
 
-            <div class="pitch-wrap floaty mx-auto"
+              <div class="pitch-wrap floaty mx-auto"
                    style="height: 350px; max-width: 850px;">
                 <!-- SVG do campo top -->
                 <div class="relative h-full w-full">
                   <svg viewBox="0 0 920 560" preserveAspectRatio="xMidYMid meet"
                        class="absolute inset-0 w-full h-full" aria-hidden="true">
                     <defs>
+                      <!-- Tapete Azul escuro conforme imagem -->
                       <linearGradient id="pitchGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#0d254a"/><stop offset="100%" stop-color="#081830"/>
+                        <stop offset="0%" stop-color="#0d254a"/>
+                        <stop offset="100%" stop-color="#081830"/>
                       </linearGradient>
+
+                      <filter id="lineGlow" x="-30%" y="-30%" width="160%" height="160%">
+                        <feGaussianBlur stdDeviation="1.2" result="blur"/>
+                        <feMerge>
+                          <feMergeNode in="blur"/>
+                          <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                      </filter>
                     </defs>
+
+                    <!-- Campo com “perspectiva” (trapézio azul) -->
                     <g transform="translate(0,0)">
-                      <path d="M110,510 L810,510 L660,100 L260,100 Z" fill="url(#pitchGrad)" opacity="1" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+                      <path d="M110,510 L810,510 L660,100 L260,100 Z"
+                            fill="url(#pitchGrad)" opacity="1" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+
+                      <!-- Linha do Meio -->
                       <line x1="185" y1="305" x2="735" y2="305" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+                      
+                      <!-- Círculo Central -->
                       <ellipse cx="460" cy="305" rx="80" ry="35" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+
+                      <!-- Gols brancos destacados -->
+                      <rect x="410" y="85" width="100" height="15" fill="none" stroke="white" stroke-width="2" filter="url(#lineGlow)"/>
+                      <rect x="410" y="510" width="100" height="15" fill="none" stroke="white" stroke-width="2" filter="url(#lineGlow)"/>
+
+                      <!-- Grande Área Top -->
+                      <path d="M280,100 L640,100 L600,200 L320,200 Z" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                      <!-- Grande Área Bottom -->
+                      <path d="M280,510 L640,510 L600,410 L320,410 Z" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
                     </g>
                   </svg>
 
-                  <!-- FIX: HEATMAP CONTAINER COM CLIP-PATH -->
-                  <div id="heatmapContainer"></div>
+                  <!-- Heatmap canvas por cima -->
+                  <div id="heatmapContainer" class="absolute inset-0" aria-hidden="true"></div>
                 </div>
+              </div>
+
+              <div class="text-center text-[11px] text-slate-500 mt-2">
+                *O centro do círculo é definido pela 5ª coordenada GPS capturada no arquivo.
+              </div>
             </div>
           </div>
         </div>
@@ -342,7 +334,15 @@
 
     <!-- HISTORY -->
     <section id="tab-history" class="hidden p-4 md:p-8 animate-in slide-in-from-right duration-500">
+      <div class="flex justify-between items-center mb-6 md:mb-10 gap-3 flex-wrap">
+        <h2 class="text-3xl md:text-4xl font-black italic uppercase">Coleção de Elite</h2>
+        <button onclick="switchTab('dashboard')" class="bg-white/5 hover:bg-white/10 px-4 md:px-6 py-2 rounded-xl font-bold transition">
+          ← VOLTAR AO HUB
+        </button>
+      </div>
+
       <div id="historyGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-10">
+        <!-- Injetado via JS -->
       </div>
     </section>
   </main>
@@ -351,7 +351,8 @@
     // =========================
     // Estado
     // =========================
-    let heatmapInstance, loadChart, radarChart, zonesChart;
+    let heatmapInstance;
+    let loadChart;
     let currentData = null;
     let photoData = "https://via.placeholder.com/200";
 
@@ -359,7 +360,11 @@
     // Helpers
     // =========================
     const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
-    function safeToNumber(x) { const n = parseFloat(x); return Number.isFinite(n) ? n : null; }
+
+    function safeToNumber(x) {
+      const n = parseFloat(x);
+      return Number.isFinite(n) ? n : null;
+    }
 
     function formatTimePTBR(horaUTC, fallbackMs) {
       if (typeof horaUTC === 'string' && horaUTC.includes(':')) return horaUTC;
@@ -388,18 +393,29 @@
     const sidebar = document.getElementById('mobileDrawer');
     const overlay = document.getElementById('mobileOverlay');
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    function openDrawer() { overlay.classList.remove('hidden'); sidebar.classList.remove('translate-x-[-110%]'); }
-    function closeDrawer() { overlay.classList.add('hidden'); sidebar.classList.add('translate-x-[-110%]'); }
+
+    function openDrawer() {
+      overlay.classList.remove('hidden');
+      sidebar.classList.remove('translate-x-[-110%]');
+    }
+    function closeDrawer() {
+      overlay.classList.add('hidden');
+      sidebar.classList.add('translate-x-[-110%]');
+    }
+
     mobileMenuBtn?.addEventListener('click', openDrawer);
     overlay?.addEventListener('click', closeDrawer);
 
     // =========================
-    // Heatmap INIT
+    // Heatmap INIT (CORES DATA FACTORY)
     // =========================
     function initHeatmap() {
+      const container = document.getElementById('heatmapContainer');
       heatmapInstance = h337.create({
-        container: document.getElementById('heatmapContainer'),
-        radius: 35, blur: 0.85, maxOpacity: 0.7,
+        container,
+        radius: 35,
+        blur: 0.85,
+        maxOpacity: 0.7,
         gradient: { '.2': 'blue', '.4': 'lime', '.6': 'yellow', '.95': 'red' }
       });
     }
@@ -409,18 +425,28 @@
     // =========================
     function bindDesktopInputs() {
       document.getElementById('photoIn').addEventListener('change', (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
         const reader = new FileReader();
-        reader.onload = (ev) => { photoData = ev.target.result; document.getElementById('cardPhoto').src = photoData; };
-        reader.readAsDataURL(e.target.files[0]);
+        reader.onload = (ev) => {
+          photoData = ev.target.result;
+          document.getElementById('cardPhoto').src = photoData;
+        };
+        reader.readAsDataURL(f);
       });
+
       document.getElementById('nameIn').addEventListener('input', (e) => {
         const n = e.target.value || "PLAYER";
-        document.getElementById('titleName').innerText = n; document.getElementById('cardName').innerText = n;
+        document.getElementById('titleName').innerText = n;
+        document.getElementById('cardName').innerText = n;
       });
+
       document.getElementById('csvFileInput').addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
         const reader = new FileReader();
         reader.onload = (ev) => processCSV(ev.target.result);
-        reader.readAsText(e.target.files[0]);
+        reader.readAsText(file);
       });
     }
 
@@ -428,157 +454,352 @@
       const nameM = document.getElementById('nameIn_m');
       const posM = document.getElementById('posIn_m');
       const sideM = document.getElementById('sideIn_m');
+      const photoM = document.getElementById('photoIn_m');
+      const csvM = document.getElementById('csvFileInput_m');
+
       function sync() {
-        document.getElementById('nameIn').value = nameM.value;
-        document.getElementById('posIn').value = posM.value;
-        document.getElementById('sideIn').value = sideM.value;
-        const n = nameM.value || "PLAYER";
-        document.getElementById('titleName').innerText = n; document.getElementById('cardName').innerText = n;
+        if (nameM) document.getElementById('nameIn').value = nameM.value;
+        if (posM) document.getElementById('posIn').value = posM.value;
+        if (sideM) document.getElementById('sideIn').value = sideM.value;
+        if (nameM) {
+          const n = nameM.value || "PLAYER";
+          document.getElementById('titleName').innerText = n;
+          document.getElementById('cardName').innerText = n;
+        }
       }
+
       [nameM, posM, sideM].forEach(el => el?.addEventListener('input', sync));
-      document.getElementById('csvFileInput_m').addEventListener('change', (e) => {
+      posM?.addEventListener('change', sync);
+      sideM?.addEventListener('change', sync);
+
+      photoM?.addEventListener('change', (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          photoData = ev.target.result;
+          document.getElementById('cardPhoto').src = photoData;
+        };
+        reader.readAsDataURL(f);
+      });
+
+      csvM?.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
         const reader = new FileReader();
         reader.onload = (ev) => processCSV(ev.target.result);
-        reader.readAsText(e.target.files[0]);
+        reader.readAsText(file);
       });
     }
 
     // =========================
-    // PARSER
+    // PARSER DUPLO (JSON + TXT)
     // =========================
     function parsePeladaExcelLike(text) {
-      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-      const headerLine = lines.find(l => l.includes("Latitude"));
-      if (!headerLine) return { error: "Formato desconhecido." };
-      const header = headerLine.split(',');
-      const idxLat = header.indexOf("Latitude");
-      const idxLng = header.indexOf("Longitude");
-      const idxVel = header.indexOf("Velocidade");
-      const idxHora = header.indexOf("Hora_UTC");
-      const idxTempo = header.indexOf("Tempo_ms");
-      const dataRows = [];
-      let stats = { distTotal: 0, velMax: 0, velMedia: 0 };
-      for (let i = lines.indexOf(headerLine) + 1; i < lines.length; i++) {
-        const col = lines[i].split(',');
-        if (col.length < header.length || isNaN(parseFloat(col[idxLat]))) continue;
-        dataRows.push({ lat: parseFloat(col[idxLat]), lng: parseFloat(col[idxLng]), vel: parseFloat(col[idxVel]), timeMs: parseInt(col[idxTempo]), horaUTC: col[idxHora] });
+      // TENTA JSON
+      let parsedJSON;
+      try { parsedJSON = JSON.parse(text); } catch { parsedJSON = null; }
+
+      if (parsedJSON) {
+        const sheet = parsedJSON?.[0]?.d;
+        if (!Array.isArray(sheet)) return { error: "Estrutura JSON inválida." };
+
+        const header = sheet.find(row => Array.isArray(row) && row[0] === "Tempo_ms" && row.includes("Latitude"));
+        const headerIndex = sheet.indexOf(header);
+        if (headerIndex < 0) return { error: "Header não encontrado no JSON." };
+
+        const idxLat = header.indexOf("Latitude");
+        const idxLng = header.indexOf("Longitude");
+        const idxVel = header.indexOf("Velocidade");
+        const idxHora = header.indexOf("Hora_UTC");
+        const idxTempo = header.indexOf("Tempo_ms");
+
+        const dataRows = [];
+        for (let i = headerIndex + 1; i < sheet.length; i++) {
+          const row = sheet[i];
+          if (!Array.isArray(row) || (typeof row[0] === 'string' && row[0].toUpperCase().includes('STOP'))) break;
+          const lat = safeToNumber(row[idxLat]);
+          if (lat !== null && lat !== 0) {
+            dataRows.push({ lat, lng: safeToNumber(row[idxLng]), vel: safeToNumber(row[idxVel]), timeMs: safeToNumber(row[idxTempo]), horaUTC: row[idxHora] });
+          }
+        }
+
+        const findKV = (key) => {
+          const line = sheet.find(r => Array.isArray(r) && typeof r[0] === 'string' && r[0].includes(key));
+          return line ? safeToNumber(line[0].split('=')[1]) : null;
+        };
+
+        return { dataRows, stats: { distTotal: findKV("TOTAL_DISTANCIA"), velMax: findKV("VEL_MAX"), velMedia: findKV("VEL_MEDIA") } };
       }
-      lines.forEach(l => {
-        if (l.startsWith("TOTAL_DISTANCIA=")) stats.distTotal = parseFloat(l.split('=')[1]);
-        if (l.startsWith("VEL_MAX=")) stats.velMax = parseFloat(l.split('=')[1]);
-      });
-      return { dataRows, stats };
+
+      // TENTA TXT
+      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      const headerLine = lines.find(l => l.includes("Tempo_ms") && l.includes("Latitude"));
+      
+      if (headerLine) {
+        const header = headerLine.split(',');
+        const headerIndex = lines.indexOf(headerLine);
+        const idxLat = header.indexOf("Latitude");
+        const idxLng = header.indexOf("Longitude");
+        const idxVel = header.indexOf("Velocidade");
+        const idxHora = header.indexOf("Hora_UTC");
+        const idxTempo = header.indexOf("Tempo_ms");
+
+        const dataRows = [];
+        let stats = { distTotal: 0, velMax: 0, velMedia: 0 };
+
+        for (let i = headerIndex + 1; i < lines.length; i++) {
+          const line = lines[i];
+          if (line === "STOP") break;
+          const row = line.split(',');
+          if (row.length < header.length) continue;
+          const lat = parseFloat(row[idxLat]);
+          if (!isNaN(lat) && lat !== 0) {
+            dataRows.push({ lat, lng: parseFloat(row[idxLng]), vel: parseFloat(row[idxVel]), timeMs: parseInt(row[idxTempo]), horaUTC: row[idxHora] });
+          }
+        }
+
+        lines.forEach(l => {
+          if (l.startsWith("TOTAL_DISTANCIA=")) stats.distTotal = parseFloat(l.split('=')[1]);
+          if (l.startsWith("VEL_MAX=")) stats.velMax = parseFloat(l.split('=')[1]);
+          if (l.startsWith("VEL_MEDIA=")) stats.velMedia = parseFloat(l.split('=')[1]);
+        });
+
+        return { dataRows, stats };
+      }
+
+      return { error: "Formato desconhecido." };
     }
 
     // =========================
-    // PROJEÇÃO (MARCO ZERO)
+    // PROJEÇÃO (CENTRALIZADO NO 5º PONTO)
     // =========================
     function projectToPitch(lat, lng, originLat, originLng) {
-      const SVG_W = 920; const SVG_H = 560;
-      const CX = SVG_W / 2; const CY = SVG_H / 2;
-      const scale = parseInt(document.getElementById('zoomScale').value);
+      const SVG_W = 920;
+      const SVG_H = 560;
+      const CX = SVG_W / 2;
+      const CY = SVG_H / 2;
+
+      // Escala para GPS converter para pixels do SVG
+      const scale = 520000; 
+
       const dx = (lng - originLng) * scale;
       const dy = (lat - originLat) * scale;
-      let x = CX + dx; let y = CY - dy;
+
+      // Inverter Y (latitude sobe, pixels descem)
+      let x = CX + dx;
+      let y = CY - dy;
+
+      // Perspectiva 3D suave para casar com o trapézio azul
       const perspective = clamp(0.7 + (y / SVG_H) * 0.4, 0.6, 1.2);
       x = CX + (x - CX) * perspective;
+
       return { x, y };
+    }
+
+    function getAttCount(points, side) {
+      const mid = 305; // meio do SVG azul
+      let count = 0;
+      for (const p of points) {
+        if (side === 'up') { if (p.y < mid) count++; }
+        else { if (p.y > mid) count++; }
+      }
+      return count;
     }
 
     function processCSV(text) {
       const parsed = parsePeladaExcelLike(text);
       if (parsed.error) return alert(parsed.error);
       const rows = parsed.dataRows;
-      
-      // MARCO ZERO
-      let originLat = parseFloat(document.getElementById('centerLat').value) || parseFloat(document.getElementById('centerLat_m').value);
-      let originLng = parseFloat(document.getElementById('centerLng').value) || parseFloat(document.getElementById('centerLng_m').value);
-      if (!originLat) {
-        originLat = rows[Math.min(5, rows.length-1)].lat;
-        originLng = rows[Math.min(5, rows.length-1)].lng;
-        document.getElementById('centerLat').value = originLat.toFixed(6);
-        document.getElementById('centerLng').value = originLng.toFixed(6);
-      }
+      if (rows.length < 5) return alert("Arquivo com dados insuficientes (mínimo 5 linhas de GPS).");
 
+      const origin = rows[4];
       const points = [], speeds = [], times = [];
+      let vSum = 0;
+
+      // MÉTRICAS DE IA (ANÁLISE DETALHADA)
+      let standingCount = 0;
+      let runningCount = 0;
       let sprintCount = 0;
+      let inSprint = false;
 
       rows.forEach(r => {
-        const proj = projectToPitch(r.lat, r.lng, originLat, originLng);
-        points.push({ x: proj.x, y: proj.y, value: 1 });
+        const proj = projectToPitch(r.lat, r.lng, origin.lat, origin.lng);
+        points.push({ x: proj.x, y: proj.y, value: clamp(r.vel, 5, 25) });
         speeds.push(r.vel);
         times.push(formatTimePTBR(r.horaUTC, r.timeMs));
-        if (r.vel > 15/3.6) sprintCount++;
+        vSum += r.vel;
+
+        // Lógica de Estado (Considerando velocidades em m/s comuns em GPS)
+        // Parado: < 0.5 m/s | Correndo: > 2.5 m/s | Sprint: > 4.2 m/s
+        if (r.vel < 0.5) standingCount++;
+        else runningCount++;
+
+        if (r.vel > 4.2) {
+          if (!inSprint) { sprintCount++; inSprint = true; }
+        } else {
+          inSprint = false;
+        }
       });
 
+      const side = document.getElementById('sideIn').value;
+      const role = document.getElementById('posIn').value;
+      const vMax = parsed.stats.velMax || Math.max(...speeds);
+      const vMean = vSum / rows.length;
+      const attRatio = points.length ? (getAttCount(points, side) / points.length) : 0;
+
       const stats = {
-        vel: clamp(Math.round(parsed.stats.velMax * 3.6 * 2.5), 30, 99),
-        dri: clamp(Math.round(parsed.stats.velMax * 3.6 * 2), 30, 99),
-        ata: 70, def: 60, pas: 75, fis: 80
+        vel: clamp(Math.round((vMax / 6.0) * 99), 35, 99),
+        dri: clamp(Math.round(vMean * 18 + 35), 35, 99),
+        ata: clamp(Math.round(attRatio * 99), 35, 99),
+        def: clamp(Math.round((1 - attRatio) * 99), 35, 99),
+        fis: clamp(Math.round((parsed.stats.distTotal / 65) * 99), 35, 99),
+        pas: clamp(Math.round(vMean * 12 + 40), 35, 99)
       };
+
+      let ovr = role === 'ATA' ? (stats.ata*0.45 + stats.vel*0.55) : role === 'DEF' ? (stats.def*0.45 + stats.fis*0.55) : (stats.pas*0.5 + stats.fis*0.5);
 
       currentData = {
         name: document.getElementById('nameIn').value || "PLAYER",
-        role: document.getElementById('posIn').value,
-        ovr: Math.round((stats.vel + stats.fis + stats.pas)/3),
-        stats, points, speeds, times, photo: photoData, sprints: sprintCount, dist: parsed.stats.distTotal
+        role, date: new Date().toLocaleDateString('pt-BR'),
+        ovr: Math.round(ovr), stats, points, speeds, times, photo: photoData,
+        vMaxHW: vMax,
+        // Novas métricas salvas
+        mIA: {
+           standing: standingCount,
+           running: runningCount,
+           sprints: sprintCount,
+           dist: parsed.stats.distTotal || 0
+        }
       };
       updateDashboard();
     }
 
     function updateDashboard() {
       const d = currentData;
+      if (!d) return;
       document.getElementById('cardOvr').innerText = d.ovr;
       document.getElementById('cardPos').innerText = d.role;
       document.getElementById('cardName').innerText = d.name;
+      document.getElementById('titleName').innerText = d.name;
       document.getElementById('s-vel').innerText = d.stats.vel;
       document.getElementById('s-dri').innerText = d.stats.dri;
       document.getElementById('s-ata').innerText = d.stats.ata;
       document.getElementById('s-def').innerText = d.stats.def;
       document.getElementById('s-pas').innerText = d.stats.pas;
       document.getElementById('s-fis').innerText = d.stats.fis;
-      
-      heatmapInstance.setData({ max: 25, data: d.points });
-      renderRadar(d.stats);
-      renderIntensidade(d.speeds, d.times);
-      renderZones(d.speeds);
-      
-      document.getElementById('aiReport').innerHTML = `Atleta percorreu ${d.dist.toFixed(1)}m com ${d.sprints} piques de alta intensidade.`;
+      document.getElementById('dateShow').innerText = d.date;
+      document.getElementById('posShow').innerText = `POSIÇÃO: ${d.role}`;
       document.getElementById('btnSave').classList.remove('hidden');
+      
+      heatmapInstance.setData({ max: 20, data: d.points });
+      renderChart(d.speeds, d.times);
+      
+      // RELATÓRIO IA DETALHADO (MELHORIA SOLICITADA)
+      const totalS = d.mIA.standing + d.mIA.running;
+      const pParado = ((d.mIA.standing / totalS) * 100).toFixed(1);
+      const pAtivo = ((d.mIA.running / totalS) * 100).toFixed(1);
+
+      let report = `
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <p>🚦 <b>Distribuição de Estado:</b></p>
+            <ul class="list-disc ml-4 opacity-80">
+              <li>Tempo Total Parado: ${d.mIA.standing}s (${pParado}%)</li>
+              <li>Tempo em Movimento: ${d.mIA.running}s (${pAtivo}%)</li>
+            </ul>
+          </div>
+          <div>
+            <p>⚡ <b>Análise de Explosão:</b></p>
+            <ul class="list-disc ml-4 opacity-80">
+              <li>Piques (Sprints > 15km/h): ${d.mIA.sprints}</li>
+              <li>Velocidade Pico: ${(d.vMaxHW * 3.6).toFixed(1)} km/h</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mt-3 pt-3 border-t border-white/10">
+          <p>🧠 <b>Diagnóstico Tático:</b> Atleta de nível <b>${d.ovr >= 85 ? 'Elite' : 'Competitivo'}</b>. 
+          ${d.mIA.sprints > 5 ? 'Apresenta alta capacidade de transição ofensiva com piques repetidos.' : 'Demonstra jogo posicional cadenciado com baixo desgaste explosivo.'} 
+          Volume total de ${(d.mIA.dist).toFixed(1)} metros percorridos.</p>
+        </div>
+      `;
+      document.getElementById('aiReport').innerHTML = report;
     }
 
-    function renderRadar(s) {
-      if (radarChart) radarChart.destroy();
-      radarChart = new Chart(document.getElementById('radarChart'), {
-        type: 'radar',
-        data: {
-          labels: ['VEL', 'DRI', 'ATA', 'DEF', 'PAS', 'FIS'],
-          datasets: [{ data: [s.vel, s.dri, s.ata, s.def, s.pas, s.fis], backgroundColor: 'rgba(245,158,11,0.2)', borderColor: '#f59e0b', pointRadius: 0 }]
-        },
-        options: { scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.05)' } } }, plugins: { legend: { display: false } } }
-      });
-    }
-
-    function renderIntensidade(speeds, times) {
+    function renderChart(speeds, times) {
       if (loadChart) loadChart.destroy();
-      loadChart = new Chart(document.getElementById('loadChart'), {
+      const ctx = document.getElementById('loadChart').getContext('2d');
+      const step = Math.ceil(speeds.length / 40);
+      const idxs = speeds.map((_, i) => i).filter(i => i % step === 0);
+      loadChart = new Chart(ctx, {
         type: 'line',
-        data: { labels: times, datasets: [{ data: speeds, borderColor: '#f59e0b', fill: true, backgroundColor: 'rgba(245,158,11,0.05)', pointRadius: 0 }] },
-        options: { maintainAspectRatio: false, scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
+        data: {
+          labels: idxs.map(i => times[i]),
+          datasets: [{
+            data: idxs.map(i => speeds[i]),
+            borderColor: '#f59e0b',
+            fill: true,
+            backgroundColor: 'rgba(245,158,11,0.08)',
+            tension: 0.4,
+            pointRadius: 0
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
       });
     }
 
-    function renderZones(speeds) {
-      if (zonesChart) zonesChart.destroy();
-      const zones = [speeds.filter(v=>v<5).length, speeds.filter(v=>v>=5 && v<15).length, speeds.filter(v=>v>=15).length];
-      zonesChart = new Chart(document.getElementById('zonesChart'), {
-        type: 'doughnut',
-        data: { labels: ['Baixa', 'Média', 'Sprint'], datasets: [{ data: zones, backgroundColor: ['#1e293b', '#3b82f6', '#f59e0b'], borderWidth: 0 }] },
-        options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#fff' } } } }
-      });
+    function saveSession() {
+      if (!currentData) return;
+      let h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
+      h.unshift(currentData);
+      localStorage.setItem('pelada_elite_h', JSON.stringify(h.slice(0, 100)));
+      alert("Card Salvo!");
+      renderHistory();
+      switchTab('history');
     }
 
-    window.onload = () => { initHeatmap(); bindDesktopInputs(); bindMobileInputs(); };
+    function renderHistory() {
+      const h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
+      const g = document.getElementById('historyGrid');
+      if (!h.length) { g.innerHTML = "<p class='col-span-full text-center py-20'>Nenhum registro.</p>"; return; }
+      g.innerHTML = h.map((card, i) => `
+        <div class="glass p-6 rounded-3xl flex flex-col items-center">
+          <div class="card-container scale-[0.75] -my-6">
+            <div class="card-bg"></div>
+            <img src="${card.photo}" class="card-photo">
+            <div class="card-content">
+              <div class="text-5xl font-black">${card.ovr}</div>
+              <div class="text-lg font-bold">${card.role}</div>
+              <div class="mt-auto">
+                <div class="text-2xl font-black uppercase text-center border-b-2 border-black/10 mb-2">${card.name}</div>
+                <div class="grid grid-cols-2 gap-x-4 text-sm font-black">
+                  <div>VEL ${card.stats.vel}</div><div>DRI ${card.stats.dri}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button onclick="loadCard(${i})" class="mt-4 bg-amber-500 text-black px-6 py-2 rounded-xl font-bold">VER DETALHES</button>
+        </div>
+      `).join('');
+    }
+
+    function loadCard(i) {
+      const h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
+      currentData = h[i];
+      updateDashboard();
+      switchTab('dashboard');
+    }
+
+    window.onload = () => {
+      initHeatmap();
+      renderHistory();
+      bindDesktopInputs();
+      bindMobileInputs();
+    };
+
+    window.switchTab = switchTab;
+    window.saveSession = saveSession;
+    window.loadCard = loadCard;
   </script>
 </body>
 </html>
