@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Pelada Pro Elite | Tactical Hub V2</title>
+  <title>Pelada Pro Elite | Tactical Hub</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -14,101 +14,212 @@
     :root { color-scheme: dark; }
     body { font-family: 'Outfit', sans-serif; background-color:#020617; color:#f8fafc; overflow-x:hidden; }
 
-    .glass { background: rgba(15,23,42,.72); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); }
+    /* Glass */
+    .glass {
+      background: rgba(15,23,42,.72);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
 
-    /* FIX 1: O CALOR NÃO ULTRAPASSA A LINHA DO CAMPO */
+    /* FIX: Mapa de calor agora tem tamanho e corte de borda */
     #heatmapContainer {
       position:absolute; inset:0;
       pointer-events:none;
+      width: 100%;
+      height: 100%;
+      /* Corta o calor exatamente no desenho do campo azul */
       clip-path: polygon(11.9% 91%, 88.1% 91%, 71.7% 17.8%, 28.3% 17.8%);
     }
 
+    /* Card profissional sem “tremedeira” no mobile */
     .card-container { width:280px; height:420px; position:relative; filter: drop-shadow(0 22px 34px rgba(0,0,0,.55)); }
+    .card-container:hover { transform: translateY(-6px); }
     .card-bg {
       width:100%; height:100%;
       background: linear-gradient(135deg, #fbbf24 0%, #d97706 50%, #78350f 100%);
       clip-path: polygon(0% 15%, 50% 0%, 100% 15%, 100% 85%, 50% 100%, 0% 85%);
       position:absolute; inset:0;
+      opacity:.98;
     }
-    .card-photo { width:150px; height:150px; position:absolute; top:44px; right:14px; object-fit:cover; border-radius:18px; mask-image: linear-gradient(to bottom, black 80%, transparent 100%); }
+    .card-photo {
+      width:150px; height:150px; position:absolute; top:44px; right:14px;
+      object-fit:cover; border-radius:18px;
+      mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+      box-shadow: 0 20px 40px rgba(0,0,0,.35);
+      border: 1px solid rgba(0,0,0,.08);
+    }
     .card-content { position:absolute; inset:0; z-index:2; color:#1f130a; padding:44px 22px; display:flex; flex-direction:column; }
-    
-    .pitch-wrap { position:relative; border-radius: 22px; overflow:hidden; background: #1b5e20; border: 1px solid rgba(255,255,255,.06); box-shadow: 0 35px 80px rgba(0,0,0,.55); }
     .tab-btn.active { border-bottom: 3px solid #f59e0b; color:#f59e0b; }
+
+    /* SVG do campo - MELHORADO PARA ESTILO DATA FACTORY */
+    .pitch-wrap {
+      position:relative;
+      border-radius: 22px;
+      overflow:hidden;
+      background: #1b5e20; /* Grama externa verde */
+      border: 1px solid rgba(255,255,255,.06);
+      box-shadow: 0 35px 80px rgba(0,0,0,.55);
+    }
+
+    /* animação sutil */
+    @keyframes floaty { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-6px);} }
+    .floaty { animation: floaty 4.2s ease-in-out infinite; }
+
+    /* evita bug de canvas sem tamanho */
+    canvas[data-heatmap] { display:block; width:100% !important; height:100% !important; }
   </style>
 </head>
 
 <body class="flex h-screen overflow-hidden">
+  <!-- Mobile top bar -->
+  <header class="md:hidden absolute top-0 left-0 right-0 z-50 p-3">
+    <div class="glass rounded-2xl flex items-center justify-between px-3 py-2">
+      <div class="flex items-center gap-2">
+        <div class="w-10 h-10 bg-amber-500 rounded-2xl flex items-center justify-center font-black text-black text-lg">P</div>
+        <div>
+          <div class="font-black italic tracking-tighter uppercase text-sm">PELADA<span class="text-amber-500">PRO</span></div>
+          <div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Elite Tactical Unit</div>
+        </div>
+      </div>
+      <button id="mobileMenuBtn" class="bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 rounded-xl font-bold text-sm">
+        Menu
+      </button>
+    </div>
+  </header>
 
-  <!-- SIDEBAR COM CALIBRAÇÃO -->
-  <aside class="w-80 glass border-r border-white/10 p-6 flex flex-col gap-6 z-30 overflow-y-auto">
+  <!-- SIDEBAR (desktop) -->
+  <aside id="sidebar" class="w-80 glass border-r border-white/10 p-6 flex flex-col gap-6 z-30 hidden md:flex overflow-y-auto">
     <div class="flex items-center gap-3">
       <div class="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center font-black text-2xl text-black">P</div>
       <div>
-        <h1 class="font-black text-xl italic leading-none">PELADA<span class="text-amber-500">PRO</span></h1>
+        <h1 class="font-black text-xl italic leading-none">
+          PELADA<span class="text-amber-500">PRO</span>
+        </h1>
         <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Elite Tactical Unit</p>
       </div>
     </div>
 
-    <!-- CALIBRAÇÃO DO ENDEREÇO / MARCO ZERO -->
-    <div class="bg-amber-500/10 p-4 rounded-2xl border border-amber-500/20 space-y-3">
-      <label class="text-[10px] font-bold text-amber-500 uppercase">📍 Ajuste do Estádio (Marco Zero)</label>
-      <input type="text" id="centerLat" placeholder="Latitude do Meio do Campo" class="w-full bg-black/40 border border-white/10 p-2 rounded-lg text-xs outline-none">
-      <input type="text" id="centerLng" placeholder="Longitude do Meio do Campo" class="w-full bg-black/40 border border-white/10 p-2 rounded-lg text-xs outline-none">
+    <!-- NOVO: CALIBRAÇÃO DE ENDEREÇO -->
+    <div class="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-3">
+      <label class="text-[10px] font-bold text-amber-500 uppercase">Centro do Campo (Marco Zero)</label>
+      <input type="text" id="centerLat" placeholder="Latitude Centro" class="w-full bg-black/40 border border-white/10 p-2 rounded-lg text-xs outline-none focus:border-amber-500">
+      <input type="text" id="centerLng" placeholder="Longitude Centro" class="w-full bg-black/40 border border-white/10 p-2 rounded-lg text-xs outline-none focus:border-amber-500">
       <div class="pt-1">
-        <label class="text-[9px] text-slate-400 uppercase">Escala/Zoom do GPS</label>
+        <label class="text-[9px] text-slate-400 uppercase">Zoom/Escala</label>
         <input type="range" id="zoomScale" min="100000" max="1500000" step="50000" value="520000" class="w-full accent-amber-500">
       </div>
     </div>
 
     <div class="space-y-4">
-      <input type="text" id="nameIn" placeholder="Nome do Atleta" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none focus:border-amber-500 transition">
-      
-      <div class="grid grid-cols-2 gap-2">
-        <select id="posIn" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none">
-          <option value="ATA">Atacante</option>
-          <option value="MEI">Meio-Campo</option>
-          <option value="DEF">Zagueiro</option>
-        </select>
-        <select id="sideIn" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none">
-          <option value="up">Cima</option>
-          <option value="down">Baixo</option>
-        </select>
+      <div>
+        <label class="text-[10px] font-bold text-slate-500 uppercase px-1">Nome do Atleta</label>
+        <input type="text" id="nameIn" placeholder="Ex: Neymar Jr"
+          class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none focus:border-amber-500 transition">
       </div>
 
-      <label class="flex items-center justify-center gap-2 bg-white text-black p-4 rounded-2xl font-black cursor-pointer hover:bg-amber-500 transition shadow-lg">
-        IMPORTAR CSV GPS
-        <input type="file" id="csvFileInput" accept=".csv" class="hidden">
-      </label>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="text-[10px] font-bold text-slate-500 uppercase px-1">Posição</label>
+          <select id="posIn" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none">
+            <option value="ATA" class="bg-slate-900">Atacante</option>
+            <option value="MEI" class="bg-slate-900">Meio-Campo</option>
+            <option value="DEF" class="bg-slate-900">Zagueiro</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold text-slate-500 uppercase px-1">Ataque p/</label>
+          <select id="sideIn" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none">
+            <option value="up" class="bg-slate-900">Cima</option>
+            <option value="down" class="bg-slate-900">Baixo</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-[10px] font-bold text-slate-500 uppercase px-1">Foto de Perfil</label>
+        <input type="file" id="photoIn" accept="image/*"
+          class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-black">
+      </div>
+
+      <div class="mt-auto space-y-3">
+        <label class="flex items-center justify-center gap-2 bg-white text-black p-4 rounded-2xl font-black cursor-pointer hover:bg-amber-500 transition">
+          IMPORTAR CSV GPS
+          <input type="file" id="csvFileInput" accept=".csv" class="hidden">
+        </label>
+
+        <nav class="flex flex-col gap-1">
+          <button data-tab="dashboard" class="tab-btn active py-3 text-left font-bold px-4 border-b border-transparent">Dashboard</button>
+          <button data-tab="history" class="tab-btn py-3 text-left font-bold px-4 border-b border-transparent">Minha Coleção</button>
+        </nav>
+      </div>
     </div>
   </aside>
 
-  <!-- MAIN HUB -->
-  <main class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8">
-    <div id="tab-dashboard" class="animate-in fade-in duration-700 space-y-8">
-      
-      <div class="flex justify-between items-end flex-wrap gap-4">
+  <!-- Mobile Drawer (Mantenha o original) -->
+  <div id="mobileOverlay" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden"></div>
+  <aside id="mobileDrawer" class="fixed top-0 left-0 bottom-0 w-80 z-50 glass border-r border-white/10 p-6 flex flex-col gap-6 translate-x-[-110%] transition md:hidden">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center font-black text-2xl text-black">P</div>
+      <div>
+        <h1 class="font-black text-xl italic leading-none">PELADA<span class="text-amber-500">PRO</span></h1>
+      </div>
+    </div>
+    <div class="space-y-4">
+      <input type="text" id="nameIn_m" placeholder="Atleta" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm">
+      <select id="posIn_m" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm">
+        <option value="ATA">Atacante</option><option value="MEI">Meio-Campo</option><option value="DEF">Zagueiro</option>
+      </select>
+      <input type="file" id="photoIn_m" accept="image/*" class="w-full text-xs">
+      <label class="flex items-center justify-center gap-2 bg-white text-black p-4 rounded-2xl font-black cursor-pointer">
+        IMPORTAR CSV GPS
+        <input type="file" id="csvFileInput_m" accept=".csv" class="hidden">
+      </label>
+      <nav class="flex flex-col gap-1">
+        <button data-tab="dashboard" class="tab-btn py-3 text-left font-bold px-4 border-b border-transparent">Dashboard</button>
+        <button data-tab="history" class="tab-btn py-3 text-left font-bold px-4 border-b border-transparent">Minha Coleção</button>
+      </nav>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 overflow-y-auto">
+    <!-- DASHBOARD -->
+    <section id="tab-dashboard" class="p-4 md:p-8 space-y-6 md:space-y-8 animate-in fade-in duration-700">
+      <div class="flex justify-between items-end gap-3 flex-wrap">
         <div>
-          <h2 class="text-4xl font-black italic uppercase tracking-tighter" id="titleName">NOVO ATLETA</h2>
-          <div id="dateShow" class="text-amber-500 font-bold text-xs mt-1 uppercase">Aguardando dados...</div>
+          <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter uppercase" id="titleName">NOVO ATLETA</h2>
+          <div class="flex gap-3 mt-2 flex-wrap">
+            <span class="bg-amber-500/10 text-amber-500 text-[10px] font-bold px-3 py-1 rounded-full border border-amber-500/20" id="dateShow">
+              AGUARDANDO DADOS...
+            </span>
+            <span class="bg-blue-500/10 text-blue-500 text-[10px] font-bold px-3 py-1 rounded-full border border-blue-500/20" id="posShow">
+              STATUS: OFFLINE
+            </span>
+          </div>
         </div>
-        <button onclick="saveSession()" id="btnSave" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-3 rounded-2xl font-black transition-all">SALVAR NA NUVEM LOCAL</button>
+
+        <button onclick="saveSession()" id="btnSave"
+          class="hidden bg-emerald-600 hover:bg-emerald-500 text-white px-6 md:px-10 py-3 rounded-2xl font-black text-sm shadow-xl shadow-emerald-900/20 transition-all">
+          SALVAR CARD NA NUVEM LOCAL
+        </button>
       </div>
 
-      <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
-        
-        <!-- COLUNA ESQUERDA: CARD + RADAR CHART (O QUE FALTAVA) -->
+      <!-- TOP ROW -->
+      <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 xl:gap-8">
+        <!-- CARD + RADAR -->
         <div class="xl:col-span-4 space-y-6">
-          <div class="flex justify-center">
+          <div class="flex justify-center py-3">
             <div class="card-container">
               <div class="card-bg"></div>
               <img id="cardPhoto" src="https://via.placeholder.com/200" class="card-photo">
               <div class="card-content">
                 <div class="text-5xl font-black" id="cardOvr">--</div>
                 <div class="text-lg font-bold opacity-70" id="cardPos">POS</div>
+
                 <div class="mt-auto pt-6">
                   <div class="text-2xl font-black uppercase text-center border-b-2 border-black/10 mb-2" id="cardName">PLAYER</div>
-                  <div class="grid grid-cols-2 gap-x-4 text-xs font-black">
+
+                  <div class="grid grid-cols-2 gap-x-4 text-sm font-black">
                     <div>VEL <span class="float-right" id="s-vel">--</span></div>
                     <div>DRI <span class="float-right" id="s-dri">--</span></div>
                     <div>ATA <span class="float-right" id="s-ata">--</span></div>
@@ -121,184 +232,225 @@
             </div>
           </div>
           
-          <!-- GRÁFICO DE RADAR DOS ATRIBUTOS -->
-          <div class="glass p-6 rounded-3xl h-64">
-            <h4 class="text-slate-500 font-bold text-[10px] uppercase mb-2">Equilíbrio de Atributos</h4>
+          <!-- NOVO: GRÁFICO DE RADAR -->
+          <div class="glass p-5 rounded-3xl h-64">
+            <h4 class="text-slate-500 font-bold text-xs uppercase mb-3">Equilíbrio de Atributos</h4>
             <canvas id="radarChart"></canvas>
           </div>
         </div>
 
-        <!-- COLUNA DIREITA: IA + MAPA + CARGA -->
-        <div class="xl:col-span-8 space-y-6">
-          
-          <div class="glass p-6 rounded-3xl border-l-4 border-amber-500" id="aiReport">
-            Dica: Digite a Latitude/Longitude do centro do campo na barra lateral antes de importar o CSV para centralizar o mapa perfeitamente.
+        <!-- AI REPORT + CHART + HEATMAP -->
+        <div class="xl:col-span-8 flex flex-col gap-5 md:gap-6">
+          <div class="glass p-5 md:p-6 rounded-3xl border-l-4 border-amber-500">
+            <h4 class="text-amber-500 font-bold text-xs uppercase mb-3 flex items-center gap-2">
+              <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+              Análise Tática da IA
+            </h4>
+            <div id="aiReport" class="text-slate-300 italic leading-relaxed text-sm">
+              O sistema está aguardando o upload do CSV.
+            </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="glass p-6 rounded-3xl h-64">
-              <h4 class="text-slate-500 font-bold text-[10px] uppercase mb-2">Intensidade (Km/h)</h4>
+            <div class="glass p-5 md:p-6 rounded-3xl h-64">
+              <h4 class="text-slate-500 font-bold text-xs uppercase mb-4">Gráfico de Intensidade (Km/h)</h4>
               <canvas id="loadChart"></canvas>
             </div>
-            <!-- ZONAS DE VELOCIDADE -->
-            <div class="glass p-6 rounded-3xl h-64">
-              <h4 class="text-slate-500 font-bold text-[10px] uppercase mb-2">Zonas de Esforço</h4>
+            <!-- NOVO: GRÁFICO DE ZONAS -->
+            <div class="glass p-5 md:p-6 rounded-3xl h-64">
+              <h4 class="text-slate-500 font-bold text-xs uppercase mb-4">Zonas de Esforço</h4>
               <canvas id="zonesChart"></canvas>
             </div>
           </div>
 
-          <!-- MAPA DE CALOR PROFISSIONAL -->
-          <div class="glass p-6 rounded-3xl">
-            <h4 class="text-slate-500 font-bold text-[10px] uppercase text-center mb-4">Visualização Tática Estádio (Clip-Protected)</h4>
-            <div class="pitch-wrap mx-auto" style="height: 400px; max-width: 800px;">
+          <!-- HEATMAP / MAPA -->
+          <div class="glass p-5 md:p-6 rounded-3xl">
+            <h4 class="text-slate-500 font-bold text-xs uppercase text-center mb-3">Visualização Tática de Estádio (GPS Centralizado)</h4>
+            <div class="pitch-wrap floaty mx-auto" style="height: 350px; max-width: 850px;">
               <div class="relative h-full w-full">
-                <!-- SVG ESTÁDIO -->
-                <svg viewBox="0 0 920 560" class="absolute inset-0 w-full h-full">
-                   <path d="M110,510 L810,510 L660,100 L260,100 Z" fill="#0d254a" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
-                   <line x1="185" y1="305" x2="735" y2="305" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
-                   <circle cx="460" cy="305" r="40" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+                <svg viewBox="0 0 920 560" preserveAspectRatio="xMidYMid meet" class="absolute inset-0 w-full h-full">
+                  <defs>
+                    <linearGradient id="pitchGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#0d254a"/><stop offset="100%" stop-color="#081830"/>
+                    </linearGradient>
+                  </defs>
+                  <g transform="translate(0,0)">
+                    <path d="M110,510 L810,510 L660,100 L260,100 Z" fill="url(#pitchGrad)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                    <line x1="185" y1="305" x2="735" y2="305" stroke="rgba(255,255,255,0.2)"/>
+                    <ellipse cx="460" cy="305" rx="80" ry="35" fill="none" stroke="rgba(255,255,255,0.2)"/>
+                  </g>
                 </svg>
-                <!-- ONDE O CALOR APARECE -->
+                <!-- HEATMAP CONTAINER FIXO -->
                 <div id="heatmapContainer"></div>
               </div>
             </div>
           </div>
-
         </div>
       </div>
+    </section>
+
+    <!-- HISTORY (Mantenha o original) -->
+    <section id="tab-history" class="hidden p-4 md:p-8 animate-in slide-in-from-right duration-500">
+      <div id="historyGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></div>
     </section>
   </main>
 
   <script>
     let heatmapInstance, loadChart, radarChart, zonesChart;
     let photoData = "https://via.placeholder.com/200";
+    let currentData = null;
+
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+    function safeToNumber(x) { const n = parseFloat(x); return Number.isFinite(n) ? n : null; }
 
     function initHeatmap() {
+      const container = document.getElementById('heatmapContainer');
       heatmapInstance = h337.create({
-        container: document.getElementById('heatmapContainer'),
-        radius: 30, blur: 0.85, maxOpacity: 0.6,
-        gradient: { '.1': 'blue', '.5': 'lime', '.7': 'yellow', '.99': 'red' }
+        container,
+        radius: 35,
+        blur: 0.85,
+        maxOpacity: 0.7,
+        gradient: { '.2': 'blue', '.4': 'lime', '.6': 'yellow', '.95': 'red' }
       });
     }
 
-    // PROJEÇÃO COM MARCO ZERO MANUAL
     function projectToPitch(lat, lng, originLat, originLng) {
       const SVG_W = 920; const SVG_H = 560;
       const CX = SVG_W / 2; const CY = SVG_H / 2;
       const scale = parseInt(document.getElementById('zoomScale').value);
-
       const dx = (lng - originLng) * scale;
       const dy = (lat - originLat) * scale;
-
-      let x = CX + dx;
-      let y = CY - dy;
-
-      const perspective = 0.7 + (y / SVG_H) * 0.4;
+      let x = CX + dx; let y = CY - dy;
+      const perspective = clamp(0.7 + (y / SVG_H) * 0.4, 0.6, 1.2);
       x = CX + (x - CX) * perspective;
-      return { x: Math.round(x), y: Math.round(y) };
+      return { x, y };
     }
 
-    function processCSV(text) {
-      const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+    // PARSER ADAPTADO
+    function parsePeladaExcelLike(text) {
+      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
       const headerLine = lines.find(l => l.includes("Latitude"));
-      if (!headerLine) return alert("Erro: CSV sem cabeçalho válido.");
-      
+      if (!headerLine) return { error: "Formato inválido" };
       const header = headerLine.split(',');
       const idxLat = header.indexOf("Latitude");
       const idxLng = header.indexOf("Longitude");
       const idxVel = header.indexOf("Velocidade");
+      const dataRows = [];
+      let stats = { distTotal: 0, velMax: 0 };
+      for (let i = lines.indexOf(headerLine) + 1; i < lines.length; i++) {
+        const col = lines[i].split(',');
+        if (col.length < header.length || isNaN(parseFloat(col[idxLat]))) continue;
+        dataRows.push({ lat: parseFloat(col[idxLat]), lng: parseFloat(col[idxLng]), vel: parseFloat(col[idxVel]) });
+      }
+      lines.forEach(l => { if (l.includes("TOTAL_DISTANCIA=")) stats.distTotal = parseFloat(l.split('=')[1]); });
+      return { dataRows, stats };
+    }
 
+    function processCSV(text) {
+      const parsed = parsePeladaExcelLike(text);
+      if (parsed.error) return alert(parsed.error);
+      const rows = parsed.dataRows;
+      
+      // Calibração de Origem
       let originLat = parseFloat(document.getElementById('centerLat').value);
       let originLng = parseFloat(document.getElementById('centerLng').value);
-
-      const rows = [];
-      lines.forEach(l => {
-        const col = l.split(',');
-        if (col.length < header.length || isNaN(parseFloat(col[idxLat]))) return;
-        rows.push({ lat: parseFloat(col[idxLat]), lng: parseFloat(col[idxLng]), vel: parseFloat(col[idxVel]) });
-      });
-
       if (!originLat || !originLng) {
-        originLat = rows[Math.min(10, rows.length-1)].lat;
-        originLng = rows[Math.min(10, rows.length-1)].lng;
+        originLat = rows[Math.min(5, rows.length-1)].lat;
+        originLng = rows[Math.min(5, rows.length-1)].lng;
         document.getElementById('centerLat').value = originLat.toFixed(6);
         document.getElementById('centerLng').value = originLng.toFixed(6);
       }
 
-      const points = rows.map(r => {
-        const p = projectToPitch(r.lat, r.lng, originLat, originLng);
-        return { x: p.x, y: p.y, value: 1 };
+      const points = [], speeds = [];
+      rows.forEach(r => {
+        const proj = projectToPitch(r.lat, r.lng, originLat, originLng);
+        points.push({ x: proj.x, y: proj.y, value: 1 });
+        speeds.push(r.vel);
       });
 
-      const speeds = rows.map(r => r.vel);
       const vMax = Math.max(...speeds);
-      
-      // GERAÇÃO DE ATRIBUTOS PARA OS GRÁFICOS
       const stats = {
-        vel: Math.min(99, Math.round(vMax * 4)),
-        dri: Math.min(99, Math.round(vMax * 3.2)),
-        ata: 70, def: 60, pas: 75, fis: 80
+        vel: clamp(Math.round(vMax * 15), 30, 99),
+        dri: clamp(Math.round(vMax * 12), 30, 99),
+        ata: 75, def: 60, pas: 80, fis: 85
       };
 
-      updateUI(stats, vMax, points, speeds);
+      currentData = {
+        name: document.getElementById('nameIn').value || "PLAYER",
+        role: document.getElementById('posIn').value,
+        ovr: Math.round((stats.vel + stats.fis + stats.pas)/3),
+        stats, points, speeds, photo: photoData
+      };
+      updateDashboard();
     }
 
-    function updateUI(s, vMax, points, speeds) {
-      document.getElementById('cardOvr').innerText = Math.round((s.vel + s.fis + s.pas)/3);
-      document.getElementById('cardName').innerText = document.getElementById('nameIn').value || "PLAYER";
-      document.getElementById('s-vel').innerText = s.vel;
-      document.getElementById('s-dri').innerText = s.dri;
-      document.getElementById('s-ata').innerText = s.ata;
-      document.getElementById('s-def').innerText = s.def;
-      document.getElementById('s-pas').innerText = s.pas;
-      document.getElementById('s-fis').innerText = s.fis;
+    function updateDashboard() {
+      const d = currentData;
+      document.getElementById('cardOvr').innerText = d.ovr;
+      document.getElementById('cardName').innerText = d.name;
+      document.getElementById('titleName').innerText = d.name;
+      document.getElementById('cardPos').innerText = d.role;
+      document.getElementById('s-vel').innerText = d.stats.vel;
+      document.getElementById('s-dri').innerText = d.stats.dri;
+      document.getElementById('s-ata').innerText = d.stats.ata;
+      document.getElementById('s-def').innerText = d.stats.def;
+      document.getElementById('s-pas').innerText = d.stats.pas;
+      document.getElementById('s-fis').innerText = d.stats.fis;
       
-      heatmapInstance.setData({ max: 25, data: points });
-      renderCharts(s, speeds);
+      heatmapInstance.setData({ max: 20, data: d.points });
+      renderRadar(d.stats);
+      renderIntensidade(d.speeds);
+      renderZones(d.speeds);
       document.getElementById('btnSave').classList.remove('hidden');
     }
 
-    function renderCharts(s, speeds) {
-      // 1. Radar Chart (O QUE FALTAVA)
+    function renderRadar(s) {
       if (radarChart) radarChart.destroy();
       radarChart = new Chart(document.getElementById('radarChart'), {
         type: 'radar',
         data: {
           labels: ['VEL', 'DRI', 'ATA', 'DEF', 'PAS', 'FIS'],
-          datasets: [{ data: [s.vel, s.dri, s.ata, s.def, s.pas, s.fis], backgroundColor: 'rgba(245,158,11,0.2)', borderColor: '#f59e0b', pointBackgroundColor: '#f59e0b' }]
+          datasets: [{ data: [s.vel, s.dri, s.ata, s.def, s.pas, s.fis], backgroundColor: 'rgba(245,158,11,0.2)', borderColor: '#f59e0b', pointRadius: 0 }]
         },
         options: { scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.05)' } } }, plugins: { legend: { display: false } } }
       });
+    }
 
-      // 2. Load Chart
+    function renderIntensidade(speeds) {
       if (loadChart) loadChart.destroy();
       loadChart = new Chart(document.getElementById('loadChart'), {
         type: 'line',
-        data: { labels: speeds.map((_,i)=>i), datasets: [{ data: speeds, borderColor: '#f59e0b', borderWidth: 2, pointRadius: 0, fill: true, backgroundColor: 'rgba(245,158,11,0.05)' }] },
-        options: { maintainAspectRatio: false, scales: { x: { display: false }, y: { grid: { color: 'rgba(255,255,255,0.05)' } } }, plugins: { legend: { display: false } } }
-      });
-
-      // 3. Zones Chart
-      if (zonesChart) zonesChart.destroy();
-      const zones = [
-        speeds.filter(v => v < 5).length,
-        speeds.filter(v => v >= 5 && v < 15).length,
-        speeds.filter(v => v >= 15).length
-      ];
-      zonesChart = new Chart(document.getElementById('zonesChart'), {
-        type: 'doughnut',
-        data: { labels: ['Baixa', 'Média', 'Sprint'], datasets: [{ data: zones, backgroundColor: ['#1e293b', '#3b82f6', '#f59e0b'], borderWidth: 0 }] },
-        options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#fff', font: { size: 10 } } } } }
+        data: { labels: speeds.map((_,i)=>i), datasets: [{ data: speeds, borderColor: '#f59e0b', fill: true, backgroundColor: 'rgba(245,158,11,0.05)', pointRadius: 0 }] },
+        options: { maintainAspectRatio: false, scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
       });
     }
 
-    document.getElementById('csvFileInput').addEventListener('change', (e) => {
-      const reader = new FileReader();
-      reader.onload = (ev) => processCSV(ev.target.result);
-      reader.readAsText(e.target.files[0]);
+    function renderZones(speeds) {
+      if (zonesChart) zonesChart.destroy();
+      const zones = [speeds.filter(v=>v<5).length, speeds.filter(v=>v>=5 && v<15).length, speeds.filter(v=>v>=15).length];
+      zonesChart = new Chart(document.getElementById('zonesChart'), {
+        type: 'doughnut',
+        data: { labels: ['Baixa', 'Média', 'Sprint'], datasets: [{ data: zones, backgroundColor: ['#1e293b', '#3b82f6', '#f59e0b'], borderWidth: 0 }] },
+        options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#fff' } } } }
+      });
+    }
+
+    // EVENTOS
+    document.getElementById('csvFileInput').addEventListener('change', e => {
+      const reader = new FileReader(); reader.onload = ev => processCSV(ev.target.result); reader.readAsText(e.target.files[0]);
     });
 
-    window.onload = initHeatmap;
+    function bindDesktopInputs() {
+      document.getElementById('photoIn').addEventListener('change', e => {
+        const reader = new FileReader(); reader.onload = ev => { photoData = ev.target.result; document.getElementById('cardPhoto').src = photoData; }; reader.readAsDataURL(e.target.files[0]);
+      });
+    }
+
+    window.onload = () => { initHeatmap(); bindDesktopInputs(); };
+    window.switchTab = (tab) => {
+      document.getElementById('tab-dashboard').classList.toggle('hidden', tab !== 'dashboard');
+      document.getElementById('tab-history').classList.toggle('hidden', tab !== 'history');
+    };
   </script>
 </body>
 </html>
