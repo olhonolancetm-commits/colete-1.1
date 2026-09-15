@@ -259,7 +259,7 @@
               Análise Tática da IA
             </h4>
             <div id="aiReport" class="text-slate-300 italic leading-relaxed text-sm">
-              O sistema está aguardando o upload do CSV para cruzar os dados de GPS com sua posição definida e gerar o diagnóstico de performance.
+              O sistema está aguardando o upload do CSV. A análise tática combinará a posição escolhida (Atacante, Meio-Campo ou Zagueiro), a trajetória GPS e a intensidade do MPU6050.
             </div>
           </div>
 
@@ -586,6 +586,81 @@
       return count;
     }
 
+    // =========================
+    // PERFIL TÁTICO POR POSIÇÃO
+    // =========================
+    function getRoleProfile(role) {
+      return {
+        ATA: {
+          name: 'Atacante',
+          focus: 'profundidade, aceleração, ocupação do terço ofensivo e ações explosivas',
+          good: 'Para um atacante, o sistema valoriza picos de velocidade, presença no setor ofensivo e repetição de ações de alta intensidade.',
+          low: 'Poucas ações explosivas ou pouca presença no setor ofensivo reduzem a leitura de profundidade.',
+          weights: { speed: 0.35, attack: 0.30, explos: 0.25, volume: 0.10 }
+        },
+        MEI: {
+          name: 'Meio-Campo',
+          focus: 'volume de deslocamento, equilíbrio entre setores, intensidade e participação contínua',
+          good: 'Para um meio-campista, o sistema valoriza constância de movimento, equilíbrio entre campo ofensivo e defensivo e capacidade de repetir ações.',
+          low: 'Baixo volume de movimento ou concentração excessiva em apenas um setor reduzem a leitura de participação global.',
+          weights: { speed: 0.15, attack: 0.20, explos: 0.20, volume: 0.45 }
+        },
+        DEF: {
+          name: 'Zagueiro',
+          focus: 'cobertura, ocupação do setor defensivo, recuperação e deslocamentos controlados',
+          good: 'Para um zagueiro, o sistema valoriza presença no setor defensivo, volume suficiente para coberturas e acelerações de recuperação.',
+          low: 'Pouca presença no setor defensivo ou excesso de picos ofensivos pode indicar um perfil diferente do esperado para a posição.',
+          weights: { speed: 0.10, attack: 0.15, explos: 0.20, volume: 0.55 }
+        }
+      }[role] || {
+        name: 'Atleta', focus: 'movimento geral', good: '', low: '',
+        weights: { speed: 0.25, attack: 0.25, explos: 0.25, volume: 0.25 }
+      };
+    }
+
+    function buildTacticalDiagnosis(d) {
+      const p = getRoleProfile(d.role);
+      const attackPct = d.mIA.attackHalfRatio * 100;
+      const defensePct = d.mIA.defenseHalfRatio * 100;
+      const centerPct = d.mIA.centerRatio * 100;
+      const movingPct = d.mIA.movingPct;
+      const sprintScore = clamp((d.mIA.sprints / Math.max(1, d.durationSec / 90)) * 100, 0, 100);
+      const speedScore = clamp((d.vMaxMPU / 20) * 100, 0, 100);
+      const volumeScore = clamp((movingPct * 1.2), 0, 100);
+      const attackScore = d.mIA.attackHalfRatio * 100;
+      const explosScore = clamp((d.mIA.explosiveActions / Math.max(1, d.durationSec / 30)) * 100, 0, 100);
+
+      let roleScore;
+      if (d.role === 'ATA') {
+        roleScore = speedScore * p.weights.speed + attackScore * p.weights.attack + explosScore * p.weights.explos + volumeScore * p.weights.volume;
+      } else if (d.role === 'DEF') {
+        roleScore = speedScore * p.weights.speed + defensePct *  p.weights.attack + explosScore * p.weights.explos + volumeScore * p.weights.volume;
+      } else {
+        const balanceScore = 100 - Math.min(100, Math.abs(attackPct - defensePct) * 1.25);
+        roleScore = speedScore * p.weights.speed + balanceScore * p.weights.attack + explosScore * p.weights.explos + volumeScore * p.weights.volume;
+      }
+
+      const level = roleScore >= 80 ? 'Elite' : roleScore >= 65 ? 'Competitivo' : roleScore >= 50 ? 'Em Desenvolvimento' : 'Baixa Amostra';
+      let tacticalText = '';
+
+      if (d.role === 'ATA') {
+        if (attackPct >= 55 && d.mIA.sprints >= 2) tacticalText = 'O perfil mostra boa ocupação do setor ofensivo combinada com ações explosivas, compatível com um atacante de profundidade.';
+        else if (attackPct >= 45) tacticalText = 'Há presença relevante no setor ofensivo, mas a amostra ainda indica espaço para aumentar a frequência das ações explosivas.';
+        else tacticalText = 'A trajetória ficou pouco concentrada no setor ofensivo para uma leitura típica de atacante; a amostra sugere participação mais recuada ou circulação ampla.';
+      } else if (d.role === 'MEI') {
+        const balance = Math.abs(attackPct - defensePct);
+        if (balance <= 20 && movingPct >= 45) tacticalText = 'O deslocamento está relativamente equilibrado entre os dois setores, com participação contínua — perfil compatível com meio-campista de ida e volta.';
+        else if (movingPct >= 45) tacticalText = 'O volume de movimento é bom, porém a trajetória ficou mais concentrada em um dos setores do campo.';
+        else tacticalText = 'O volume de deslocamento foi moderado; para um meio-campista, a amostra sugere maior necessidade de participação contínua entre os setores.';
+      } else {
+        if (defensePct >= 55 && volumeScore >= 45) tacticalText = 'A maior permanência no setor defensivo, combinada com deslocamento suficiente, é compatível com um zagueiro realizando coberturas e recuperações.';
+        else if (defensePct >= 45) tacticalText = 'A trajetória mantém presença defensiva relevante, embora haja circulação significativa fora do setor de referência.';
+        else tacticalText = 'A trajetória ficou pouco concentrada no setor defensivo; isso pode representar uma atuação mais adiantada ou uma amostra curta para caracterizar o papel do zagueiro.';
+      }
+
+      return { p, level, roleScore, tacticalText, attackPct, defensePct, centerPct, sprintScore, speedScore, volumeScore, explosScore };
+    }
+
     function processCSV(text) {
       const parsed = parsePeladaExcelLike(text);
       if (parsed.error) return alert(parsed.error);
@@ -596,7 +671,8 @@
       const points = [], speedsMPU = [], speedsGPS = [], times = [];
       let mpuSum = 0, gpsSum = 0;
       let standingCount = 0, movingCount = 0, sprintCount = 0, inSprint = false;
-      let maxAccel = 0;
+      let maxAccel = 0, explosiveActions = 0;
+      let attackHalfCount = 0, defenseHalfCount = 0, centerCount = 0;
 
       rows.forEach(r => {
         const proj = projectToPitch(r.lat, r.lng, origin.lat, origin.lng);
@@ -613,8 +689,15 @@
         gpsSum += r.gpsKmh;
         maxAccel = Math.max(maxAccel, r.accelPeak, r.accel);
 
-        if (r.motion === 0 || r.mpuKmh < 1.0) standingCount++;
+        const isMoving = (r.motion === 1 || r.mpuKmh >= 1.0);
+        if (!isMoving) standingCount++;
         else movingCount++;
+
+        if (proj.y < 285) attackHalfCount++;
+        else if (proj.y > 325) defenseHalfCount++;
+        else centerCount++;
+
+        if (r.accel >= 3.0 || r.accelPeak >= 3.0) explosiveActions++;
 
         if (r.mpuKmh >= 15.0) {
           if (!inSprint) { sprintCount++; inSprint = true; }
@@ -641,11 +724,14 @@
         pas: clamp(Math.round(vMeanMPU * 1.6 + 40), 35, 99)
       };
 
+      const roleForScore = getRoleProfile(role);
+      const roleVolume = clamp((movingCount / Math.max(1, rows.length)) * 100, 0, 100);
+      const roleExplos = clamp((explosiveActions / Math.max(1, rows.length * 0.08)) * 100, 0, 100);
       let ovr = role === 'ATA'
-        ? (stats.ata * 0.45 + stats.vel * 0.55)
+        ? (stats.vel * 0.35 + stats.ata * 0.30 + stats.fis * 0.10 + roleExplos * 0.25)
         : role === 'DEF'
-          ? (stats.def * 0.45 + stats.fis * 0.55)
-          : (stats.pas * 0.5 + stats.fis * 0.5);
+          ? (stats.def * 0.35 + stats.fis * 0.35 + stats.vel * 0.10 + roleVolume * 0.20)
+          : (stats.pas * 0.30 + stats.fis * 0.30 + stats.vel * 0.10 + roleVolume * 0.30);
 
       // Tempo real aproximado pelo intervalo dos registros, não por "1 linha = 1 segundo".
       const durationSec = rows.length > 1
@@ -705,30 +791,52 @@
       const pParado = total ? ((d.mIA.standing / total) * 100).toFixed(1) : "0.0";
       const pAtivo = total ? ((d.mIA.moving / total) * 100).toFixed(1) : "0.0";
 
+      const td = buildTacticalDiagnosis(d);
       let report = `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+          <div class="bg-white/5 rounded-2xl p-3">
+            <div class="text-[10px] text-slate-500 uppercase font-bold">Posição analisada</div>
+            <div class="text-lg font-black text-amber-400">${td.p.name}</div>
+            <div class="text-[11px] text-slate-400 mt-1">Foco: ${td.p.focus}</div>
+          </div>
+          <div class="bg-white/5 rounded-2xl p-3">
+            <div class="text-[10px] text-slate-500 uppercase font-bold">Nível tático estimado</div>
+            <div class="text-lg font-black">${td.level}</div>
+            <div class="text-[11px] text-slate-400 mt-1">Índice posicional: ${td.roleScore.toFixed(0)}/100</div>
+          </div>
+          <div class="bg-white/5 rounded-2xl p-3">
+            <div class="text-[10px] text-slate-500 uppercase font-bold">Setor predominante</div>
+            <div class="text-lg font-black">${td.attackPct >= td.defensePct ? 'Ofensivo' : 'Defensivo'}</div>
+            <div class="text-[11px] text-slate-400 mt-1">Ofensivo ${td.attackPct.toFixed(1)}% · Defensivo ${td.defensePct.toFixed(1)}%</div>
+          </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <p>🛰️ <b>GPS — Posicionamento:</b></p>
             <ul class="list-disc ml-4 opacity-80">
               <li>Distância espacial: ${d.mIA.dist.toFixed(1)} m</li>
               <li>Pico GPS: ${d.vMaxGPS.toFixed(1)} km/h</li>
-              <li>GPS não controla a velocidade do gráfico.</li>
+              <li>O GPS define onde o atleta esteve no campo.</li>
             </ul>
           </div>
           <div>
-            <p>⚡ <b>MPU6050 — Movimento:</b></p>
+            <p>⚡ <b>MPU6050 — Intensidade:</b></p>
             <ul class="list-disc ml-4 opacity-80">
-              <li>Velocidade MPU estimada: ${d.vMaxMPU.toFixed(1)} km/h pico</li>
+              <li>Pico MPU: ${d.vMaxMPU.toFixed(1)} km/h</li>
               <li>Média MPU: ${d.vMeanMPU.toFixed(1)} km/h</li>
-              <li>Piques MPU ≥ 15 km/h: ${d.mIA.sprints}</li>
+              <li>Ações explosivas: ${d.mIA.explosiveActions}</li>
+              <li>Picos MPU ≥ 15 km/h: ${d.mIA.sprints}</li>
             </ul>
           </div>
         </div>
+
         <div class="mt-3 pt-3 border-t border-white/10">
-          <p>🧠 <b>Diagnóstico Tático:</b> Atleta de nível <b>${d.ovr >= 85 ? 'Elite' : 'Competitivo'}</b>.
-          ${d.mIA.sprints > 5 ? 'Alta frequência de ações explosivas detectadas pelo perfil de velocidade do MPU.' : 'Perfil de intensidade com baixa frequência de picos explosivos.'}
-          Distribuição: ${pParado}% em baixa atividade e ${pAtivo}% em movimento.</p>
-          <p class="mt-2 opacity-70">Aceleração dinâmica máxima registrada: ${d.mIA.maxAccel.toFixed(2)} m/s². Tempo analisado: ${d.durationSec.toFixed(1)} s.</p>
+          <p>🧠 <b>Diagnóstico Tático — ${td.p.name}:</b> ${td.tacticalText}</p>
+          <p class="mt-2 opacity-80">Distribuição espacial: <b>${td.attackPct.toFixed(1)}%</b> setor ofensivo · <b>${td.centerPct.toFixed(1)}%</b> zona central · <b>${td.defensePct.toFixed(1)}%</b> setor defensivo.</p>
+          <p class="mt-2 opacity-80">Atividade: <b>${d.mIA.movingPct.toFixed(1)}%</b> do período em movimento. Pico de aceleração dinâmica: <b>${d.mIA.maxAccel.toFixed(2)} m/s²</b>.</p>
+          <p class="mt-2 text-[11px] text-slate-500">${td.p.good} ${td.p.low} A leitura é inferida por posição GPS + intensidade do MPU; sem dados de bola, passes, duelos ou eventos, ela não identifica sozinha a ação tática específica.</p>
+          <p class="mt-2 opacity-70">Tempo analisado: ${d.durationSec.toFixed(1)} s.</p>
         </div>
       `;
       document.getElementById('aiReport').innerHTML = report;
