@@ -1,359 +1,72 @@
 <!DOCTYPE html>
 <html lang="pt-BR" class="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Pelada Pro Elite | Trackr Tactical Hub</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/heatmap.js/2.0.2/heatmap.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
-
-  <style>
-    :root { color-scheme: dark; }
-    body { font-family: 'Outfit', sans-serif; background-color:#020617; color:#f8fafc; overflow-x:hidden; }
-
-    /* Glass */
-    .glass {
-      background: rgba(15,23,42,.72);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-
-    /* Heatmap “canvas” transparente por cima do SVG */
-    #heatmapLayer {
-      position:absolute; inset:0;
-      pointer-events:none;
-    }
-
-    /* Card profissional sem “tremedeira” no mobile */
-    .card-container { width:280px; height:420px; position:relative; filter: drop-shadow(0 22px 34px rgba(0,0,0,.55)); }
-    .card-container:hover { transform: translateY(-6px); }
-    .card-bg {
-      width:100%; height:100%;
-      background: linear-gradient(135deg, #fbbf24 0%, #d97706 50%, #78350f 100%);
-      clip-path: polygon(0% 15%, 50% 0%, 100% 15%, 100% 85%, 50% 100%, 0% 85%);
-      position:absolute; inset:0;
-      opacity:.98;
-    }
-    .card-photo {
-      width:150px; height:150px; position:absolute; top:44px; right:14px;
-      object-fit:cover; border-radius:18px;
-      mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-      box-shadow: 0 20px 40px rgba(0,0,0,.35);
-      border: 1px solid rgba(0,0,0,.08);
-    }
-    .card-content { position:absolute; inset:0; z-index:2; color:#1f130a; padding:44px 22px; display:flex; flex-direction:column; }
-    .tab-btn.active { border-bottom: 3px solid #f59e0b; color:#f59e0b; }
-
-    /* SVG do campo - MELHORADO PARA ESTILO DATA FACTORY */
-    .pitch-wrap {
-      position:relative;
-      border-radius: 22px;
-      overflow:hidden;
-      background: #1b5e20; /* Grama externa verde */
-      border: 1px solid rgba(255,255,255,.06);
-      box-shadow: 0 35px 80px rgba(0,0,0,.55);
-    }
-
-    /* animação sutil */
-    @keyframes floaty { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-6px);} }
-    .floaty { animation: floaty 4.2s ease-in-out infinite; }
-
-    /* evita bug de canvas sem tamanho */
-    canvas[data-heatmap] { display:block; width:100% !important; height:100% !important; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pelada Pro Elite | Pro Tactical Suite</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/heatmap.js/2.0.2/heatmap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#05060a;--panel:#0c0f17;--panel2:#111521;--line:rgba(255,255,255,.09);--muted:#7e8799;--text:#f7f8fb;--gold:#f5b51b;--gold2:#ffcf4a;--green:#27d17f;--blue:#4aa8ff;--red:#ff5d6c;}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}body{overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 78% 4%,rgba(245,181,27,.10),transparent 26%),radial-gradient(circle at 20% 90%,rgba(74,168,255,.07),transparent 24%);z-index:-1}
+button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+.app{min-height:100vh;display:grid;grid-template-columns:272px 1fr}.rail{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);background:rgba(8,10,16,.92);backdrop-filter:blur(18px);padding:24px 18px;display:flex;flex-direction:column;z-index:20}.brand{display:flex;align-items:center;gap:12px;margin-bottom:30px}.brand-mark{width:44px;height:44px;border-radius:14px;background:linear-gradient(145deg,#ffd34e,#dc8b00);display:grid;place-items:center;color:#111;font:900 25px Outfit;box-shadow:0 10px 30px rgba(245,181,27,.18)}.brand h1{font:900 18px Outfit;margin:0;font-style:italic;letter-spacing:-.7px}.brand p{font-size:8px;color:#6e7789;letter-spacing:1.6px;font-weight:800;margin:3px 0 0}.rail-section{margin-top:4px}.label{display:block;color:#697286;font-size:9px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;margin:0 0 7px 3px}.field{width:100%;border:1px solid var(--line);background:#111521;color:#f5f6fa;border-radius:11px;padding:11px 12px;outline:0}.field:focus{border-color:rgba(245,181,27,.7);box-shadow:0 0 0 3px rgba(245,181,27,.08)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.upload{margin-top:8px}.filebtn{display:flex;align-items:center;justify-content:center;gap:8px;background:#f6f7f9;color:#090a0e;padding:13px 12px;border-radius:12px;font-size:11px;font-weight:900;letter-spacing:.2px}.filebtn:hover{background:var(--gold2)}.filebtn input{display:none}.nav{margin-top:auto;display:grid;gap:5px}.nav button{border:1px solid transparent;background:transparent;color:#8b94a7;text-align:left;padding:12px 13px;border-radius:11px;font-weight:800;font-size:11px}.nav button:hover{background:#111521;color:#fff}.nav button.active{background:linear-gradient(90deg,rgba(245,181,27,.13),transparent);border-color:rgba(245,181,27,.17);color:var(--gold)}.rail-foot{font-size:8px;color:#4f586a;line-height:1.5;margin-top:20px;padding:0 4px}.main{min-width:0;padding:26px 32px 42px}.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:22px}.eyebrow{font-size:9px;letter-spacing:2px;color:var(--gold);font-weight:900}.title{font:900 clamp(34px,4vw,58px)/.95 Outfit;margin:6px 0 8px;letter-spacing:-2px;font-style:italic;text-transform:uppercase}.sub{color:#697286;font-size:11px}.actions{display:flex;gap:9px;align-items:center}.btn{border:1px solid var(--line);background:#0e121b;color:#dce1ea;border-radius:11px;padding:11px 14px;font-size:10px;font-weight:900;letter-spacing:.5px}.btn:hover{background:#151a25}.btn-gold{background:var(--gold);color:#111;border-color:var(--gold);box-shadow:0 10px 25px rgba(245,181,27,.12)}.btn-green{background:var(--green);color:#06120c;border-color:var(--green)}.status-pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 10px;font-size:8px;font-weight:900;letter-spacing:.8px;border:1px solid var(--line);background:#0d1119;color:#8490a4}.status-pill:before{content:"";width:6px;height:6px;border-radius:50%;background:#737b8c}.status-ok{color:#8ff0bb;border-color:rgba(39,209,127,.22);background:rgba(39,209,127,.07)}.status-ok:before{background:var(--green);box-shadow:0 0 10px var(--green)}
+.hero{display:grid;grid-template-columns:300px 1fr;gap:18px;margin-bottom:18px}.profile-panel,.analysis-panel,.chart-panel,.pitch-panel,.collection-panel{border:1px solid var(--line);background:linear-gradient(180deg,rgba(17,21,33,.94),rgba(10,13,21,.94));border-radius:18px;box-shadow:0 25px 70px rgba(0,0,0,.25)}
+.profile-panel{padding:18px;position:relative;overflow:hidden}.profile-panel:after{content:"";position:absolute;width:220px;height:220px;right:-100px;top:-100px;border-radius:50%;background:rgba(245,181,27,.08);filter:blur(10px)}.profile-head{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1}.mini-role{font-size:8px;color:var(--gold);font-weight:900;letter-spacing:1.4px}.ovr{font:900 56px/.9 Outfit;letter-spacing:-3px}.ovr-label{font-size:8px;color:#727b8c;font-weight:900;letter-spacing:1px}.avatar{width:112px;height:112px;border-radius:18px;object-fit:cover;border:1px solid rgba(255,255,255,.12);background:#151a26;box-shadow:0 18px 40px rgba(0,0,0,.4)}.player-name{font:900 24px Outfit;text-transform:uppercase;letter-spacing:-1px;margin:18px 0 2px}.player-role{font-size:9px;color:#7e8798;font-weight:800;letter-spacing:1.2px}.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}.stat{background:#0a0d14;border:1px solid rgba(255,255,255,.06);padding:10px;border-radius:11px}.stat span{display:block;color:#667084;font-size:8px;font-weight:900}.stat b{display:block;font:800 20px Outfit;margin-top:2px}.gold b{color:var(--gold)}
+.analysis-panel{padding:20px;display:flex;flex-direction:column;min-height:420px}.panel-kicker{display:flex;justify-content:space-between;align-items:center;color:#778195;font-size:9px;font-weight:900;letter-spacing:1.2px;text-transform:uppercase}.panel-kicker strong{color:var(--gold)}.report{margin-top:13px;color:#d4d9e2;font-size:12px;line-height:1.7;overflow:auto;max-height:355px;padding-right:5px}.report::-webkit-scrollbar{width:4px}.report::-webkit-scrollbar-thumb{background:#293142;border-radius:10px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}.kpi{padding:14px 15px;border:1px solid var(--line);border-radius:14px;background:rgba(12,15,23,.82)}.kpi .k{font-size:8px;color:#697386;font-weight:900;letter-spacing:1px;text-transform:uppercase}.kpi .v{font:800 21px Outfit;margin-top:5px}.kpi .hint{font-size:8px;color:#566073;margin-top:2px}.kpi.accent{border-color:rgba(245,181,27,.18);background:linear-gradient(145deg,rgba(245,181,27,.09),rgba(12,15,23,.82))}.kpi.accent .v{color:var(--gold)}
+.grid-main{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}.chart-panel,.pitch-panel{padding:18px;min-width:0}.chart-wrap{height:270px;margin-top:12px}.pitch-wrap{height:420px;position:relative;border-radius:15px;overflow:hidden;background:radial-gradient(circle at 50% 50%,#193b27,#0e2b1a);border:1px solid rgba(255,255,255,.07);margin-top:12px}.pitch-wrap:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.025) 0,rgba(255,255,255,.025) 10%,transparent 10%,transparent 20%);mix-blend-mode:screen}.pitch-wrap svg{position:absolute;inset:0;width:100%;height:100%}#heatmapContainer{position:absolute;inset:0;pointer-events:none}canvas[data-heatmap]{display:block;width:100%!important;height:100%!important}.footnote{font-size:8px;color:#555e70;text-align:center;margin-top:8px}.section-title{font-size:10px;font-weight:900;letter-spacing:1.2px;text-transform:uppercase;color:#8a93a5}.section-title strong{color:#fff}
+.collection-panel{padding:20px}.collection-head{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin-bottom:18px}.collection-head h2{font:900 31px Outfit;margin:0;letter-spacing:-1px}.collection-head p{font-size:9px;color:#687184;margin:5px 0 0}.history-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.history-grid .glass{background:#0d1119!important;border:1px solid var(--line)!important}.card-container{width:250px;height:360px;position:relative;filter:drop-shadow(0 22px 34px rgba(0,0,0,.55));transition:.25s}.card-container:hover{transform:translateY(-4px)}.card-bg{position:absolute;inset:0;background:linear-gradient(145deg,#ffd55d,#e49a13 50%,#7d4307);clip-path:polygon(0 13%,50% 0,100% 13%,100% 87%,50% 100%,0 87%)}.card-photo{position:absolute;top:36px;right:11px;width:132px;height:132px;object-fit:cover;border-radius:16px;box-shadow:0 15px 30px rgba(0,0,0,.35)}.card-content{position:absolute;inset:0;z-index:2;color:#1d1409;padding:34px 20px;display:flex;flex-direction:column}.tab-btn.active{color:var(--gold)}
+.mobile-top{display:none}
+ .glass{background:#0d1119;border:1px solid var(--line);border-radius:16px}.history-grid .card-container{width:220px;height:320px}.history-grid .card-content{padding:30px 18px}.history-grid .card-photo{width:112px;height:112px;top:34px}.history-card-actions{display:flex;gap:7px;justify-content:center;width:100%;margin-top:2px}.history-card-actions .btn{padding:9px 11px;font-size:9px}.history-card-title{font:900 22px Outfit;text-transform:uppercase}.history-card-meta{font-size:8px;color:#697386;font-weight:900;letter-spacing:1px}.history-card-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;font-weight:900}.history-card-stats span{display:flex;justify-content:space-between;padding:6px 7px;background:rgba(0,0,0,.08);border-radius:7px} .@media(max-width:1180px){.app{grid-template-columns:230px 1fr}.main{padding:22px}.hero{grid-template-columns:270px 1fr}.kpis{grid-template-columns:repeat(3,1fr)}.grid-main{grid-template-columns:1fr}.history-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.app{display:block}.rail{position:fixed;left:0;top:0;bottom:0;width:300px;transform:translateX(-105%);transition:.25s;z-index:80}.rail.open{transform:translateX(0)}.mobile-top{display:flex;position:sticky;top:0;z-index:50;padding:10px;background:rgba(5,6,10,.84);backdrop-filter:blur(15px);border-bottom:1px solid var(--line);align-items:center;justify-content:space-between}.mobile-brand{display:flex;align-items:center;gap:9px}.mobile-brand .brand-mark{width:35px;height:35px;font-size:20px;border-radius:10px}.mobile-brand b{font:900 14px Outfit;font-style:italic}.main{padding:17px 13px 30px}.topbar{align-items:flex-start;flex-direction:column}.actions{width:100%;justify-content:space-between}.hero{grid-template-columns:1fr}.profile-panel{min-height:390px}.kpis{grid-template-columns:repeat(2,1fr)}.history-grid{grid-template-columns:1fr}.chart-wrap{height:230px}.pitch-wrap{height:340px}.title{font-size:40px}.analysis-panel{min-height:auto}.report{max-height:none}.profile-panel .avatar{width:96px;height:96px}}
+</style>
 </head>
-
-<body class="flex h-screen overflow-hidden">
-  <!-- Mobile top bar -->
-  <header class="md:hidden absolute top-0 left-0 right-0 z-50 p-3">
-    <div class="glass rounded-2xl flex items-center justify-between px-3 py-2">
-      <div class="flex items-center gap-2">
-        <div class="w-10 h-10 bg-amber-500 rounded-2xl flex items-center justify-center font-black text-black text-lg">P</div>
-        <div>
-          <div class="font-black italic tracking-tighter uppercase text-sm">PELADA<span class="text-amber-500">PRO</span></div>
-          <div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Elite Tactical Unit</div>
-        </div>
-      </div>
-      <button id="mobileMenuBtn" class="bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 rounded-xl font-bold text-sm">
-        Menu
-      </button>
+<body>
+<div class="mobile-top"><div class="mobile-brand"><div class="brand-mark">P</div><div><b>PELADA PRO</b><div style="font-size:7px;color:#687184;letter-spacing:1.4px;font-weight:900">PRO TACTICAL SUITE</div></div></div><button class="btn" id="mobileMenuBtn">MENU</button></div>
+<div class="app">
+<aside class="rail" id="mobileDrawer">
+  <div class="brand"><div class="brand-mark">P</div><div><h1>PELADA<span style="color:var(--gold)">PRO</span></h1><p>PRO TACTICAL SUITE</p></div></div>
+  <div class="rail-section">
+    <label class="label">Nome do atleta</label><input id="nameIn" class="field" placeholder="Ex: João Silva">
+    <div class="grid2" style="margin-top:10px"><div><label class="label">Posição</label><select id="posIn" class="field"><option value="ATA">Atacante</option><option value="MEI">Meio-Campo</option><option value="DEF">Zagueiro</option></select></div><div><label class="label">Ataque p/</label><select id="sideIn" class="field"><option value="up">Cima</option><option value="down">Baixo</option></select></div></div>
+    <div class="upload"><label class="label">Imagem do atleta</label><input id="photoIn" type="file" accept="image/*" class="field" style="padding:7px"></div>
+  </div>
+  <div style="margin-top:16px"><label class="filebtn">IMPORTAR DADOS DO TRACKR<input id="csvFileInput" type="file" accept=".csv"></label></div>
+  <nav class="nav"><button data-tab="dashboard" class="tab-btn active">▣ &nbsp; DASHBOARD</button><button data-tab="history" class="tab-btn">◈ &nbsp; MINHA COLEÇÃO</button></nav>
+  <div class="rail-foot">PELADA PRO ELITE<br>Performance intelligence para futebol amador.</div>
+</aside>
+<div id="mobileOverlay" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:70"></div>
+<main class="main">
+<section id="tab-dashboard">
+  <div class="topbar"><div><div class="eyebrow">PELADA PRO / PERFORMANCE INTELLIGENCE</div><h2 class="title" id="titleName">NOVO ATLETA</h2><div class="sub"><span id="dateShow">AGUARDANDO DADOS...</span> &nbsp;·&nbsp; <span id="posShow">STATUS: OFFLINE</span></div></div><div class="actions"><span id="sessionStatus" class="status-pill">AGUARDANDO CSV</span><button id="btnSave" onclick="saveSession()" class="btn btn-green hidden">SALVAR CARD</button></div></div>
+  <div class="hero">
+    <div class="profile-panel">
+      <div class="profile-head"><div><div class="mini-role">OVERALL</div><div class="ovr" id="cardOvr">--</div><div class="ovr-label">RATING</div></div><img id="cardPhoto" class="avatar" src="https://via.placeholder.com/200" alt="Foto do atleta"></div>
+      <div class="player-name" id="cardName">PLAYER</div><div class="player-role" id="cardPos">POSIÇÃO</div>
+      <div class="statgrid"><div class="stat gold"><span>VEL</span><b id="s-vel">--</b></div><div class="stat"><span>DRI</span><b id="s-dri">--</b></div><div class="stat"><span>ATA</span><b id="s-ata">--</b></div><div class="stat"><span>DEF</span><b id="s-def">--</b></div><div class="stat"><span>PAS</span><b id="s-pas">--</b></div><div class="stat"><span>FIS</span><b id="s-fis">--</b></div></div>
+      <div style="margin-top:18px;font-size:8px;color:#596274;line-height:1.5">O rating é uma leitura estimada a partir da trajetória, intensidade e perfil posicional selecionado.</div>
     </div>
-  </header>
+    <div class="analysis-panel"><div class="panel-kicker"><span><strong>IA TÁTICA</strong> / RELATÓRIO DE PERFORMANCE</span><span id="hudRole">—</span></div><div id="aiReport" class="report">Importe um CSV do Trackr para gerar a análise premium. O sistema cruza posição escolhida, trajetória GPS e dados de movimento do dispositivo.</div></div>
+  </div>
+  <div class="kpis">
+    <div class="kpi accent"><div class="k">Overall</div><div class="v" id="hudOvr">—</div><div class="hint">rating estimado</div></div>
+    <div class="kpi"><div class="k">Distância</div><div class="v" id="hudDistance">—</div><div class="hint">trajetória GPS</div></div>
+    <div class="kpi"><div class="k">Pico GPS</div><div class="v" id="hudGps">—</div><div class="hint">referência espacial</div></div>
+    <div class="kpi"><div class="k">Pico Trackr</div><div class="v" id="hudTrackr">—</div><div class="hint">intensidade estimada</div></div>
+    <div class="kpi"><div class="k">Movimento</div><div class="v" id="hudMoving">—</div><div class="hint"><span id="hudExplosive">0</span> ações explosivas</div></div>
+  </div>
+  <div class="grid-main">
+    <div class="chart-panel"><div class="section-title">CARGA DE VELOCIDADE <strong>/ TRACKR x GPS</strong></div><div class="chart-wrap"><canvas id="loadChart"></canvas></div></div>
+    <div class="pitch-panel"><div class="section-title">MAPA DE OCUPAÇÃO <strong>/ TRAJETÓRIA + INTENSIDADE</strong></div><div class="pitch-wrap"><svg viewBox="0 0 920 560" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="pitchGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#132b52"/><stop offset="100%" stop-color="#07182f"/></linearGradient></defs><path d="M110,510 L810,510 L660,100 L260,100 Z" fill="url(#pitchGrad)" stroke="rgba(255,255,255,.65)" stroke-width="2"/><line x1="185" y1="305" x2="735" y2="305" stroke="rgba(255,255,255,.4)" stroke-width="2"/><ellipse cx="460" cy="305" rx="80" ry="35" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"/><rect x="410" y="85" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><rect x="410" y="510" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><path d="M280,100 L640,100 L600,200 L320,200 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/><path d="M280,510 L640,510 L600,410 L320,410 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/></svg><div id="heatmapContainer"></div></div><div class="footnote">GPS controla a posição. A intensidade visual vem dos dados de movimento do dispositivo.</div></div>
+  </div>
+</section>
+<section id="tab-history" class="hidden"><div class="collection-panel"><div class="collection-head"><div><div class="eyebrow">ARQUIVO DE PERFORMANCE</div><h2>Minha Coleção</h2><p>Cards salvos localmente neste navegador.</p></div><div class="actions"><button id="btnClearHistory" onclick="clearHistory()" class="btn hidden">EXCLUIR TODOS</button><button onclick="switchTab('dashboard')" class="btn btn-gold">NOVO RELATÓRIO</button></div></div><div id="historyGrid" class="history-grid"></div></div></section>
+</main></div>
+<script>
 
-  <!-- SIDEBAR (desktop) -->
-  <aside id="sidebar"
-         class="w-80 glass border-r border-white/10 p-6 flex flex-col gap-6 z-30 hidden md:flex">
-    <div class="flex items-center gap-3">
-      <div class="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center font-black text-2xl text-black">P</div>
-      <div>
-        <h1 class="font-black text-xl italic leading-none">
-          PELADA<span class="text-amber-500">PRO</span>
-        </h1>
-        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Elite Tactical Unit</p>
-      </div>
-    </div>
-
-    <div class="space-y-4">
-      <div>
-        <label class="text-[10px] font-bold text-slate-500 uppercase px-1">Nome do Atleta</label>
-        <input type="text" id="nameIn" placeholder="Ex: Neymar Jr"
-          class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none focus:border-amber-500 transition">
-      </div>
-
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="text-[10px] font-bold text-slate-500 uppercase px-1">Posição</label>
-          <select id="posIn" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none">
-            <option value="ATA" class="bg-slate-900">Atacante</option>
-            <option value="MEI" class="bg-slate-900">Meio-Campo</option>
-            <option value="DEF" class="bg-slate-900">Zagueiro</option>
-          </select>
-        </div>
-        <div>
-          <label class="text-[10px] font-bold text-slate-500 uppercase px-1">Ataque p/</label>
-          <select id="sideIn" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none">
-            <option value="up" class="bg-slate-900">Cima</option>
-            <option value="down" class="bg-slate-900">Baixo</option>
-          </select>
-        </div>
-      </div>
-
-      <div>
-        <label class="text-[10px] font-bold text-slate-500 uppercase px-1">Foto de Perfil</label>
-        <input type="file" id="photoIn" accept="image/*"
-          class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-black">
-      </div>
-
-      <div class="mt-auto space-y-3">
-        <label class="flex items-center justify-center gap-2 bg-white text-black p-4 rounded-2xl font-black cursor-pointer hover:bg-amber-500 transition">
-          IMPORTAR CSV DO TRACKR
-          <input type="file" id="csvFileInput" accept=".csv" class="hidden">
-        </label>
-
-        <nav class="flex flex-col gap-1">
-          <button data-tab="dashboard" class="tab-btn active py-3 text-left font-bold px-4 border-b border-transparent">Dashboard</button>
-          <button data-tab="history" class="tab-btn py-3 text-left font-bold px-4 border-b border-transparent">Minha Coleção</button>
-        </nav>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Mobile Drawer -->
-  <div id="mobileOverlay" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden"></div>
-  <aside id="mobileDrawer" class="fixed top-0 left-0 bottom-0 w-80 z-50 glass border-r border-white/10 p-6 flex flex-col gap-6 translate-x-[-110%] transition md:hidden">
-    <!-- reaproveita o mesmo conteúdo do sidebar (duplicado simples) -->
-    <div class="flex items-center gap-3">
-      <div class="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center font-black text-2xl text-black">P</div>
-      <div>
-        <h1 class="font-black text-xl italic leading-none">
-          PELADA<span class="text-amber-500">PRO</span>
-        </h1>
-        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Elite Tactical Unit</p>
-      </div>
-    </div>
-
-    <div class="space-y-4">
-      <div>
-        <label class="text-[10px] font-bold text-slate-500 uppercase px-1">Nome do Atleta</label>
-        <input type="text" id="nameIn_m" placeholder="Ex: Neymar Jr"
-          class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none focus:border-amber-500 transition">
-      </div>
-
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="text-[10px] font-bold text-slate-500 uppercase px-1">Posição</label>
-          <select id="posIn_m" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none">
-            <option value="ATA" class="bg-slate-900">Atacante</option>
-            <option value="MEI" class="bg-slate-900">Meio-Campo</option>
-            <option value="DEF" class="bg-slate-900">Zagueiro</option>
-          </select>
-        </div>
-        <div>
-          <label class="text-[10px] font-bold text-slate-500 uppercase px-1">Ataque p/</label>
-          <select id="sideIn_m" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none">
-            <option value="up" class="bg-slate-900">Cima</option>
-            <option value="down" class="bg-slate-900">Baixo</option>
-          </select>
-        </div>
-      </div>
-
-      <div>
-        <label class="text-[10px] font-bold text-slate-500 uppercase px-1">Foto de Perfil</label>
-        <input type="file" id="photoIn_m" accept="image/*"
-          class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-black">
-      </div>
-
-      <div class="mt-auto space-y-3">
-        <label class="flex items-center justify-center gap-2 bg-white text-black p-4 rounded-2xl font-black cursor-pointer hover:bg-amber-500 transition">
-          IMPORTAR CSV DO TRACKR
-          <input type="file" id="csvFileInput_m" accept=".csv" class="hidden">
-        </label>
-
-        <nav class="flex flex-col gap-1">
-          <button data-tab="dashboard" class="tab-btn py-3 text-left font-bold px-4 border-b border-transparent">Dashboard</button>
-          <button data-tab="history" class="tab-btn py-3 text-left font-bold px-4 border-b border-transparent">Minha Coleção</button>
-        </nav>
-      </div>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="flex-1 overflow-y-auto">
-    <!-- DASHBOARD -->
-    <section id="tab-dashboard" class="p-4 md:p-8 space-y-6 md:space-y-8 animate-in fade-in duration-700">
-      <div class="flex justify-between items-end gap-3 flex-wrap">
-        <div>
-          <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter uppercase" id="titleName">NOVO ATLETA</h2>
-          <div class="flex gap-3 mt-2 flex-wrap">
-            <span class="bg-amber-500/10 text-amber-500 text-[10px] font-bold px-3 py-1 rounded-full border border-amber-500/20" id="dateShow">
-              AGUARDANDO DADOS...
-            </span>
-            <span class="bg-blue-500/10 text-blue-500 text-[10px] font-bold px-3 py-1 rounded-full border border-blue-500/20" id="posShow">
-              STATUS: OFFLINE
-            </span>
-          </div>
-        </div>
-
-        <button onclick="saveSession()" id="btnSave"
-          class="hidden bg-emerald-600 hover:bg-emerald-500 text-white px-6 md:px-10 py-3 rounded-2xl font-black text-sm shadow-xl shadow-emerald-900/20 transition-all">
-          SALVAR CARD NA NUVEM LOCAL
-        </button>
-      </div>
-
-      <!-- TOP ROW -->
-      <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 xl:gap-8">
-        <!-- CARD -->
-        <div class="xl:col-span-4 flex justify-center py-3">
-          <div class="card-container">
-            <div class="card-bg"></div>
-            <img id="cardPhoto" src="https://via.placeholder.com/200" class="card-photo">
-            <div class="card-content">
-              <div class="text-5xl font-black" id="cardOvr">--</div>
-              <div class="text-lg font-bold opacity-70" id="cardPos">POS</div>
-
-              <div class="mt-auto pt-6">
-                <div class="text-2xl font-black uppercase text-center border-b-2 border-black/10 mb-2" id="cardName">PLAYER</div>
-
-                <div class="grid grid-cols-2 gap-x-4 text-sm font-black">
-                  <div>VEL <span class="float-right" id="s-vel">--</span></div>
-                  <div>DRI <span class="float-right" id="s-dri">--</span></div>
-                  <div>ATA <span class="float-right" id="s-ata">--</span></div>
-                  <div>DEF <span class="float-right" id="s-def">--</span></div>
-                  <div>PAS <span class="float-right" id="s-pas">--</span></div>
-                  <div>FIS <span class="float-right" id="s-fis">--</span></div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        <!-- AI REPORT + CHART + HEATMAP -->
-        <div class="xl:col-span-8 flex flex-col gap-5 md:gap-6">
-          <div class="glass p-5 md:p-6 rounded-3xl border-l-4 border-amber-500">
-            <h4 class="text-amber-500 font-bold text-xs uppercase mb-3 flex items-center gap-2">
-              <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
-              Análise Tática da IA
-            </h4>
-            <div id="aiReport" class="text-slate-300 italic leading-relaxed text-sm">
-              O sistema está aguardando o upload do CSV. A análise tática combinará a posição escolhida (Atacante, Meio-Campo ou Zagueiro), a trajetória GPS e os dados de movimento do Trackr.
-            </div>
-          </div>
-
-          <div class="glass p-5 md:p-6 rounded-3xl flex-1 min-h-[280px]">
-            <h4 class="text-slate-500 font-bold text-xs uppercase mb-4">Velocidade estimada pelo dispositivo (km/h)</h4>
-
-            <div class="h-[180px] md:h-[220px]">
-              <canvas id="loadChart"></canvas>
-            </div>
-
-            <!-- HEATMAP / MAPA - MELHORADO PARA PERSPECTIVA DATA FACTORY -->
-            <div class="mt-5 md:mt-6">
-              <h4 class="text-slate-500 font-bold text-xs uppercase text-center mb-3">Trajetória GPS + intensidade do dispositivo</h4>
-
-              <div class="pitch-wrap floaty mx-auto"
-                   style="height: 350px; max-width: 850px;">
-                <!-- SVG do campo top -->
-                <div class="relative h-full w-full">
-                  <svg viewBox="0 0 920 560" preserveAspectRatio="xMidYMid meet"
-                       class="absolute inset-0 w-full h-full" aria-hidden="true">
-                    <defs>
-                      <!-- Tapete Azul escuro conforme imagem -->
-                      <linearGradient id="pitchGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#0d254a"/>
-                        <stop offset="100%" stop-color="#081830"/>
-                      </linearGradient>
-
-                      <filter id="lineGlow" x="-30%" y="-30%" width="160%" height="160%">
-                        <feGaussianBlur stdDeviation="1.2" result="blur"/>
-                        <feMerge>
-                          <feMergeNode in="blur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
-                    </defs>
-
-                    <!-- Campo com “perspectiva” (trapézio azul) -->
-                    <g transform="translate(0,0)">
-                      <path d="M110,510 L810,510 L660,100 L260,100 Z"
-                            fill="url(#pitchGrad)" opacity="1" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
-
-                      <!-- Linha do Meio -->
-                      <line x1="185" y1="305" x2="735" y2="305" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
-                      
-                      <!-- Círculo Central -->
-                      <ellipse cx="460" cy="305" rx="80" ry="35" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
-
-                      <!-- Gols brancos destacados -->
-                      <rect x="410" y="85" width="100" height="15" fill="none" stroke="white" stroke-width="2" filter="url(#lineGlow)"/>
-                      <rect x="410" y="510" width="100" height="15" fill="none" stroke="white" stroke-width="2" filter="url(#lineGlow)"/>
-
-                      <!-- Grande Área Top -->
-                      <path d="M280,100 L640,100 L600,200 L320,200 Z" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                      <!-- Grande Área Bottom -->
-                      <path d="M280,510 L640,510 L600,410 L320,410 Z" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                    </g>
-                  </svg>
-
-                  <!-- Heatmap canvas por cima -->
-                  <div id="heatmapContainer" class="absolute inset-0" aria-hidden="true"></div>
-                </div>
-              </div>
-
-              <div class="text-center text-[11px] text-slate-500 mt-2">
-                *GPS controla somente posição/trajetória. A velocidade e a intensidade do mapa vêm do dispositivo.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- HISTORY -->
-    <section id="tab-history" class="hidden p-4 md:p-8 animate-in slide-in-from-right duration-500">
-      <div class="flex justify-between items-center mb-6 md:mb-10 gap-3 flex-wrap">
-        <div>
-          <h2 class="text-3xl md:text-4xl font-black italic uppercase">Coleção de Elite</h2>
-          <p class="text-xs text-slate-500 mt-1">Cards salvos neste navegador.</p>
-        </div>
-        <div class="flex gap-2">
-          <button id="btnClearHistory" onclick="clearHistory()" class="hidden bg-red-500/15 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/30 px-4 md:px-5 py-2 rounded-xl font-black text-xs transition">EXCLUIR TODOS</button>
-          <button onclick="switchTab('dashboard')" class="bg-white/5 hover:bg-white/10 px-4 md:px-6 py-2 rounded-xl font-bold transition">
-            ← VOLTAR AO HUB
-          </button>
-        </div>
-      </div>
-
-      <div id="historyGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-10">
-        <!-- Injetado via JS -->
-      </div>
-    </section>
-  </main>
-
-  <script>
     // =========================
     // Estado
     // =========================
@@ -938,25 +651,20 @@
       if (clearBtn) clearBtn.classList.toggle('hidden', !h.length);
       if (!h.length) { g.innerHTML = "<p class='col-span-full text-center py-20'>Nenhum registro.</p>"; return; }
       g.innerHTML = h.map((card, i) => `
-        <div class="glass p-6 rounded-3xl flex flex-col items-center">
-          <div class="card-container scale-[0.75] -my-6">
+        <div class="glass history-card">
+          <div class="card-container">
             <div class="card-bg"></div>
             <img src="${card.photo}" class="card-photo">
             <div class="card-content">
-              <div class="text-5xl font-black">${card.ovr}</div>
-              <div class="text-lg font-bold">${card.role}</div>
+              <div class="ovr">${card.ovr}</div>
+              <div class="history-card-meta">${card.role}</div>
               <div class="mt-auto">
-                <div class="text-2xl font-black uppercase text-center border-b-2 border-black/10 mb-2">${card.name}</div>
-                <div class="grid grid-cols-2 gap-x-4 text-sm font-black">
-                  <div>VEL ${card.stats.vel}</div><div>DRI ${card.stats.dri}</div>
-                </div>
+                <div class="history-card-title">${card.name}</div>
+                <div class="history-card-stats"><span>VEL <b>${card.stats.vel}</b></span><span>DRI <b>${card.stats.dri}</b></span></div>
               </div>
             </div>
           </div>
-          <div class="mt-4 flex gap-2 w-full justify-center">
-            <button onclick="loadCard(${i})" class="bg-amber-500 hover:bg-amber-400 text-black px-5 py-2 rounded-xl font-bold transition">VER DETALHES</button>
-            <button onclick="deleteCard(${i})" class="bg-red-500/15 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/30 px-5 py-2 rounded-xl font-bold transition">EXCLUIR</button>
-          </div>
+          <div class="history-card-actions"><button onclick="loadCard(${i})" class="btn btn-gold">VER DETALHES</button><button onclick="deleteCard(${i})" class="btn">EXCLUIR</button></div>
         </div>
       `).join('');
     }
@@ -1017,6 +725,38 @@
     window.switchTab = switchTab;
     window.saveSession = saveSession;
     window.loadCard = loadCard;
-  </script>
+  
+
+    // =========================
+    // PREMIUM HUD LAYER
+    // =========================
+    function updatePremiumHUD(){
+      if(!currentData) return;
+      const d=currentData;
+      const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
+      const mins=Math.floor((d.durationSec||0)/60), secs=Math.round((d.durationSec||0)%60);
+      const duration=`${mins}:${String(secs).padStart(2,'0')}`;
+      const roleNames={ATA:'ATACANTE',MEI:'MEIO-CAMPO',DEF:'ZAGUEIRO'};
+      const role=roleNames[d.role]||d.role||'ATLETA';
+      const moving=(d.mIA?.movingPct||0);
+      const dist=(d.mIA?.dist||0);
+      const explosive=d.mIA?.explosiveActions||0;
+      set('hudRole',role); set('hudDuration',duration); set('hudDistance',`${dist.toFixed(0)} m`);
+      set('hudMoving',`${moving.toFixed(0)}%`); set('hudGps',`${(d.vMaxGPS||0).toFixed(1)} km/h`);
+      set('hudTrackr',`${(d.vMaxMPU||0).toFixed(1)} km/h`); set('hudExplosive',explosive);
+      set('hudOvr',d.ovr); set('hudDate',d.date||'—');
+      const status=document.getElementById('sessionStatus');
+      if(status){status.textContent='ANÁLISE CONCLUÍDA';status.className='status-pill status-ok';}
+    }
+    setInterval(updatePremiumHUD,350);
+
+</script>
+<script>
+// Mobile mirror inputs kept compatible with the original data engine.
+(function(){
+  const add=(id,el)=>{const x=document.getElementById(id); if(x&&el) x.addEventListener('change',el)};
+  const sync=()=>{const n=document.getElementById('nameIn_m');const p=document.getElementById('posIn_m');const s=document.getElementById('sideIn_m');if(n)document.getElementById('nameIn').value=n.value;if(p)document.getElementById('posIn').value=p.value;if(s)document.getElementById('sideIn').value=s.value;};
+})();
+</script>
 </body>
 </html>
