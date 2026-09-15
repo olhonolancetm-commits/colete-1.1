@@ -581,6 +581,29 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
       updateDashboard();
     }
 
+    function renderHeatmap(points) {
+      const container = document.getElementById('heatmapContainer');
+      if (!container || !heatmapInstance || !points?.length) return;
+
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      if (!w || !h) {
+        requestAnimationFrame(() => renderHeatmap(points));
+        return;
+      }
+
+      // Os pontos são calculados no sistema de coordenadas do SVG (920x560).
+      // No celular o campo muda de tamanho; convertemos para pixels reais
+      // do container para o heatmap continuar aparecendo corretamente.
+      const data = points.map(p => ({
+        x: Math.round(clamp((p.x / 920) * w, 0, w)),
+        y: Math.round(clamp((p.y / 560) * h, 0, h)),
+        value: clamp(Number(p.value) || 0, 0, 25)
+      })).filter(p => p.x >= 0 && p.y >= 0);
+
+      heatmapInstance.setData({ max: 25, min: 0, data });
+    }
+
     function updateDashboard() {
       const d = currentData;
       if (!d) return;
@@ -613,7 +636,7 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
       document.getElementById('posShow').innerText = `GPS: ${d.vMaxGPS.toFixed(1)} km/h | Trackr: ${d.vMaxMPU.toFixed(1)} km/h`;
       document.getElementById('btnSave').classList.remove('hidden');
 
-      heatmapInstance.setData({ max: 25, data: d.points });
+      renderHeatmap(d.points);
       renderChart(d.speedsMPU, d.times, d.speedsGPS);
 
       const total = d.mIA.standing + d.mIA.moving;
@@ -841,11 +864,16 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
       switchTab('dashboard');
     }
 
+    window.addEventListener('resize', () => {
+      if (currentData?.points?.length) renderHeatmap(currentData.points);
+    });
+
     window.onload = () => {
       initHeatmap();
       renderHistory();
       bindDesktopInputs();
       bindMobileInputs();
+      if (currentData?.points?.length) requestAnimationFrame(() => renderHeatmap(currentData.points));
     };
 
     window.switchTab = switchTab;
