@@ -642,33 +642,57 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
         b.peak = Math.max(b.peak, p.value);
       }
 
-      function heatColor(v) {
-        // Azul -> verde -> amarelo -> vermelho
-        if (v < .25) return `rgba(40,120,255,${0.18 + v * .55})`;
-        if (v < .55) return `rgba(60,220,90,${0.22 + v * .55})`;
-        if (v < .78) return `rgba(255,215,40,${0.25 + v * .55})`;
-        return `rgba(235,35,35,${0.28 + v * .58})`;
+      // Escala adaptativa: os dados do Trackr normalmente ficam abaixo de 25 km/h.
+      // Usar /25 deixava praticamente tudo azul/verde. Aqui usamos o percentil 85
+      // da sessão, mantendo os picos fortes sem deixar um único valor dominar.
+      const sessionValues = bins.filter(b => b.count).map(b => b.sum / b.count).sort((a,b) => a-b);
+      const p85 = sessionValues.length ? sessionValues[Math.floor((sessionValues.length - 1) * 0.85)] : 1;
+      const scaleMax = Math.max(1.2, p85, Math.max(...sessionValues, 0) * 0.72);
+
+      function heatColor(v, alpha) {
+        // Mapa térmico esportivo: azul -> ciano -> verde -> amarelo -> laranja -> vermelho.
+        // O vermelho fica reservado para as zonas realmente mais intensas/densas.
+        const stops = [
+          [0.00, 35, 125, 255],
+          [0.22, 0, 205, 255],
+          [0.42, 35, 220, 120],
+          [0.60, 245, 235, 40],
+          [0.78, 255, 145, 20],
+          [1.00, 225, 25, 25]
+        ];
+        let a = stops[0], b = stops[stops.length - 1];
+        for (let i = 0; i < stops.length - 1; i++) {
+          if (v >= stops[i][0] && v <= stops[i+1][0]) { a = stops[i]; b = stops[i+1]; break; }
+        }
+        const t = b[0] === a[0] ? 0 : (v - a[0]) / (b[0] - a[0]);
+        const r = Math.round(a[1] + (b[1]-a[1]) * t);
+        const g = Math.round(a[2] + (b[2]-a[2]) * t);
+        const bl = Math.round(a[3] + (b[3]-a[3]) * t);
+        return `rgba(${r},${g},${bl},${alpha})`;
       }
 
-      const radius = Math.max(18, Math.min(w, h) * 0.075);
-      ctx.globalCompositeOperation = 'source-over';
+      const radius = Math.max(20, Math.min(w, h) * 0.085);
+      ctx.globalCompositeOperation = 'lighter';
       for (let cy = 0; cy < rows; cy++) {
         for (let cx = 0; cx < cols; cx++) {
           const b = bins[cy * cols + cx];
           if (!b.count) continue;
           const avg = b.sum / b.count;
-          // Intensidade + densidade: pontos repetidos no mesmo setor reforçam a mancha.
-          const density = clamp(b.count / Math.max(1, points.length / 70), 0, 1);
-          const v = clamp((avg / 25) * .72 + density * .28, 0, 1);
+          // Intensidade relativa à própria sessão + densidade da ocupação.
+          const speedNorm = clamp(avg / scaleMax, 0, 1);
+          const density = clamp(b.count / Math.max(1, points.length / 45), 0, 1);
+          const v = clamp(speedNorm * .58 + density * .42, 0, 1);
+          const alpha = 0.16 + Math.pow(v, 0.72) * 0.68;
           const x0 = ((cx + .5) / cols) * 920;
           const y0 = ((cy + .5) / rows) * 560;
           const q = clampPointToPitch({ x: x0, y: y0, value: avg });
           const x = (q.x / 920) * w;
           const y = (q.y / 560) * h;
           const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
-          const color = heatColor(v);
+          const color = heatColor(v, alpha);
           grad.addColorStop(0, color);
-          grad.addColorStop(.35, color.replace(/0\.[0-9]+\)/, '0.18)'));
+          grad.addColorStop(.28, heatColor(v, alpha * .72));
+          grad.addColorStop(.62, heatColor(v, alpha * .28));
           grad.addColorStop(1, 'rgba(0,0,0,0)');
           ctx.fillStyle = grad;
           ctx.beginPath();
