@@ -125,7 +125,7 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
   </div>
   <div class="grid-main">
     <div class="chart-panel"><div class="section-title">CARGA DE VELOCIDADE <strong>/ TRACKR x GPS</strong></div><div class="chart-wrap"><canvas id="loadChart"></canvas></div></div>
-    <div class="pitch-panel"><div class="section-title">MAPA DE OCUPAÇÃO <strong>/ TRAJETÓRIA + INTENSIDADE</strong></div><div class="pitch-wrap"><svg viewBox="0 0 920 560" preserveAspectRatio="none"><defs><linearGradient id="pitchGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#132b52"/><stop offset="100%" stop-color="#07182f"/></linearGradient></defs><path d="M110,510 L810,510 L660,100 L260,100 Z" fill="url(#pitchGrad)" stroke="rgba(255,255,255,.65)" stroke-width="2"/><line x1="185" y1="305" x2="735" y2="305" stroke="rgba(255,255,255,.4)" stroke-width="2"/><ellipse cx="460" cy="305" rx="80" ry="35" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"/><rect x="410" y="85" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><rect x="410" y="510" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><path d="M280,100 L640,100 L600,200 L320,200 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/><path d="M280,510 L640,510 L600,410 L320,410 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/></svg><div id="heatmapContainer"></div></div><div class="footnote">GPS controla a posição. A intensidade visual vem dos dados de movimento do dispositivo.</div></div>
+    <div class="pitch-panel"><div class="section-title">MAPA DE OCUPAÇÃO <strong>/ TRAJETÓRIA + INTENSIDADE</strong></div><div class="pitch-wrap"><svg viewBox="0 0 920 560" preserveAspectRatio="none"><defs><linearGradient id="pitchGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#132b52"/><stop offset="100%" stop-color="#07182f"/></linearGradient></defs><path d="M110,510 L810,510 L660,100 L260,100 Z" fill="url(#pitchGrad)" stroke="rgba(255,255,255,.65)" stroke-width="2"/><line x1="185" y1="305" x2="735" y2="305" stroke="rgba(255,255,255,.4)" stroke-width="2"/><ellipse cx="460" cy="305" rx="80" ry="35" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"/><rect x="410" y="85" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><rect x="410" y="510" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><path d="M280,100 L640,100 L600,200 L320,200 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/><path d="M280,510 L640,510 L600,410 L320,410 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/></svg><div id="heatmapContainer"></div></div><div class="footnote">O ponto inicial é sempre o centro. A partir dele, o GPS desenha o deslocamento e a intensidade do dispositivo colore o mapa.</div></div>
   </div>
 </section>
 <section id="tab-history" class="hidden"><div class="collection-panel"><div class="collection-head"><div><div class="eyebrow">ARQUIVO DE PERFORMANCE</div><h2>Minha Coleção</h2><p>Cards salvos localmente neste navegador.</p></div><div class="actions"><button id="btnClearHistory" onclick="clearHistory()" class="btn hidden">EXCLUIR TODOS</button><button onclick="switchTab('dashboard')" class="btn btn-gold">NOVO RELATÓRIO</button></div></div><div id="historyGrid" class="history-grid"></div></div></section>
@@ -361,8 +361,22 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
     }
 
     // =========================
-    // PROJEÇÃO (CENTRALIZADO NO 5º PONTO)
+    // PROJEÇÃO TÁTICA — INÍCIO SEMPRE NO CENTRO
+    // O primeiro bloco estável de GPS vira o ponto de partida (centro do campo).
+    // A partir dele, cada deslocamento é desenhado relativo ao ponto inicial.
     // =========================
+    function getMapAnchor(rows) {
+      const n = Math.min(10, rows.length);
+      if (!n) return { lat: 0, lng: 0 };
+      // Mediana reduz o efeito de um primeiro ponto GPS ainda instável.
+      const lats = rows.slice(0, n).map(r => r.lat).sort((a,b) => a-b);
+      const lngs = rows.slice(0, n).map(r => r.lng).sort((a,b) => a-b);
+      const mid = Math.floor(n / 2);
+      const lat = n % 2 ? lats[mid] : (lats[mid-1] + lats[mid]) / 2;
+      const lng = n % 2 ? lngs[mid] : (lngs[mid-1] + lngs[mid]) / 2;
+      return { lat, lng };
+    }
+
     function projectToPitch(lat, lng, originLat, originLng) {
       const SVG_W = 920;
       const SVG_H = 560;
@@ -477,7 +491,9 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
       const rows = parsed.dataRows;
       if (rows.length < 5) return alert("Arquivo com dados insuficientes (mínimo 5 coordenadas GPS válidas).");
 
-      const origin = rows[4];
+      // O ponto inicial da sessão fica SEMPRE no centro do campo.
+      // Depois disso, o mapa acompanha os deslocamentos relativos ao início.
+      const origin = getMapAnchor(rows);
       const points = [], speedsMPU = [], speedsGPS = [], times = [];
       let mpuSum = 0, gpsSum = 0;
       let standingCount = 0, movingCount = 0, sprintCount = 0, inSprint = false;
@@ -488,7 +504,7 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
         const proj = projectToPitch(r.lat, r.lng, origin.lat, origin.lng);
 
         // GPS define ONDE o atleta estava.
-        // MPU define a intensidade/velocidade usada no heatmap.
+        // Trackr define a intensidade/velocidade usada no heatmap.
         const intensity = clamp(r.mpuKmh, 0, 25);
         points.push({ x: proj.x, y: proj.y, value: intensity });
         speedsMPU.push(r.mpuKmh);
@@ -555,6 +571,7 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
         ovr: Math.round(ovr),
         stats,
         points,
+        mapAnchor: origin,
         speedsMPU,
         speedsGPS,
         times,
@@ -627,31 +644,46 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, w, h);
 
-      // Agrupa os milhares de registros em uma grade leve. Isso é muito mais
-      // estável no navegador do celular do que desenhar cada registro.
+      const SVG_W = 920, SVG_H = 560;
+      const pitchToCanvas = p => ({ x: (p.x / SVG_W) * w, y: (p.y / SVG_H) * h });
+      const pitchPoints = points.map(clampPointToPitch);
+
+      // Linha de trajetória: deixa claro como o atleta saiu do ponto inicial.
+      // O primeiro ponto útil fica no centro por definição da projeção.
+      if (pitchPoints.length > 1) {
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.beginPath();
+        pitchPoints.forEach((p, i) => {
+          const q = pitchToCanvas(p);
+          if (i === 0) ctx.moveTo(q.x, q.y);
+          else ctx.lineTo(q.x, q.y);
+        });
+        ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 5]);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Agrupa os registros para manter o mapa leve no celular.
       const cols = 28, rows = 18;
       const bins = Array.from({ length: cols * rows }, () => ({ sum: 0, count: 0, peak: 0 }));
-      for (const raw of points) {
-        const p = clampPointToPitch(raw);
-        const nx = p.x / 920, ny = p.y / 560;
+      for (const raw of pitchPoints) {
+        const nx = raw.x / SVG_W, ny = raw.y / SVG_H;
         const cx = clamp(Math.floor(nx * cols), 0, cols - 1);
         const cy = clamp(Math.floor(ny * rows), 0, rows - 1);
         const b = bins[cy * cols + cx];
-        b.sum += p.value;
+        b.sum += raw.value;
         b.count++;
-        b.peak = Math.max(b.peak, p.value);
+        b.peak = Math.max(b.peak, raw.value);
       }
 
-      // Escala adaptativa: os dados do Trackr normalmente ficam abaixo de 25 km/h.
-      // Usar /25 deixava praticamente tudo azul/verde. Aqui usamos o percentil 85
-      // da sessão, mantendo os picos fortes sem deixar um único valor dominar.
       const sessionValues = bins.filter(b => b.count).map(b => b.sum / b.count).sort((a,b) => a-b);
       const p85 = sessionValues.length ? sessionValues[Math.floor((sessionValues.length - 1) * 0.85)] : 1;
       const scaleMax = Math.max(1.2, p85, Math.max(...sessionValues, 0) * 0.72);
 
       function heatColor(v, alpha) {
-        // Mapa térmico esportivo: azul -> ciano -> verde -> amarelo -> laranja -> vermelho.
-        // O vermelho fica reservado para as zonas realmente mais intensas/densas.
         const stops = [
           [0.00, 35, 125, 255],
           [0.22, 0, 205, 255],
@@ -678,16 +710,15 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
           const b = bins[cy * cols + cx];
           if (!b.count) continue;
           const avg = b.sum / b.count;
-          // Intensidade relativa à própria sessão + densidade da ocupação.
           const speedNorm = clamp(avg / scaleMax, 0, 1);
           const density = clamp(b.count / Math.max(1, points.length / 45), 0, 1);
           const v = clamp(speedNorm * .58 + density * .42, 0, 1);
           const alpha = 0.16 + Math.pow(v, 0.72) * 0.68;
-          const x0 = ((cx + .5) / cols) * 920;
-          const y0 = ((cy + .5) / rows) * 560;
+          const x0 = ((cx + .5) / cols) * SVG_W;
+          const y0 = ((cy + .5) / rows) * SVG_H;
           const q = clampPointToPitch({ x: x0, y: y0, value: avg });
-          const x = (q.x / 920) * w;
-          const y = (q.y / 560) * h;
+          const x = (q.x / SVG_W) * w;
+          const y = (q.y / SVG_H) * h;
           const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
           const color = heatColor(v, alpha);
           grad.addColorStop(0, color);
@@ -701,8 +732,19 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
         }
       }
       ctx.globalCompositeOperation = 'source-over';
-    }
 
+      // Marcador do início: centro exato do campo.
+      const start = pitchToCanvas(clampPointToPitch(points[0]));
+      ctx.beginPath();
+      ctx.arc(start.x, start.y, 6, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,.95)';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(start.x, start.y, 11, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(245,158,11,.9)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
     function updateDashboard() {
       const d = currentData;
       if (!d) return;
