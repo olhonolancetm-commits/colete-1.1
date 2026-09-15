@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Pelada Pro Elite | Tactical Hub</title>
+  <title>Pelada Pro Elite | GPS + MPU Tactical Hub</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -129,7 +129,7 @@
 
       <div class="mt-auto space-y-3">
         <label class="flex items-center justify-center gap-2 bg-white text-black p-4 rounded-2xl font-black cursor-pointer hover:bg-amber-500 transition">
-          IMPORTAR CSV GPS
+          IMPORTAR CSV GPS + MPU
           <input type="file" id="csvFileInput" accept=".csv" class="hidden">
         </label>
 
@@ -188,7 +188,7 @@
 
       <div class="mt-auto space-y-3">
         <label class="flex items-center justify-center gap-2 bg-white text-black p-4 rounded-2xl font-black cursor-pointer hover:bg-amber-500 transition">
-          IMPORTAR CSV GPS
+          IMPORTAR CSV GPS + MPU
           <input type="file" id="csvFileInput_m" accept=".csv" class="hidden">
         </label>
 
@@ -264,7 +264,7 @@
           </div>
 
           <div class="glass p-5 md:p-6 rounded-3xl flex-1 min-h-[280px]">
-            <h4 class="text-slate-500 font-bold text-xs uppercase mb-4">Gráfico de Intensidade (Km/h)</h4>
+            <h4 class="text-slate-500 font-bold text-xs uppercase mb-4">Velocidade estimada pelo MPU (km/h)</h4>
 
             <div class="h-[180px] md:h-[220px]">
               <canvas id="loadChart"></canvas>
@@ -272,7 +272,7 @@
 
             <!-- HEATMAP / MAPA - MELHORADO PARA PERSPECTIVA DATA FACTORY -->
             <div class="mt-5 md:mt-6">
-              <h4 class="text-slate-500 font-bold text-xs uppercase text-center mb-3">Visualização Tática de Estádio (GPS Centralizado)</h4>
+              <h4 class="text-slate-500 font-bold text-xs uppercase text-center mb-3">Trajetória GPS + intensidade do MPU</h4>
 
               <div class="pitch-wrap floaty mx-auto"
                    style="height: 350px; max-width: 850px;">
@@ -324,7 +324,7 @@
               </div>
 
               <div class="text-center text-[11px] text-slate-500 mt-2">
-                *O centro do círculo é definido pela 5ª coordenada GPS capturada no arquivo.
+                *GPS controla somente posição/trajetória. A velocidade e a intensidade do mapa vêm do MPU6050.
               </div>
             </div>
           </div>
@@ -496,79 +496,58 @@
     // PARSER DUPLO (JSON + TXT)
     // =========================
     function parsePeladaExcelLike(text) {
-      // TENTA JSON
-      let parsedJSON;
-      try { parsedJSON = JSON.parse(text); } catch { parsedJSON = null; }
+      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      const headerIndex = lines.findIndex(l => l.startsWith("Tempo_ms,") && l.includes("Latitude"));
+      if (headerIndex < 0) return { error: "Header 3.3 não encontrado. Use o CSV gerado pelo Firmware 3.3." };
 
-      if (parsedJSON) {
-        const sheet = parsedJSON?.[0]?.d;
-        if (!Array.isArray(sheet)) return { error: "Estrutura JSON inválida." };
+      const header = lines[headerIndex].split(',');
+      const idx = (name) => header.indexOf(name);
+      const required = ["Latitude","Longitude","Velocidade_GPS_kmh","Velocidade_MPU_kmh","Tempo_ms"];
+      const missing = required.filter(k => idx(k) < 0);
+      if (missing.length) return { error: "CSV incompatível. Campos ausentes: " + missing.join(", ") };
 
-        const header = sheet.find(row => Array.isArray(row) && row[0] === "Tempo_ms" && row.includes("Latitude"));
-        const headerIndex = sheet.indexOf(header);
-        if (headerIndex < 0) return { error: "Header não encontrado no JSON." };
+      const dataRows = [];
+      for (let i = headerIndex + 1; i < lines.length; i++) {
+        const line = lines[i];
+        if (line === "STOP") break;
+        if (line.startsWith("TOTAL_") || line.startsWith("VEL_") || line.startsWith("TEMPO_")) continue;
 
-        const idxLat = header.indexOf("Latitude");
-        const idxLng = header.indexOf("Longitude");
-        const idxVel = header.indexOf("Velocidade");
-        const idxHora = header.indexOf("Hora_UTC");
-        const idxTempo = header.indexOf("Tempo_ms");
+        const row = line.split(',');
+        if (row.length < header.length) continue;
 
-        const dataRows = [];
-        for (let i = headerIndex + 1; i < sheet.length; i++) {
-          const row = sheet[i];
-          if (!Array.isArray(row) || (typeof row[0] === 'string' && row[0].toUpperCase().includes('STOP'))) break;
-          const lat = safeToNumber(row[idxLat]);
-          if (lat !== null && lat !== 0) {
-            dataRows.push({ lat, lng: safeToNumber(row[idxLng]), vel: safeToNumber(row[idxVel]), timeMs: safeToNumber(row[idxTempo]), horaUTC: row[idxHora] });
-          }
-        }
+        const lat = safeToNumber(row[idx("Latitude")]);
+        const lng = safeToNumber(row[idx("Longitude")]);
+        if (lat === null || lng === null || lat === 0 || lng === 0) continue;
 
-        const findKV = (key) => {
-          const line = sheet.find(r => Array.isArray(r) && typeof r[0] === 'string' && r[0].includes(key));
-          return line ? safeToNumber(line[0].split('=')[1]) : null;
-        };
-
-        return { dataRows, stats: { distTotal: findKV("TOTAL_DISTANCIA"), velMax: findKV("VEL_MAX"), velMedia: findKV("VEL_MEDIA") } };
-      }
-
-      // TENTA TXT
-      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-      const headerLine = lines.find(l => l.includes("Tempo_ms") && l.includes("Latitude"));
-      
-      if (headerLine) {
-        const header = headerLine.split(',');
-        const headerIndex = lines.indexOf(headerLine);
-        const idxLat = header.indexOf("Latitude");
-        const idxLng = header.indexOf("Longitude");
-        const idxVel = header.indexOf("Velocidade");
-        const idxHora = header.indexOf("Hora_UTC");
-        const idxTempo = header.indexOf("Tempo_ms");
-
-        const dataRows = [];
-        let stats = { distTotal: 0, velMax: 0, velMedia: 0 };
-
-        for (let i = headerIndex + 1; i < lines.length; i++) {
-          const line = lines[i];
-          if (line === "STOP") break;
-          const row = line.split(',');
-          if (row.length < header.length) continue;
-          const lat = parseFloat(row[idxLat]);
-          if (!isNaN(lat) && lat !== 0) {
-            dataRows.push({ lat, lng: parseFloat(row[idxLng]), vel: parseFloat(row[idxVel]), timeMs: parseInt(row[idxTempo]), horaUTC: row[idxHora] });
-          }
-        }
-
-        lines.forEach(l => {
-          if (l.startsWith("TOTAL_DISTANCIA=")) stats.distTotal = parseFloat(l.split('=')[1]);
-          if (l.startsWith("VEL_MAX=")) stats.velMax = parseFloat(l.split('=')[1]);
-          if (l.startsWith("VEL_MEDIA=")) stats.velMedia = parseFloat(l.split('=')[1]);
+        dataRows.push({
+          lat,
+          lng,
+          gpsKmh: safeToNumber(row[idx("Velocidade_GPS_kmh")]) ?? 0,
+          mpuKmh: safeToNumber(row[idx("Velocidade_MPU_kmh")]) ?? 0,
+          mpuMps: safeToNumber(row[idx("Velocidade_MPU_mps")]) ?? 0,
+          accel: safeToNumber(row[idx("AccelDinamica_ms2")]) ?? 0,
+          accelPeak: safeToNumber(row[idx("PicoAccelDinamica_ms2")]) ?? 0,
+          motion: safeToNumber(row[idx("Movimento")]) ?? 0,
+          timeMs: safeToNumber(row[idx("Tempo_ms")]) ?? 0,
+          horaUTC: idx("Hora_UTC") >= 0 ? row[idx("Hora_UTC")] : "",
+          fix: idx("GPS_FIX") >= 0 ? safeToNumber(row[idx("GPS_FIX")]) ?? 0 : 0,
+          dist: idx("Distancia_m") >= 0 ? safeToNumber(row[idx("Distancia_m")]) ?? 0 : 0
         });
-
-        return { dataRows, stats };
       }
 
-      return { error: "Formato desconhecido." };
+      const stats = { distTotal: 0, velMaxMPU: 0, velMaxGPS: 0, velMediaGPS: 0 };
+      lines.forEach(l => {
+        if (l.startsWith("TOTAL_DISTANCIA=")) stats.distTotal = parseFloat(l.split('=')[1]) || 0;
+        if (l.startsWith("VEL_MAX_MPU=")) stats.velMaxMPU = parseFloat(l.split('=')[1]) || 0;
+        if (l.startsWith("VEL_MAX_GPS=")) stats.velMaxGPS = parseFloat(l.split('=')[1]) || 0;
+        if (l.startsWith("VEL_MEDIA_GPS=")) stats.velMediaGPS = parseFloat(l.split('=')[1]) || 0;
+      });
+
+      if (!stats.distTotal && dataRows.length) stats.distTotal = Math.max(...dataRows.map(r => r.dist));
+      if (!stats.velMaxMPU && dataRows.length) stats.velMaxMPU = Math.max(...dataRows.map(r => r.mpuKmh));
+      if (!stats.velMaxGPS && dataRows.length) stats.velMaxGPS = Math.max(...dataRows.map(r => r.gpsKmh));
+
+      return { dataRows, stats };
     }
 
     // =========================
@@ -611,31 +590,33 @@
       const parsed = parsePeladaExcelLike(text);
       if (parsed.error) return alert(parsed.error);
       const rows = parsed.dataRows;
-      if (rows.length < 5) return alert("Arquivo com dados insuficientes (mínimo 5 linhas de GPS).");
+      if (rows.length < 5) return alert("Arquivo com dados insuficientes (mínimo 5 coordenadas GPS válidas).");
 
       const origin = rows[4];
-      const points = [], speeds = [], times = [];
-      let vSum = 0;
-
-      // MÉTRICAS DE IA (ANÁLISE DETALHADA)
-      let standingCount = 0;
-      let runningCount = 0;
-      let sprintCount = 0;
-      let inSprint = false;
+      const points = [], speedsMPU = [], speedsGPS = [], times = [];
+      let mpuSum = 0, gpsSum = 0;
+      let standingCount = 0, movingCount = 0, sprintCount = 0, inSprint = false;
+      let maxAccel = 0;
 
       rows.forEach(r => {
         const proj = projectToPitch(r.lat, r.lng, origin.lat, origin.lng);
-        points.push({ x: proj.x, y: proj.y, value: clamp(r.vel, 5, 25) });
-        speeds.push(r.vel);
+
+        // GPS define ONDE o atleta estava.
+        // MPU define a intensidade/velocidade usada no heatmap.
+        const intensity = clamp(r.mpuKmh, 0, 25);
+        points.push({ x: proj.x, y: proj.y, value: intensity });
+        speedsMPU.push(r.mpuKmh);
+        speedsGPS.push(r.gpsKmh);
         times.push(formatTimePTBR(r.horaUTC, r.timeMs));
-        vSum += r.vel;
 
-        // Lógica de Estado (Considerando velocidades em m/s comuns em GPS)
-        // Parado: < 0.5 m/s | Correndo: > 2.5 m/s | Sprint: > 4.2 m/s
-        if (r.vel < 0.5) standingCount++;
-        else runningCount++;
+        mpuSum += r.mpuKmh;
+        gpsSum += r.gpsKmh;
+        maxAccel = Math.max(maxAccel, r.accelPeak, r.accel);
 
-        if (r.vel > 4.2) {
+        if (r.motion === 0 || r.mpuKmh < 1.0) standingCount++;
+        else movingCount++;
+
+        if (r.mpuKmh >= 15.0) {
           if (!inSprint) { sprintCount++; inSprint = true; }
         } else {
           inSprint = false;
@@ -644,40 +625,65 @@
 
       const side = document.getElementById('sideIn').value;
       const role = document.getElementById('posIn').value;
-      const vMax = parsed.stats.velMax || Math.max(...speeds);
-      const vMean = vSum / rows.length;
+      const vMaxMPU = parsed.stats.velMaxMPU || Math.max(...speedsMPU);
+      const vMaxGPS = parsed.stats.velMaxGPS || Math.max(...speedsGPS);
+      const vMeanMPU = mpuSum / rows.length;
+      const vMeanGPS = gpsSum / rows.length;
       const attRatio = points.length ? (getAttCount(points, side) / points.length) : 0;
 
+      const dist = parsed.stats.distTotal || 0;
       const stats = {
-        vel: clamp(Math.round((vMax / 6.0) * 99), 35, 99),
-        dri: clamp(Math.round(vMean * 18 + 35), 35, 99),
+        vel: clamp(Math.round((vMaxMPU / 25) * 99), 35, 99),
+        dri: clamp(Math.round(vMeanMPU * 2.2 + 35), 35, 99),
         ata: clamp(Math.round(attRatio * 99), 35, 99),
         def: clamp(Math.round((1 - attRatio) * 99), 35, 99),
-        fis: clamp(Math.round((parsed.stats.distTotal / 65) * 99), 35, 99),
-        pas: clamp(Math.round(vMean * 12 + 40), 35, 99)
+        fis: clamp(Math.round((dist / 65) * 99), 35, 99),
+        pas: clamp(Math.round(vMeanMPU * 1.6 + 40), 35, 99)
       };
 
-      let ovr = role === 'ATA' ? (stats.ata*0.45 + stats.vel*0.55) : role === 'DEF' ? (stats.def*0.45 + stats.fis*0.55) : (stats.pas*0.5 + stats.fis*0.5);
+      let ovr = role === 'ATA'
+        ? (stats.ata * 0.45 + stats.vel * 0.55)
+        : role === 'DEF'
+          ? (stats.def * 0.45 + stats.fis * 0.55)
+          : (stats.pas * 0.5 + stats.fis * 0.5);
+
+      // Tempo real aproximado pelo intervalo dos registros, não por "1 linha = 1 segundo".
+      const durationSec = rows.length > 1
+        ? Math.max(1, (rows[rows.length - 1].timeMs - rows[0].timeMs) / 1000)
+        : rows.length * 0.1;
 
       currentData = {
         name: document.getElementById('nameIn').value || "PLAYER",
-        role, date: new Date().toLocaleDateString('pt-BR'),
-        ovr: Math.round(ovr), stats, points, speeds, times, photo: photoData,
-        vMaxHW: vMax,
-        // Novas métricas salvas
+        role,
+        date: new Date().toLocaleDateString('pt-BR'),
+        ovr: Math.round(ovr),
+        stats,
+        points,
+        speedsMPU,
+        speedsGPS,
+        times,
+        photo: photoData,
+        vMaxMPU,
+        vMaxGPS,
+        vMeanMPU,
+        vMeanGPS,
+        durationSec,
         mIA: {
-           standing: standingCount,
-           running: runningCount,
-           sprints: sprintCount,
-           dist: parsed.stats.distTotal || 0
+          standing: standingCount,
+          moving: movingCount,
+          sprints: sprintCount,
+          dist,
+          maxAccel
         }
       };
+
       updateDashboard();
     }
 
     function updateDashboard() {
       const d = currentData;
       if (!d) return;
+
       document.getElementById('cardOvr').innerText = d.ovr;
       document.getElementById('cardPos').innerText = d.role;
       document.getElementById('cardName').innerText = d.name;
@@ -689,62 +695,96 @@
       document.getElementById('s-pas').innerText = d.stats.pas;
       document.getElementById('s-fis').innerText = d.stats.fis;
       document.getElementById('dateShow').innerText = d.date;
-      document.getElementById('posShow').innerText = `POSIÇÃO: ${d.role}`;
+      document.getElementById('posShow').innerText = `GPS: ${d.vMaxGPS.toFixed(1)} km/h | MPU: ${d.vMaxMPU.toFixed(1)} km/h`;
       document.getElementById('btnSave').classList.remove('hidden');
-      
-      heatmapInstance.setData({ max: 20, data: d.points });
-      renderChart(d.speeds, d.times);
-      
-      // RELATÓRIO IA DETALHADO (MELHORIA SOLICITADA)
-      const totalS = d.mIA.standing + d.mIA.running;
-      const pParado = ((d.mIA.standing / totalS) * 100).toFixed(1);
-      const pAtivo = ((d.mIA.running / totalS) * 100).toFixed(1);
+
+      heatmapInstance.setData({ max: 25, data: d.points });
+      renderChart(d.speedsMPU, d.times, d.speedsGPS);
+
+      const total = d.mIA.standing + d.mIA.moving;
+      const pParado = total ? ((d.mIA.standing / total) * 100).toFixed(1) : "0.0";
+      const pAtivo = total ? ((d.mIA.moving / total) * 100).toFixed(1) : "0.0";
 
       let report = `
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <p>🚦 <b>Distribuição de Estado:</b></p>
+            <p>🛰️ <b>GPS — Posicionamento:</b></p>
             <ul class="list-disc ml-4 opacity-80">
-              <li>Tempo Total Parado: ${d.mIA.standing}s (${pParado}%)</li>
-              <li>Tempo em Movimento: ${d.mIA.running}s (${pAtivo}%)</li>
+              <li>Distância espacial: ${d.mIA.dist.toFixed(1)} m</li>
+              <li>Pico GPS: ${d.vMaxGPS.toFixed(1)} km/h</li>
+              <li>GPS não controla a velocidade do gráfico.</li>
             </ul>
           </div>
           <div>
-            <p>⚡ <b>Análise de Explosão:</b></p>
+            <p>⚡ <b>MPU6050 — Movimento:</b></p>
             <ul class="list-disc ml-4 opacity-80">
-              <li>Piques (Sprints > 15km/h): ${d.mIA.sprints}</li>
-              <li>Velocidade Pico: ${(d.vMaxHW * 3.6).toFixed(1)} km/h</li>
+              <li>Velocidade MPU estimada: ${d.vMaxMPU.toFixed(1)} km/h pico</li>
+              <li>Média MPU: ${d.vMeanMPU.toFixed(1)} km/h</li>
+              <li>Piques MPU ≥ 15 km/h: ${d.mIA.sprints}</li>
             </ul>
           </div>
         </div>
         <div class="mt-3 pt-3 border-t border-white/10">
-          <p>🧠 <b>Diagnóstico Tático:</b> Atleta de nível <b>${d.ovr >= 85 ? 'Elite' : 'Competitivo'}</b>. 
-          ${d.mIA.sprints > 5 ? 'Apresenta alta capacidade de transição ofensiva com piques repetidos.' : 'Demonstra jogo posicional cadenciado com baixo desgaste explosivo.'} 
-          Volume total de ${(d.mIA.dist).toFixed(1)} metros percorridos.</p>
+          <p>🧠 <b>Diagnóstico Tático:</b> Atleta de nível <b>${d.ovr >= 85 ? 'Elite' : 'Competitivo'}</b>.
+          ${d.mIA.sprints > 5 ? 'Alta frequência de ações explosivas detectadas pelo perfil de velocidade do MPU.' : 'Perfil de intensidade com baixa frequência de picos explosivos.'}
+          Distribuição: ${pParado}% em baixa atividade e ${pAtivo}% em movimento.</p>
+          <p class="mt-2 opacity-70">Aceleração dinâmica máxima registrada: ${d.mIA.maxAccel.toFixed(2)} m/s². Tempo analisado: ${d.durationSec.toFixed(1)} s.</p>
         </div>
       `;
       document.getElementById('aiReport').innerHTML = report;
     }
 
-    function renderChart(speeds, times) {
+    function renderChart(speedsMPU, times, speedsGPS) {
       if (loadChart) loadChart.destroy();
       const ctx = document.getElementById('loadChart').getContext('2d');
-      const step = Math.ceil(speeds.length / 40);
-      const idxs = speeds.map((_, i) => i).filter(i => i % step === 0);
+      const step = Math.max(1, Math.ceil(speedsMPU.length / 60));
+      const idxs = speedsMPU.map((_, i) => i).filter(i => i % step === 0);
+
       loadChart = new Chart(ctx, {
         type: 'line',
         data: {
           labels: idxs.map(i => times[i]),
-          datasets: [{
-            data: idxs.map(i => speeds[i]),
-            borderColor: '#f59e0b',
-            fill: true,
-            backgroundColor: 'rgba(245,158,11,0.08)',
-            tension: 0.4,
-            pointRadius: 0
-          }]
+          datasets: [
+            {
+              label: 'MPU',
+              data: idxs.map(i => speedsMPU[i]),
+              borderColor: '#f59e0b',
+              backgroundColor: 'rgba(245,158,11,0.08)',
+              fill: true,
+              tension: 0.25,
+              pointRadius: 0
+            },
+            {
+              label: 'GPS',
+              data: idxs.map(i => speedsGPS[i]),
+              borderColor: '#38bdf8',
+              backgroundColor: 'transparent',
+              fill: false,
+              tension: 0.2,
+              pointRadius: 0,
+              borderDash: [5, 4]
+            }
+          ]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              labels: { color: '#94a3b8', boxWidth: 10 }
+            }
+          },
+          scales: {
+            x: { display: false },
+            y: {
+              display: true,
+              beginAtZero: true,
+              ticks: { color: '#64748b', callback: v => `${v} km/h` },
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            }
+          }
+        }
       });
     }
 
@@ -786,6 +826,27 @@
     function loadCard(i) {
       const h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
       currentData = h[i];
+
+      // Compatibilidade com cards antigos salvos pelo dashboard anterior.
+      if (currentData && !Array.isArray(currentData.speedsMPU)) {
+        const oldSpeeds = Array.isArray(currentData.speeds) ? currentData.speeds : [];
+        currentData.speedsMPU = oldSpeeds.map(v => (Number(v) || 0) * 3.6);
+        currentData.speedsGPS = oldSpeeds.map(() => 0);
+        currentData.vMaxMPU = Number(currentData.vMaxHW || 0) * 3.6;
+        currentData.vMaxGPS = 0;
+        currentData.vMeanMPU = currentData.speedsMPU.length
+          ? currentData.speedsMPU.reduce((a,b) => a + b, 0) / currentData.speedsMPU.length
+          : 0;
+        currentData.vMeanGPS = 0;
+        currentData.mIA = currentData.mIA || {};
+        currentData.mIA.moving = currentData.mIA.running || 0;
+        currentData.mIA.standing = currentData.mIA.standing || 0;
+        currentData.mIA.sprints = currentData.mIA.sprints || 0;
+        currentData.mIA.dist = currentData.mIA.dist || 0;
+        currentData.mIA.maxAccel = currentData.mIA.maxAccel || 0;
+        currentData.durationSec = Math.max(1, oldSpeeds.length * 0.1);
+      }
+
       updateDashboard();
       switchTab('dashboard');
     }
