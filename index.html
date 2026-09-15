@@ -335,10 +335,16 @@
     <!-- HISTORY -->
     <section id="tab-history" class="hidden p-4 md:p-8 animate-in slide-in-from-right duration-500">
       <div class="flex justify-between items-center mb-6 md:mb-10 gap-3 flex-wrap">
-        <h2 class="text-3xl md:text-4xl font-black italic uppercase">Coleção de Elite</h2>
-        <button onclick="switchTab('dashboard')" class="bg-white/5 hover:bg-white/10 px-4 md:px-6 py-2 rounded-xl font-bold transition">
-          ← VOLTAR AO HUB
-        </button>
+        <div>
+          <h2 class="text-3xl md:text-4xl font-black italic uppercase">Coleção de Elite</h2>
+          <p class="text-xs text-slate-500 mt-1">Cards salvos neste navegador.</p>
+        </div>
+        <div class="flex gap-2">
+          <button id="btnClearHistory" onclick="clearHistory()" class="hidden bg-red-500/15 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/30 px-4 md:px-5 py-2 rounded-xl font-black text-xs transition">EXCLUIR TODOS</button>
+          <button onclick="switchTab('dashboard')" class="bg-white/5 hover:bg-white/10 px-4 md:px-6 py-2 rounded-xl font-bold transition">
+            ← VOLTAR AO HUB
+          </button>
+        </div>
       </div>
 
       <div id="historyGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-10">
@@ -928,6 +934,8 @@
     function renderHistory() {
       const h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
       const g = document.getElementById('historyGrid');
+      const clearBtn = document.getElementById('btnClearHistory');
+      if (clearBtn) clearBtn.classList.toggle('hidden', !h.length);
       if (!h.length) { g.innerHTML = "<p class='col-span-full text-center py-20'>Nenhum registro.</p>"; return; }
       g.innerHTML = h.map((card, i) => `
         <div class="glass p-6 rounded-3xl flex flex-col items-center">
@@ -945,9 +953,30 @@
               </div>
             </div>
           </div>
-          <button onclick="loadCard(${i})" class="mt-4 bg-amber-500 text-black px-6 py-2 rounded-xl font-bold">VER DETALHES</button>
+          <div class="mt-4 flex gap-2 w-full justify-center">
+            <button onclick="loadCard(${i})" class="bg-amber-500 hover:bg-amber-400 text-black px-5 py-2 rounded-xl font-bold transition">VER DETALHES</button>
+            <button onclick="deleteCard(${i})" class="bg-red-500/15 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/30 px-5 py-2 rounded-xl font-bold transition">EXCLUIR</button>
+          </div>
         </div>
       `).join('');
+    }
+
+    function deleteCard(i) {
+      const h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
+      if (!h[i]) return;
+      const nome = h[i].name || 'este card';
+      if (!confirm(`Excluir ${nome} da Minha Coleção?`)) return;
+      h.splice(i, 1);
+      localStorage.setItem('pelada_elite_h', JSON.stringify(h));
+      renderHistory();
+    }
+
+    function clearHistory() {
+      const h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
+      if (!h.length) return;
+      if (!confirm(`Excluir os ${h.length} cards salvos da Minha Coleção?`)) return;
+      localStorage.removeItem('pelada_elite_h');
+      renderHistory();
     }
 
     function loadCard(i) {
