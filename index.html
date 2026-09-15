@@ -757,7 +757,12 @@
         mIA: {
           standing: standingCount,
           moving: movingCount,
+          movingPct: rows.length ? (movingCount / rows.length) * 100 : 0,
           sprints: sprintCount,
+          explosiveActions,
+          attackHalfRatio: points.length ? (attackHalfCount / points.length) : 0,
+          defenseHalfRatio: points.length ? (defenseHalfCount / points.length) : 0,
+          centerRatio: points.length ? (centerCount / points.length) : 0,
           dist,
           maxAccel
         }
@@ -769,6 +774,20 @@
     function updateDashboard() {
       const d = currentData;
       if (!d) return;
+
+      // Compatibilidade/segurança para sessões antigas e para qualquer CSV parcial.
+      d.mIA = d.mIA || {};
+      const totalIA = (Number(d.mIA.standing) || 0) + (Number(d.mIA.moving) || 0);
+      d.mIA.movingPct = Number.isFinite(Number(d.mIA.movingPct))
+        ? Number(d.mIA.movingPct)
+        : (totalIA ? ((Number(d.mIA.moving) || 0) / totalIA) * 100 : 0);
+      d.mIA.explosiveActions = Number(d.mIA.explosiveActions) || 0;
+      d.mIA.sprints = Number(d.mIA.sprints) || 0;
+      d.mIA.dist = Number(d.mIA.dist) || 0;
+      d.mIA.maxAccel = Number(d.mIA.maxAccel) || 0;
+      d.mIA.attackHalfRatio = Number.isFinite(Number(d.mIA.attackHalfRatio)) ? Number(d.mIA.attackHalfRatio) : 0;
+      d.mIA.defenseHalfRatio = Number.isFinite(Number(d.mIA.defenseHalfRatio)) ? Number(d.mIA.defenseHalfRatio) : 0;
+      d.mIA.centerRatio = Number.isFinite(Number(d.mIA.centerRatio)) ? Number(d.mIA.centerRatio) : 0;
 
       document.getElementById('cardOvr').innerText = d.ovr;
       document.getElementById('cardPos').innerText = d.role;
