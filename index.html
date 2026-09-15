@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Pelada Pro Elite | GPS + MPU Tactical Hub</title>
+  <title>Pelada Pro Elite | Trackr Tactical Hub</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -129,7 +129,7 @@
 
       <div class="mt-auto space-y-3">
         <label class="flex items-center justify-center gap-2 bg-white text-black p-4 rounded-2xl font-black cursor-pointer hover:bg-amber-500 transition">
-          IMPORTAR CSV GPS + MPU
+          IMPORTAR CSV DO TRACKR
           <input type="file" id="csvFileInput" accept=".csv" class="hidden">
         </label>
 
@@ -188,7 +188,7 @@
 
       <div class="mt-auto space-y-3">
         <label class="flex items-center justify-center gap-2 bg-white text-black p-4 rounded-2xl font-black cursor-pointer hover:bg-amber-500 transition">
-          IMPORTAR CSV GPS + MPU
+          IMPORTAR CSV DO TRACKR
           <input type="file" id="csvFileInput_m" accept=".csv" class="hidden">
         </label>
 
@@ -259,12 +259,12 @@
               Análise Tática da IA
             </h4>
             <div id="aiReport" class="text-slate-300 italic leading-relaxed text-sm">
-              O sistema está aguardando o upload do CSV. A análise tática combinará a posição escolhida (Atacante, Meio-Campo ou Zagueiro), a trajetória GPS e a intensidade do MPU6050.
+              O sistema está aguardando o upload do CSV. A análise tática combinará a posição escolhida (Atacante, Meio-Campo ou Zagueiro), a trajetória GPS e os dados de movimento do Trackr.
             </div>
           </div>
 
           <div class="glass p-5 md:p-6 rounded-3xl flex-1 min-h-[280px]">
-            <h4 class="text-slate-500 font-bold text-xs uppercase mb-4">Velocidade estimada pelo MPU (km/h)</h4>
+            <h4 class="text-slate-500 font-bold text-xs uppercase mb-4">Velocidade estimada pelo dispositivo (km/h)</h4>
 
             <div class="h-[180px] md:h-[220px]">
               <canvas id="loadChart"></canvas>
@@ -272,7 +272,7 @@
 
             <!-- HEATMAP / MAPA - MELHORADO PARA PERSPECTIVA DATA FACTORY -->
             <div class="mt-5 md:mt-6">
-              <h4 class="text-slate-500 font-bold text-xs uppercase text-center mb-3">Trajetória GPS + intensidade do MPU</h4>
+              <h4 class="text-slate-500 font-bold text-xs uppercase text-center mb-3">Trajetória GPS + intensidade do dispositivo</h4>
 
               <div class="pitch-wrap floaty mx-auto"
                    style="height: 350px; max-width: 850px;">
@@ -324,7 +324,7 @@
               </div>
 
               <div class="text-center text-[11px] text-slate-500 mt-2">
-                *GPS controla somente posição/trajetória. A velocidade e a intensidade do mapa vêm do MPU6050.
+                *GPS controla somente posição/trajetória. A velocidade e a intensidade do mapa vêm do dispositivo.
               </div>
             </div>
           </div>
@@ -781,7 +781,7 @@
       document.getElementById('s-pas').innerText = d.stats.pas;
       document.getElementById('s-fis').innerText = d.stats.fis;
       document.getElementById('dateShow').innerText = d.date;
-      document.getElementById('posShow').innerText = `GPS: ${d.vMaxGPS.toFixed(1)} km/h | MPU: ${d.vMaxMPU.toFixed(1)} km/h`;
+      document.getElementById('posShow').innerText = `GPS: ${d.vMaxGPS.toFixed(1)} km/h | Trackr: ${d.vMaxMPU.toFixed(1)} km/h`;
       document.getElementById('btnSave').classList.remove('hidden');
 
       heatmapInstance.setData({ max: 25, data: d.points });
@@ -821,12 +821,12 @@
             </ul>
           </div>
           <div>
-            <p>⚡ <b>MPU6050 — Intensidade:</b></p>
+            <p>⚡ <b>Trackr — Intensidade:</b></p>
             <ul class="list-disc ml-4 opacity-80">
-              <li>Pico MPU: ${d.vMaxMPU.toFixed(1)} km/h</li>
-              <li>Média MPU: ${d.vMeanMPU.toFixed(1)} km/h</li>
+              <li>Pico Trackr: ${d.vMaxMPU.toFixed(1)} km/h</li>
+              <li>Média Trackr: ${d.vMeanMPU.toFixed(1)} km/h</li>
               <li>Ações explosivas: ${d.mIA.explosiveActions}</li>
-              <li>Picos MPU ≥ 15 km/h: ${d.mIA.sprints}</li>
+              <li>Picos Trackr ≥ 15 km/h: ${d.mIA.sprints}</li>
             </ul>
           </div>
         </div>
@@ -835,7 +835,7 @@
           <p>🧠 <b>Diagnóstico Tático — ${td.p.name}:</b> ${td.tacticalText}</p>
           <p class="mt-2 opacity-80">Distribuição espacial: <b>${td.attackPct.toFixed(1)}%</b> setor ofensivo · <b>${td.centerPct.toFixed(1)}%</b> zona central · <b>${td.defensePct.toFixed(1)}%</b> setor defensivo.</p>
           <p class="mt-2 opacity-80">Atividade: <b>${d.mIA.movingPct.toFixed(1)}%</b> do período em movimento. Pico de aceleração dinâmica: <b>${d.mIA.maxAccel.toFixed(2)} m/s²</b>.</p>
-          <p class="mt-2 text-[11px] text-slate-500">${td.p.good} ${td.p.low} A leitura é inferida por posição GPS + intensidade do MPU; sem dados de bola, passes, duelos ou eventos, ela não identifica sozinha a ação tática específica.</p>
+          <p class="mt-2 text-[11px] text-slate-500">${td.p.good} ${td.p.low} A leitura é inferida por posição GPS + intensidade do dispositivo; sem dados de bola, passes, duelos ou eventos, ela não identifica sozinha a ação tática específica.</p>
           <p class="mt-2 opacity-70">Tempo analisado: ${d.durationSec.toFixed(1)} s.</p>
         </div>
       `;
@@ -854,7 +854,7 @@
           labels: idxs.map(i => times[i]),
           datasets: [
             {
-              label: 'MPU',
+              label: 'Trackr',
               data: idxs.map(i => speedsMPU[i]),
               borderColor: '#f59e0b',
               backgroundColor: 'rgba(245,158,11,0.08)',
