@@ -125,7 +125,7 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
   </div>
   <div class="grid-main">
     <div class="chart-panel"><div class="section-title">CARGA DE VELOCIDADE <strong>/ TRACKR x GPS</strong></div><div class="chart-wrap"><canvas id="loadChart"></canvas></div></div>
-    <div class="pitch-panel"><div class="section-title">MAPA DE OCUPAÇÃO <strong>/ TRAJETÓRIA + INTENSIDADE</strong></div><div class="pitch-wrap"><svg viewBox="0 0 920 560" preserveAspectRatio="none"><defs><linearGradient id="pitchGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#132b52"/><stop offset="100%" stop-color="#07182f"/></linearGradient></defs><path d="M110,510 L810,510 L660,100 L260,100 Z" fill="url(#pitchGrad)" stroke="rgba(255,255,255,.65)" stroke-width="2"/><line x1="185" y1="305" x2="735" y2="305" stroke="rgba(255,255,255,.4)" stroke-width="2"/><ellipse cx="460" cy="305" rx="80" ry="35" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"/><rect x="410" y="85" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><rect x="410" y="510" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><path d="M280,100 L640,100 L600,200 L320,200 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/><path d="M280,510 L640,510 L600,410 L320,410 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/></svg><div id="heatmapContainer"></div></div><div class="footnote">O ponto inicial é o centro do campo. O GPS só move a trajetória quando o Trackr confirma deslocamento; ruído parado é congelado e a intensidade do dispositivo colore o mapa.</div></div>
+    <div class="pitch-panel"><div class="section-title">MAPA DE OCUPAÇÃO <strong>/ TRAJETÓRIA + INTENSIDADE</strong></div><div class="pitch-wrap"><svg viewBox="0 0 920 560" preserveAspectRatio="none"><defs><linearGradient id="pitchGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#132b52"/><stop offset="100%" stop-color="#07182f"/></linearGradient></defs><path d="M110,510 L810,510 L660,100 L260,100 Z" fill="url(#pitchGrad)" stroke="rgba(255,255,255,.65)" stroke-width="2"/><line x1="185" y1="305" x2="735" y2="305" stroke="rgba(255,255,255,.4)" stroke-width="2"/><ellipse cx="460" cy="305" rx="80" ry="35" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"/><rect x="410" y="85" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><rect x="410" y="510" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><path d="M280,100 L640,100 L600,200 L320,200 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/><path d="M280,510 L640,510 L600,410 L320,410 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/><circle id="startMarkerOuter" cx="460" cy="305" r="13" fill="rgba(245,158,11,.18)" stroke="rgba(245,158,11,.95)" stroke-width="3"/><circle id="startMarkerInner" cx="460" cy="305" r="6" fill="white" stroke="white" stroke-width="1"/></svg><div id="heatmapContainer"></div></div><div class="footnote">O ponto inicial é o centro do campo. O GPS só move a trajetória quando o Trackr confirma deslocamento; ruído parado é congelado e a intensidade do dispositivo colore o mapa.</div></div>
   </div>
 </section>
 <section id="tab-history" class="hidden"><div class="collection-panel"><div class="collection-head"><div><div class="eyebrow">ARQUIVO DE PERFORMANCE</div><h2>Minha Coleção</h2><p>Cards salvos localmente neste navegador.</p></div><div class="actions"><button id="btnClearHistory" onclick="clearHistory()" class="btn hidden">EXCLUIR TODOS</button><button onclick="switchTab('dashboard')" class="btn btn-gold">NOVO RELATÓRIO</button></div></div><div id="historyGrid" class="history-grid"></div></div></section>
@@ -414,7 +414,7 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
     }
 
     function buildFilteredTrajectory(rows, origin) {
-      const CENTER = { x: 460, y: 305 };
+      const CENTER = { x: 460, y: 305 }; // linha central + centro do círculo do campo
       const projected = rows.map(r => ({ ...projectToPitch(r.lat, r.lng, origin.lat, origin.lng), row: r }));
       if (!projected.length) return [{ ...CENTER, value: 0, moving: false }];
 
@@ -863,19 +863,15 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
       }
       ctx.globalCompositeOperation = 'source-over';
 
-      // Marcador do inicio: centro exato do campo.
-      // Nao usamos diretamente points[0], pois cards antigos podem ter
-      // coordenadas projetadas antes da regra de centralizacao.
-      const start = pitchToCanvas({x:460, y:305, value:0});
-      ctx.beginPath();
-      ctx.arc(start.x, start.y, 6, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255,255,255,.95)';
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(start.x, start.y, 11, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(245,158,11,.9)';
-      ctx.lineWidth = 2;
-      ctx.stroke();
+      // O marcador inicial fica no SVG, não no canvas.
+      // Assim ele usa exatamente a mesma escala/transformação do desenho
+      // do campo em qualquer tamanho de tela (desktop ou celular).
+      const startOuter = document.getElementById('startMarkerOuter');
+      const startInner = document.getElementById('startMarkerInner');
+      if (startOuter) startOuter.setAttribute('cx', '460');
+      if (startOuter) startOuter.setAttribute('cy', '305');
+      if (startInner) startInner.setAttribute('cx', '460');
+      if (startInner) startInner.setAttribute('cy', '305');
     }
     function updateDashboard() {
       const d = currentData;
