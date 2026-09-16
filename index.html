@@ -456,8 +456,9 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
 
         movingConfirm++;
         if (!wasMoving) {
-          // Exige poucos registros consecutivos; isso elimina um pulso isolado,
-          // mas mantém movimentos curtos de 2–4 m visíveis.
+          // O GPS de repouso continua sendo a referência. Não reiniciamos
+          // a referência no 3º ponto móvel, pois isso apagaria os primeiros
+          // metros do deslocamento real.
           if (movingConfirm < 3) return;
           wasMoving = true;
           segmentVisualStart = { ...visual };
@@ -798,7 +799,10 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
       // Não deixa milhares de amostras parado criarem um hotspot falso no centro.
       // O calor vem apenas de pontos de deslocamento com intensidade útil.
       const heatPoints = pitchPoints.filter((p, i) => i > 0 && p.value >= 0.15);
-      const heatSource = heatPoints.length ? heatPoints : pitchPoints.slice(1);
+      // Pequeno ponto de origem: mostra visualmente de onde a trajetória saiu,
+      // sem transformar o repouso inteiro em hotspot.
+      const originHeat = { x: 460, y: 305, value: heatPoints.length ? Math.min(0.65, Math.max(0.25, heatPoints[0].value * 0.18)) : 0.35 };
+      const heatSource = [originHeat, ...(heatPoints.length ? heatPoints : pitchPoints.slice(1))];
       for (const raw of heatSource) {
         const nx = raw.x / SVG_W, ny = raw.y / SVG_H;
         const cx = clamp(Math.floor(nx * cols), 0, cols - 1);
