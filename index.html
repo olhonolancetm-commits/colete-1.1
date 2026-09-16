@@ -125,7 +125,7 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
   </div>
   <div class="grid-main">
     <div class="chart-panel"><div class="section-title">CARGA DE VELOCIDADE <strong>/ TRACKR x GPS</strong></div><div class="chart-wrap"><canvas id="loadChart"></canvas></div></div>
-    <div class="pitch-panel"><div class="section-title">MAPA DE OCUPAÇÃO <strong>/ TRAJETÓRIA + INTENSIDADE</strong></div><div class="pitch-wrap"><svg viewBox="0 0 920 560" preserveAspectRatio="none"><defs><linearGradient id="pitchGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#132b52"/><stop offset="100%" stop-color="#07182f"/></linearGradient></defs><path d="M110,510 L810,510 L660,100 L260,100 Z" fill="url(#pitchGrad)" stroke="rgba(255,255,255,.65)" stroke-width="2"/><line x1="185" y1="305" x2="735" y2="305" stroke="rgba(255,255,255,.4)" stroke-width="2"/><ellipse cx="460" cy="305" rx="80" ry="35" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"/><rect x="410" y="85" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><rect x="410" y="510" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><path d="M280,100 L640,100 L600,200 L320,200 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/><path d="M280,510 L640,510 L600,410 L320,410 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/></svg><div id="heatmapContainer"></div></div><div class="footnote">O ponto inicial é sempre o centro. A partir dele, o GPS desenha o deslocamento e a intensidade do dispositivo colore o mapa.</div></div>
+    <div class="pitch-panel"><div class="section-title">MAPA DE OCUPAÇÃO <strong>/ TRAJETÓRIA + INTENSIDADE</strong></div><div class="pitch-wrap"><svg viewBox="0 0 920 560" preserveAspectRatio="none"><defs><linearGradient id="pitchGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#132b52"/><stop offset="100%" stop-color="#07182f"/></linearGradient></defs><path d="M110,510 L810,510 L660,100 L260,100 Z" fill="url(#pitchGrad)" stroke="rgba(255,255,255,.65)" stroke-width="2"/><line x1="185" y1="305" x2="735" y2="305" stroke="rgba(255,255,255,.4)" stroke-width="2"/><ellipse cx="460" cy="305" rx="80" ry="35" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"/><rect x="410" y="85" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><rect x="410" y="510" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><path d="M280,100 L640,100 L600,200 L320,200 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/><path d="M280,510 L640,510 L600,410 L320,410 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/></svg><div id="heatmapContainer"></div></div><div class="footnote">O ponto inicial é o centro do campo. O GPS só move a trajetória quando o Trackr confirma deslocamento; ruído parado é congelado e a intensidade do dispositivo colore o mapa.</div></div>
   </div>
 </section>
 <section id="tab-history" class="hidden"><div class="collection-panel"><div class="collection-head"><div><div class="eyebrow">ARQUIVO DE PERFORMANCE</div><h2>Minha Coleção</h2><p>Cards salvos localmente neste navegador.</p></div><div class="actions"><button id="btnClearHistory" onclick="clearHistory()" class="btn hidden">EXCLUIR TODOS</button><button onclick="switchTab('dashboard')" class="btn btn-gold">NOVO RELATÓRIO</button></div></div><div id="historyGrid" class="history-grid"></div></div></section>
@@ -381,7 +381,7 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
       const SVG_W = 920;
       const SVG_H = 560;
       const CX = SVG_W / 2;
-      const CY = SVG_H / 2;
+      const CY = 305; // centro real do campo (linha do meio)
 
       // Escala para GPS converter para pixels do SVG
       const scale = 520000; 
@@ -398,6 +398,115 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
       x = CX + (x - CX) * perspective;
 
       return { x, y };
+    }
+
+    // =========================
+    // FILTRO DE TRAJETÓRIA GPS GUIADO PELO TRACKR
+    // - Parado: congela a posição visual e reaprende o ponto GPS de repouso.
+    // - Em movimento: mede o deslocamento relativo ao último ponto estável.
+    // - Rejeita saltos isolados sem apagar deslocamentos reais de poucos metros.
+    // =========================
+    function median(values) {
+      if (!values.length) return 0;
+      const a = [...values].sort((x,y) => x-y);
+      const m = Math.floor(a.length / 2);
+      return a.length % 2 ? a[m] : (a[m-1] + a[m]) / 2;
+    }
+
+    function buildFilteredTrajectory(rows, origin) {
+      const CENTER = { x: 460, y: 305 };
+      const projected = rows.map(r => ({ ...projectToPitch(r.lat, r.lng, origin.lat, origin.lng), row: r }));
+      if (!projected.length) return [{ ...CENTER, value: 0, moving: false }];
+
+      let visual = { ...CENTER };
+      let segmentVisualStart = { ...CENTER };
+      let segmentGpsStart = { x: projected[0].x, y: projected[0].y };
+      let wasMoving = false;
+      let movingConfirm = 0;
+      let smoothOffset = { x: 0, y: 0 };
+      let lastRawOffset = { x: 0, y: 0 };
+      const stationaryWindow = [];
+      const result = [{ ...CENTER, value: 0, moving: false, sourceIndex: 0 }];
+
+      function stableGpsAnchor(fallback) {
+        if (!stationaryWindow.length) return { x: fallback.x, y: fallback.y };
+        return {
+          x: median(stationaryWindow.map(p => p.x)),
+          y: median(stationaryWindow.map(p => p.y))
+        };
+      }
+
+      projected.forEach((p, i) => {
+        const r = p.row;
+        const movingSignal = (Number(r.motion) === 1) || Number(r.mpuKmh) >= 1.0;
+
+        if (!movingSignal) {
+          movingConfirm = 0;
+          stationaryWindow.push({ x: p.x, y: p.y });
+          if (stationaryWindow.length > 30) stationaryWindow.shift();
+
+          // Ao parar, a posição visual fica exatamente onde terminou o deslocamento.
+          // O GPS pode passear alguns metros sem arrastar o atleta no mapa.
+          if (wasMoving) {
+            wasMoving = false;
+            segmentVisualStart = { ...visual };
+          }
+          return;
+        }
+
+        movingConfirm++;
+        if (!wasMoving) {
+          // Exige poucos registros consecutivos; isso elimina um pulso isolado,
+          // mas mantém movimentos curtos de 2–4 m visíveis.
+          if (movingConfirm < 3) return;
+          wasMoving = true;
+          segmentVisualStart = { ...visual };
+          segmentGpsStart = stableGpsAnchor(p);
+          smoothOffset = { x: 0, y: 0 };
+          lastRawOffset = { x: 0, y: 0 };
+        }
+
+        let rawOffset = { x: p.x - segmentGpsStart.x, y: p.y - segmentGpsStart.y };
+        const jump = Math.hypot(rawOffset.x - lastRawOffset.x, rawOffset.y - lastRawOffset.y);
+
+        // ~42 px representam cerca de 8–9 m nesta projeção. Um salto maior
+        // em uma única amostra é tratado como ruído; se persistir, as próximas
+        // amostras aproximam a trajetória normalmente.
+        if (jump > 42 && Number(r.gpsKmh) < 18) return;
+        lastRawOffset = rawOffset;
+
+        // Suavização leve: reduz tremor, sem usar limiar rígido de 5 m.
+        // Assim um deslocamento real pequeno não desaparece.
+        const alpha = 0.34;
+        smoothOffset.x += (rawOffset.x - smoothOffset.x) * alpha;
+        smoothOffset.y += (rawOffset.y - smoothOffset.y) * alpha;
+
+        visual = clampPointToPitch({
+          x: segmentVisualStart.x + smoothOffset.x,
+          y: segmentVisualStart.y + smoothOffset.y,
+          value: r.mpuKmh
+        });
+
+        result.push({
+          x: visual.x, y: visual.y,
+          value: clamp(Number(r.mpuKmh) || 0, 0, 25),
+          moving: true, sourceIndex: i
+        });
+      });
+
+      return result;
+    }
+
+    function calculateDurationSec(rows) {
+      if (rows.length < 2) return rows.length ? 0.1 : 0;
+      let ms = 0;
+      for (let i = 1; i < rows.length; i++) {
+        const dt = Number(rows[i].timeMs) - Number(rows[i-1].timeMs);
+        // Tempo_ms reinicia quando há nova retomada da gravação.
+        // Soma apenas intervalos positivos plausíveis entre amostras.
+        if (dt > 0 && dt <= 2000) ms += dt;
+      }
+      return Math.max(1, ms / 1000);
     }
 
     function getAttCount(points, side) {
@@ -491,22 +600,17 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
       const rows = parsed.dataRows;
       if (rows.length < 5) return alert("Arquivo com dados insuficientes (mínimo 5 coordenadas GPS válidas).");
 
-      // O ponto inicial da sessão fica SEMPRE no centro do campo.
-      // Depois disso, o mapa acompanha os deslocamentos relativos ao início.
+      // O ponto inicial da sessão fica no centro real do campo (460,305).
+      // A trajetória visual usa GPS apenas quando o Trackr confirma movimento.
       const origin = getMapAnchor(rows);
-      const points = [], speedsMPU = [], speedsGPS = [], times = [];
+      const points = buildFilteredTrajectory(rows, origin);
+      const speedsMPU = [], speedsGPS = [], times = [];
       let mpuSum = 0, gpsSum = 0;
       let standingCount = 0, movingCount = 0, sprintCount = 0, inSprint = false;
       let maxAccel = 0, explosiveActions = 0;
       let attackHalfCount = 0, defenseHalfCount = 0, centerCount = 0;
 
       rows.forEach(r => {
-        const proj = projectToPitch(r.lat, r.lng, origin.lat, origin.lng);
-
-        // GPS define ONDE o atleta estava.
-        // Trackr define a intensidade/velocidade usada no heatmap.
-        const intensity = clamp(r.mpuKmh, 0, 25);
-        points.push({ x: proj.x, y: proj.y, value: intensity });
         speedsMPU.push(r.mpuKmh);
         speedsGPS.push(r.gpsKmh);
         times.push(formatTimePTBR(r.horaUTC, r.timeMs));
@@ -519,10 +623,6 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
         if (!isMoving) standingCount++;
         else movingCount++;
 
-        if (proj.y < 285) attackHalfCount++;
-        else if (proj.y > 325) defenseHalfCount++;
-        else centerCount++;
-
         if (r.accel >= 3.0 || r.accelPeak >= 3.0) explosiveActions++;
 
         if (r.mpuKmh >= 15.0) {
@@ -530,6 +630,15 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
         } else {
           inSprint = false;
         }
+      });
+
+      // Setores táticos calculados pela trajetória filtrada, não pelo GPS bruto.
+      const tacticalPoints = points.filter(p => p.moving);
+      const sectorBase = tacticalPoints.length ? tacticalPoints : points;
+      sectorBase.forEach(p => {
+        if (p.y < 285) attackHalfCount++;
+        else if (p.y > 325) defenseHalfCount++;
+        else centerCount++;
       });
 
       const side = document.getElementById('sideIn').value;
@@ -559,10 +668,8 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
           ? (stats.def * 0.35 + stats.fis * 0.35 + stats.vel * 0.10 + roleVolume * 0.20)
           : (stats.pas * 0.30 + stats.fis * 0.30 + stats.vel * 0.10 + roleVolume * 0.30);
 
-      // Tempo real aproximado pelo intervalo dos registros, não por "1 linha = 1 segundo".
-      const durationSec = rows.length > 1
-        ? Math.max(1, (rows[rows.length - 1].timeMs - rows[0].timeMs) / 1000)
-        : rows.length * 0.1;
+      // Tempo acumulado robusto, inclusive quando Tempo_ms reinicia entre retomadas.
+      const durationSec = calculateDurationSec(rows);
 
       currentData = {
         name: document.getElementById('nameIn').value || "PLAYER",
@@ -587,9 +694,9 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
           movingPct: rows.length ? (movingCount / rows.length) * 100 : 0,
           sprints: sprintCount,
           explosiveActions,
-          attackHalfRatio: points.length ? (attackHalfCount / points.length) : 0,
-          defenseHalfRatio: points.length ? (defenseHalfCount / points.length) : 0,
-          centerRatio: points.length ? (centerCount / points.length) : 0,
+          attackHalfRatio: sectorBase.length ? (attackHalfCount / sectorBase.length) : 0,
+          defenseHalfRatio: sectorBase.length ? (defenseHalfCount / sectorBase.length) : 0,
+          centerRatio: sectorBase.length ? (centerCount / sectorBase.length) : 0,
           dist,
           maxAccel
         }
@@ -650,17 +757,17 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
       // GARANTIA DE CENTRALIZACAO DO INICIO
       // O mapa e relativo ao ponto inicial da sessao. Isso tambem corrige
       // cards antigos ou sessoes salvas com uma projecao anterior: o primeiro
-      // ponto e sempre deslocado para o centro geometrico do campo (460,280)
+      // ponto e sempre deslocado para o centro real do campo (460,305)
       // antes de aplicar o recorte/perspectiva.
       const rawPoints = points.map(p => ({
         x: Number(p.x) || 460,
-        y: Number(p.y) || 280,
+        y: Number(p.y) || 305,
         value: Number(p.value) || 0
       }));
       const anchorX = rawPoints.length ? rawPoints[0].x : 460;
-      const anchorY = rawPoints.length ? rawPoints[0].y : 280;
+      const anchorY = rawPoints.length ? rawPoints[0].y : 305;
       const offsetX = 460 - anchorX;
-      const offsetY = 280 - anchorY;
+      const offsetY = 305 - anchorY;
       const pitchPoints = rawPoints.map(p => clampPointToPitch({
         x: p.x + offsetX,
         y: p.y + offsetY,
@@ -688,7 +795,11 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
       // Agrupa os registros para manter o mapa leve no celular.
       const cols = 28, rows = 18;
       const bins = Array.from({ length: cols * rows }, () => ({ sum: 0, count: 0, peak: 0 }));
-      for (const raw of pitchPoints) {
+      // Não deixa milhares de amostras parado criarem um hotspot falso no centro.
+      // O calor vem apenas de pontos de deslocamento com intensidade útil.
+      const heatPoints = pitchPoints.filter((p, i) => i > 0 && p.value >= 0.15);
+      const heatSource = heatPoints.length ? heatPoints : pitchPoints.slice(1);
+      for (const raw of heatSource) {
         const nx = raw.x / SVG_W, ny = raw.y / SVG_H;
         const cx = clamp(Math.floor(nx * cols), 0, cols - 1);
         const cy = clamp(Math.floor(ny * rows), 0, rows - 1);
@@ -730,7 +841,7 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
           if (!b.count) continue;
           const avg = b.sum / b.count;
           const speedNorm = clamp(avg / scaleMax, 0, 1);
-          const density = clamp(b.count / Math.max(1, points.length / 45), 0, 1);
+          const density = clamp(b.count / Math.max(1, heatSource.length / 45), 0, 1);
           const v = clamp(speedNorm * .58 + density * .42, 0, 1);
           const alpha = 0.16 + Math.pow(v, 0.72) * 0.68;
           const x0 = ((cx + .5) / cols) * SVG_W;
@@ -755,7 +866,7 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
       // Marcador do inicio: centro exato do campo.
       // Nao usamos diretamente points[0], pois cards antigos podem ter
       // coordenadas projetadas antes da regra de centralizacao.
-      const start = pitchToCanvas({x:460, y:280, value:0});
+      const start = pitchToCanvas({x:460, y:305, value:0});
       ctx.beginPath();
       ctx.arc(start.x, start.y, 6, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(255,255,255,.95)';
