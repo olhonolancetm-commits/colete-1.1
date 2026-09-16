@@ -646,7 +646,26 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
 
       const SVG_W = 920, SVG_H = 560;
       const pitchToCanvas = p => ({ x: (p.x / SVG_W) * w, y: (p.y / SVG_H) * h });
-      const pitchPoints = points.map(clampPointToPitch);
+
+      // GARANTIA DE CENTRALIZACAO DO INICIO
+      // O mapa e relativo ao ponto inicial da sessao. Isso tambem corrige
+      // cards antigos ou sessoes salvas com uma projecao anterior: o primeiro
+      // ponto e sempre deslocado para o centro geometrico do campo (460,280)
+      // antes de aplicar o recorte/perspectiva.
+      const rawPoints = points.map(p => ({
+        x: Number(p.x) || 460,
+        y: Number(p.y) || 280,
+        value: Number(p.value) || 0
+      }));
+      const anchorX = rawPoints.length ? rawPoints[0].x : 460;
+      const anchorY = rawPoints.length ? rawPoints[0].y : 280;
+      const offsetX = 460 - anchorX;
+      const offsetY = 280 - anchorY;
+      const pitchPoints = rawPoints.map(p => clampPointToPitch({
+        x: p.x + offsetX,
+        y: p.y + offsetY,
+        value: p.value
+      }));
 
       // Linha de trajetória: deixa claro como o atleta saiu do ponto inicial.
       // O primeiro ponto útil fica no centro por definição da projeção.
@@ -733,8 +752,10 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
       }
       ctx.globalCompositeOperation = 'source-over';
 
-      // Marcador do início: centro exato do campo.
-      const start = pitchToCanvas(clampPointToPitch(points[0]));
+      // Marcador do inicio: centro exato do campo.
+      // Nao usamos diretamente points[0], pois cards antigos podem ter
+      // coordenadas projetadas antes da regra de centralizacao.
+      const start = pitchToCanvas({x:460, y:280, value:0});
       ctx.beginPath();
       ctx.arc(start.x, start.y, 6, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(255,255,255,.95)';
