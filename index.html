@@ -3,1186 +3,1152 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Pelada Pro Elite | Pro Tactical Suite</title>
+<title>Pelada Pro Elite | Pro Tactical Suite 5.0</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/heatmap.js/2.0.2/heatmap.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style type="text/css">@font-face {font-family:'Inter';font-style:normal;font-weight:400;src:url(/cf-fonts/v/inter/5.2.8/vietnamese/wght/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:400;src:url(/cf-fonts/v/inter/5.2.8/greek-ext/wght/normal.woff2);unicode-range:U+1F00-1FFF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:400;src:url(/cf-fonts/v/inter/5.2.8/greek/wght/normal.woff2);unicode-range:U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:400;src:url(/cf-fonts/v/inter/5.2.8/cyrillic-ext/wght/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:400;src:url(/cf-fonts/v/inter/5.2.8/cyrillic/wght/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:400;src:url(/cf-fonts/v/inter/5.2.8/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:400;src:url(/cf-fonts/v/inter/5.2.8/latin-ext/wght/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:500;src:url(/cf-fonts/v/inter/5.2.8/cyrillic/wght/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:500;src:url(/cf-fonts/v/inter/5.2.8/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:500;src:url(/cf-fonts/v/inter/5.2.8/greek/wght/normal.woff2);unicode-range:U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:500;src:url(/cf-fonts/v/inter/5.2.8/greek-ext/wght/normal.woff2);unicode-range:U+1F00-1FFF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:500;src:url(/cf-fonts/v/inter/5.2.8/latin-ext/wght/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:500;src:url(/cf-fonts/v/inter/5.2.8/cyrillic-ext/wght/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:500;src:url(/cf-fonts/v/inter/5.2.8/vietnamese/wght/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:600;src:url(/cf-fonts/v/inter/5.2.8/greek-ext/wght/normal.woff2);unicode-range:U+1F00-1FFF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:600;src:url(/cf-fonts/v/inter/5.2.8/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:600;src:url(/cf-fonts/v/inter/5.2.8/latin-ext/wght/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:600;src:url(/cf-fonts/v/inter/5.2.8/vietnamese/wght/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:600;src:url(/cf-fonts/v/inter/5.2.8/cyrillic/wght/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:600;src:url(/cf-fonts/v/inter/5.2.8/cyrillic-ext/wght/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:600;src:url(/cf-fonts/v/inter/5.2.8/greek/wght/normal.woff2);unicode-range:U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:700;src:url(/cf-fonts/v/inter/5.2.8/greek-ext/wght/normal.woff2);unicode-range:U+1F00-1FFF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:700;src:url(/cf-fonts/v/inter/5.2.8/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:700;src:url(/cf-fonts/v/inter/5.2.8/cyrillic-ext/wght/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:700;src:url(/cf-fonts/v/inter/5.2.8/latin-ext/wght/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:700;src:url(/cf-fonts/v/inter/5.2.8/vietnamese/wght/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:700;src:url(/cf-fonts/v/inter/5.2.8/greek/wght/normal.woff2);unicode-range:U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:700;src:url(/cf-fonts/v/inter/5.2.8/cyrillic/wght/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:800;src:url(/cf-fonts/v/inter/5.2.8/latin-ext/wght/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:800;src:url(/cf-fonts/v/inter/5.2.8/cyrillic/wght/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:800;src:url(/cf-fonts/v/inter/5.2.8/cyrillic-ext/wght/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:800;src:url(/cf-fonts/v/inter/5.2.8/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:800;src:url(/cf-fonts/v/inter/5.2.8/greek/wght/normal.woff2);unicode-range:U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:800;src:url(/cf-fonts/v/inter/5.2.8/greek-ext/wght/normal.woff2);unicode-range:U+1F00-1FFF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:800;src:url(/cf-fonts/v/inter/5.2.8/vietnamese/wght/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:900;src:url(/cf-fonts/v/inter/5.2.8/greek-ext/wght/normal.woff2);unicode-range:U+1F00-1FFF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:900;src:url(/cf-fonts/v/inter/5.2.8/vietnamese/wght/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:900;src:url(/cf-fonts/v/inter/5.2.8/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:900;src:url(/cf-fonts/v/inter/5.2.8/latin-ext/wght/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:900;src:url(/cf-fonts/v/inter/5.2.8/cyrillic/wght/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:900;src:url(/cf-fonts/v/inter/5.2.8/cyrillic-ext/wght/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:'Inter';font-style:normal;font-weight:900;src:url(/cf-fonts/v/inter/5.2.8/greek/wght/normal.woff2);unicode-range:U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;font-display:swap;}@font-face {font-family:'Outfit';font-style:normal;font-weight:400;src:url(/cf-fonts/v/outfit/5.2.8/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'Outfit';font-style:normal;font-weight:400;src:url(/cf-fonts/v/outfit/5.2.8/latin-ext/wght/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'Outfit';font-style:normal;font-weight:600;src:url(/cf-fonts/v/outfit/5.2.8/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'Outfit';font-style:normal;font-weight:600;src:url(/cf-fonts/v/outfit/5.2.8/latin-ext/wght/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'Outfit';font-style:normal;font-weight:800;src:url(/cf-fonts/v/outfit/5.2.8/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'Outfit';font-style:normal;font-weight:800;src:url(/cf-fonts/v/outfit/5.2.8/latin-ext/wght/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'Outfit';font-style:normal;font-weight:900;src:url(/cf-fonts/v/outfit/5.2.8/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'Outfit';font-style:normal;font-weight:900;src:url(/cf-fonts/v/outfit/5.2.8/latin-ext/wght/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}</style>
 <style>
 :root{color-scheme:dark;--bg:#05060a;--panel:#0c0f17;--panel2:#111521;--line:rgba(255,255,255,.09);--muted:#7e8799;--text:#f7f8fb;--gold:#f5b51b;--gold2:#ffcf4a;--green:#27d17f;--blue:#4aa8ff;--red:#ff5d6c;}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}body{overflow-x:hidden}
 body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 78% 4%,rgba(245,181,27,.10),transparent 26%),radial-gradient(circle at 20% 90%,rgba(74,168,255,.07),transparent 24%);z-index:-1}
 button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
-.app{min-height:100vh;display:grid;grid-template-columns:272px 1fr}.rail{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);background:rgba(8,10,16,.92);backdrop-filter:blur(18px);padding:24px 18px;display:flex;flex-direction:column;z-index:20}.brand{display:flex;align-items:center;gap:12px;margin-bottom:30px}.brand-mark{width:44px;height:44px;border-radius:14px;background:linear-gradient(145deg,#ffd34e,#dc8b00);display:grid;place-items:center;color:#111;font:900 25px Outfit;box-shadow:0 10px 30px rgba(245,181,27,.18)}.brand h1{font:900 18px Outfit;margin:0;font-style:italic;letter-spacing:-.7px}.brand p{font-size:8px;color:#6e7789;letter-spacing:1.6px;font-weight:800;margin:3px 0 0}.rail-section{margin-top:4px}.label{display:block;color:#697286;font-size:9px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;margin:0 0 7px 3px}.field{width:100%;border:1px solid var(--line);background:#111521;color:#f5f6fa;border-radius:11px;padding:11px 12px;outline:0}.field:focus{border-color:rgba(245,181,27,.7);box-shadow:0 0 0 3px rgba(245,181,27,.08)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.upload{margin-top:8px}.filebtn{display:flex;align-items:center;justify-content:center;gap:8px;background:#f6f7f9;color:#090a0e;padding:13px 12px;border-radius:12px;font-size:11px;font-weight:900;letter-spacing:.2px}.filebtn:hover{background:var(--gold2)}.filebtn input{display:none}.nav{margin-top:auto;display:grid;gap:5px}.nav button{border:1px solid transparent;background:transparent;color:#8b94a7;text-align:left;padding:12px 13px;border-radius:11px;font-weight:800;font-size:11px}.nav button:hover{background:#111521;color:#fff}.nav button.active{background:linear-gradient(90deg,rgba(245,181,27,.13),transparent);border-color:rgba(245,181,27,.17);color:var(--gold)}.rail-foot{font-size:8px;color:#4f586a;line-height:1.5;margin-top:20px;padding:0 4px}.main{min-width:0;padding:26px 32px 42px}.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:22px}.eyebrow{font-size:9px;letter-spacing:2px;color:var(--gold);font-weight:900}.title{font:900 clamp(34px,4vw,58px)/.95 Outfit;margin:6px 0 8px;letter-spacing:-2px;font-style:italic;text-transform:uppercase}.sub{color:#697286;font-size:11px}.actions{display:flex;gap:9px;align-items:center}.btn{border:1px solid var(--line);background:#0e121b;color:#dce1ea;border-radius:11px;padding:11px 14px;font-size:10px;font-weight:900;letter-spacing:.5px}.btn:hover{background:#151a25}.btn-gold{background:var(--gold);color:#111;border-color:var(--gold);box-shadow:0 10px 25px rgba(245,181,27,.12)}.btn-green{background:var(--green);color:#06120c;border-color:var(--green)}.status-pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 10px;font-size:8px;font-weight:900;letter-spacing:.8px;border:1px solid var(--line);background:#0d1119;color:#8490a4}.status-pill:before{content:"";width:6px;height:6px;border-radius:50%;background:#737b8c}.status-ok{color:#8ff0bb;border-color:rgba(39,209,127,.22);background:rgba(39,209,127,.07)}.status-ok:before{background:var(--green);box-shadow:0 0 10px var(--green)}
-.hero{display:grid;grid-template-columns:300px 1fr;gap:18px;margin-bottom:18px}.profile-panel,.analysis-panel,.chart-panel,.pitch-panel,.collection-panel{border:1px solid var(--line);background:linear-gradient(180deg,rgba(17,21,33,.94),rgba(10,13,21,.94));border-radius:18px;box-shadow:0 25px 70px rgba(0,0,0,.25)}
-.profile-panel{padding:18px;position:relative;overflow:hidden}.profile-panel:after{content:"";position:absolute;width:220px;height:220px;right:-100px;top:-100px;border-radius:50%;background:rgba(245,181,27,.08);filter:blur(10px)}.profile-head{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1}.mini-role{font-size:8px;color:var(--gold);font-weight:900;letter-spacing:1.4px}.ovr{font:900 56px/.9 Outfit;letter-spacing:-3px}.ovr-label{font-size:8px;color:#727b8c;font-weight:900;letter-spacing:1px}.avatar{width:112px;height:112px;border-radius:18px;object-fit:cover;border:1px solid rgba(255,255,255,.12);background:#151a26;box-shadow:0 18px 40px rgba(0,0,0,.4)}.player-name{font:900 24px Outfit;text-transform:uppercase;letter-spacing:-1px;margin:18px 0 2px}.player-role{font-size:9px;color:#7e8798;font-weight:800;letter-spacing:1.2px}.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}.stat{background:#0a0d14;border:1px solid rgba(255,255,255,.06);padding:10px;border-radius:11px}.stat span{display:block;color:#667084;font-size:8px;font-weight:900}.stat b{display:block;font:800 20px Outfit;margin-top:2px}.gold b{color:var(--gold)}
-.analysis-panel{padding:20px;display:flex;flex-direction:column;min-height:420px}.panel-kicker{display:flex;justify-content:space-between;align-items:center;color:#778195;font-size:9px;font-weight:900;letter-spacing:1.2px;text-transform:uppercase}.panel-kicker strong{color:var(--gold)}.report{margin-top:13px;color:#d4d9e2;font-size:12px;line-height:1.7;overflow:auto;max-height:355px;padding-right:5px}.report::-webkit-scrollbar{width:4px}.report::-webkit-scrollbar-thumb{background:#293142;border-radius:10px}
-.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}.kpi{padding:14px 15px;border:1px solid var(--line);border-radius:14px;background:rgba(12,15,23,.82)}.kpi .k{font-size:8px;color:#697386;font-weight:900;letter-spacing:1px;text-transform:uppercase}.kpi .v{font:800 21px Outfit;margin-top:5px}.kpi .hint{font-size:8px;color:#566073;margin-top:2px}.kpi.accent{border-color:rgba(245,181,27,.18);background:linear-gradient(145deg,rgba(245,181,27,.09),rgba(12,15,23,.82))}.kpi.accent .v{color:var(--gold)}
-.grid-main{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}.chart-panel,.pitch-panel{padding:18px;min-width:0}.chart-wrap{height:270px;margin-top:12px}.pitch-wrap{height:420px;position:relative;border-radius:15px;overflow:hidden;background:radial-gradient(circle at 50% 50%,#193b27,#0e2b1a);border:1px solid rgba(255,255,255,.07);margin-top:12px}.pitch-wrap:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.025) 0,rgba(255,255,255,.025) 10%,transparent 10%,transparent 20%);mix-blend-mode:screen}.pitch-wrap svg{position:absolute;inset:0;width:100%;height:100%}#heatmapContainer{position:absolute;inset:0;pointer-events:none;overflow:hidden;clip-path:polygon(28.26% 17.86%,71.74% 17.86%,88.04% 91.07%,11.96% 91.07%)}#heatmapContainer canvas.pitch-heat-canvas{display:block;width:100%;height:100%}.footnote{font-size:8px;color:#555e70;text-align:center;margin-top:8px}.section-title{font-size:10px;font-weight:900;letter-spacing:1.2px;text-transform:uppercase;color:#8a93a5}.section-title strong{color:#fff}
-.collection-panel{padding:20px}.collection-head{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin-bottom:18px}.collection-head h2{font:900 31px Outfit;margin:0;letter-spacing:-1px}.collection-head p{font-size:9px;color:#687184;margin:5px 0 0}.history-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.history-grid .glass{background:linear-gradient(145deg,#0d1119,#090c13)!important;border:1px solid var(--line)!important}.history-card{padding:16px;min-height:360px;display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:center;position:relative;overflow:hidden}.history-card:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 15%,rgba(245,181,27,.08),transparent 32%);pointer-events:none}.card-container{width:250px;height:360px;position:relative;filter:drop-shadow(0 22px 34px rgba(0,0,0,.55));transition:.25s}.card-container:hover{transform:translateY(-4px)}.card-bg{position:absolute;inset:0;background:linear-gradient(145deg,#ffd55d,#e49a13 50%,#7d4307);clip-path:polygon(0 13%,50% 0,100% 13%,100% 87%,50% 100%,0 87%)}.card-photo{position:absolute;top:36px;right:11px;width:132px;height:132px;object-fit:cover;border-radius:16px;box-shadow:0 15px 30px rgba(0,0,0,.35)}.card-content{position:absolute;inset:0;z-index:2;color:#1d1409;padding:34px 20px;display:flex;flex-direction:column}.tab-btn.active{color:var(--gold)}
+.app{min-height:100vh;display:grid;grid-template-columns:272px 1fr}
+.rail{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);background:rgba(8,10,16,.92);backdrop-filter:blur(18px);padding:24px 18px;display:flex;flex-direction:column;z-index:20}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+.brand-mark{width:44px;height:44px;border-radius:14px;background:linear-gradient(145deg,#ffd34e,#dc8b00);display:grid;place-items:center;color:#111;font:900 25px Outfit;box-shadow:0 10px 30px rgba(245,181,27,.18)}
+.brand h1{font:900 18px Outfit;margin:0;font-style:italic;letter-spacing:-.7px}.brand p{font-size:8px;color:#6e7789;letter-spacing:1.6px;font-weight:800;margin:3px 0 0}
+.label{display:block;color:#697286;font-size:9px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;margin:0 0 7px 3px}
+.field{width:100%;border:1px solid var(--line);background:#111521;color:#f5f6fa;border-radius:11px;padding:11px 12px;outline:0}
+.field:focus{border-color:rgba(245,181,27,.7);box-shadow:0 0 0 3px rgba(245,181,27,.08)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.filebtn{display:flex;align-items:center;justify-content:center;gap:8px;background:#f6f7f9;color:#090a0e;padding:13px 12px;border-radius:12px;font-size:11px;font-weight:900}
+.filebtn:hover{background:var(--gold2)}.filebtn input{display:none}
+.nav{margin-top:auto;display:grid;gap:5px}
+.nav button{border:1px solid transparent;background:transparent;color:#8b94a7;text-align:left;padding:12px 13px;border-radius:11px;font-weight:800;font-size:11px}
+.nav button:hover{background:#111521;color:#fff}
+.nav button.active{background:linear-gradient(90deg,rgba(245,181,27,.13),transparent);border-color:rgba(245,181,27,.17);color:var(--gold)}
+.rail-foot{font-size:8px;color:#4f586a;line-height:1.5;margin-top:20px;padding:0 4px}
+.main{min-width:0;padding:26px 32px 42px}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:22px}
+.eyebrow{font-size:9px;letter-spacing:2px;color:var(--gold);font-weight:900}
+.title{font:900 clamp(34px,4vw,58px)/.95 Outfit;margin:6px 0 8px;letter-spacing:-2px;font-style:italic;text-transform:uppercase}
+.sub{color:#697286;font-size:11px}
+.actions{display:flex;gap:9px;align-items:center}
+.btn{border:1px solid var(--line);background:#0e121b;color:#dce1ea;border-radius:11px;padding:11px 14px;font-size:10px;font-weight:900;letter-spacing:.5px}
+.btn:hover{background:#151a25}
+.btn-gold{background:var(--gold);color:#111;border-color:var(--gold)}
+.btn-green{background:var(--green);color:#06120c;border-color:var(--green)}
+.status-pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 10px;font-size:8px;font-weight:900;letter-spacing:.8px;border:1px solid var(--line);background:#0d1119;color:#8490a4}
+.status-pill:before{content:"";width:6px;height:6px;border-radius:50%;background:#737b8c}
+.status-ok{color:#8ff0bb;border-color:rgba(39,209,127,.22);background:rgba(39,209,127,.07)}
+.status-ok:before{background:var(--green);box-shadow:0 0 10px var(--green)}
+.hero{display:grid;grid-template-columns:300px 1fr;gap:18px;margin-bottom:18px}
+.profile-panel,.analysis-panel,.chart-panel,.pitch-panel,.collection-panel,.zones-panel{border:1px solid var(--line);background:linear-gradient(180deg,rgba(17,21,33,.94),rgba(10,13,21,.94));border-radius:18px;box-shadow:0 25px 70px rgba(0,0,0,.25)}
+.profile-panel{padding:18px;position:relative;overflow:hidden}
+.profile-head{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1}
+.mini-role{font-size:8px;color:var(--gold);font-weight:900;letter-spacing:1.4px}
+.ovr{font:900 56px/.9 Outfit;letter-spacing:-3px}.ovr-label{font-size:8px;color:#727b8c;font-weight:900;letter-spacing:1px}
+.avatar{width:112px;height:112px;border-radius:18px;object-fit:cover;border:1px solid rgba(255,255,255,.12);background:#151a26}
+.player-name{font:900 24px Outfit;text-transform:uppercase;letter-spacing:-1px;margin:18px 0 2px}
+.player-role{font-size:9px;color:#7e8798;font-weight:800;letter-spacing:1.2px}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}
+.stat{background:#0a0d14;border:1px solid rgba(255,255,255,.06);padding:10px;border-radius:11px}
+.stat span{display:block;color:#667084;font-size:8px;font-weight:900}.stat b{display:block;font:800 20px Outfit;margin-top:2px}.gold b{color:var(--gold)}
+.analysis-panel{padding:20px;display:flex;flex-direction:column;min-height:420px}
+.panel-kicker{display:flex;justify-content:space-between;align-items:center;color:#778195;font-size:9px;font-weight:900;letter-spacing:1.2px;text-transform:uppercase}
+.panel-kicker strong{color:var(--gold)}
+.report{margin-top:13px;color:#d4d9e2;font-size:12px;line-height:1.7;overflow:auto;max-height:355px;padding-right:5px}
+.report::-webkit-scrollbar{width:4px}.report::-webkit-scrollbar-thumb{background:#293142;border-radius:10px}
+.report .box{background:rgba(255,255,255,.04);border-radius:14px;padding:11px;border:1px solid rgba(255,255,255,.05)}
+.report h4{margin:14px 0 6px;font:800 11px Outfit;letter-spacing:1px;text-transform:uppercase;color:#8a93a5}
+.report ul{margin:4px 0 0 16px;padding:0;opacity:.85}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:18px}
+.kpi{padding:14px 15px;border:1px solid var(--line);border-radius:14px;background:rgba(12,15,23,.82);min-width:0}
+.kpi .k{font-size:8px;color:#697386;font-weight:900;letter-spacing:1px;text-transform:uppercase}
+.kpi .v{font:800 21px Outfit;margin-top:5px;white-space:nowrap}.kpi .hint{font-size:8px;color:#566073;margin-top:2px}
+.kpi.accent{border-color:rgba(245,181,27,.18);background:linear-gradient(145deg,rgba(245,181,27,.09),rgba(12,15,23,.82))}
+.kpi.accent .v{color:var(--gold)}
+.grid-main{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.chart-panel,.pitch-panel,.zones-panel{padding:18px;min-width:0}
+.chart-wrap{height:270px;margin-top:12px}
+.pitch-wrap{position:relative;width:100%;aspect-ratio:920/560;margin-top:12px;border-radius:15px;overflow:hidden;background:#0a1d12;border:1px solid rgba(255,255,255,.07)}
+.pitch-wrap svg,.pitch-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;font-size:9px;color:#8a93a5;font-weight:800;letter-spacing:.6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.zone-row{display:grid;grid-template-columns:96px 1fr 62px;gap:10px;align-items:center;margin-top:9px;font-size:10px;font-weight:800}
+.zone-row .bar{height:9px;border-radius:5px;background:#161c27;overflow:hidden}
+.zone-row .bar i{display:block;height:100%;border-radius:5px}
+.zone-row .num{text-align:right;color:#9aa5b6;font-variant-numeric:tabular-nums}
+.section-title{font-size:10px;font-weight:900;letter-spacing:1.2px;text-transform:uppercase;color:#8a93a5}
+.section-title strong{color:#fff}
+.collection-panel{padding:20px}
+.collection-head{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin-bottom:18px}
+.collection-head h2{font:900 31px Outfit;margin:0;letter-spacing:-1px}
+.collection-head p{font-size:9px;color:#687184;margin:5px 0 0}
+.history-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.history-card{padding:16px;display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:center;background:#0d1119;border:1px solid var(--line);border-radius:16px}
+.card-container{width:220px;height:320px;position:relative}
+.card-bg{position:absolute;inset:0;background:linear-gradient(145deg,#ffd55d,#e49a13 50%,#7d4307);clip-path:polygon(0 13%,50% 0,100% 13%,100% 87%,50% 100%,0 87%)}
+.card-photo{position:absolute;top:34px;right:11px;width:112px;height:112px;object-fit:cover;border-radius:16px}
+.card-content{position:absolute;inset:0;z-index:2;color:#1d1409;padding:30px 18px;display:flex;flex-direction:column}
+.history-card-info{position:relative;min-width:0}
+.history-card-kicker{font-size:8px;color:var(--gold);font-weight:900;letter-spacing:1.5px;text-transform:uppercase}
+.history-card-name{font:900 27px/.95 Outfit;text-transform:uppercase;letter-spacing:-1px;margin:5px 0 3px}
+.history-card-role{font-size:9px;color:#7e8798;font-weight:800;letter-spacing:1px}
+.history-card-date{font-size:9px;color:#596274;margin-top:7px}
+.history-metrics{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:15px}
+.history-metric{background:#080b11;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:9px}
+.history-metric span{display:block;font-size:7px;color:#687184;font-weight:900;text-transform:uppercase}
+.history-metric b{display:block;font:800 18px Outfit;margin-top:2px}
+.history-metric.highlight b{color:var(--gold)}
+.history-tactical{margin-top:12px;padding:10px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05)}
+.history-tactical span{font-size:7px;color:#687184;font-weight:900;text-transform:uppercase}
+.history-tactical strong{display:block;font-size:11px;margin-top:4px;color:#e7eaf0}
+.history-card-actions{display:flex;gap:7px;margin-top:12px}.history-card-actions .btn{padding:9px 11px;font-size:9px}
+.history-card-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;font-weight:900}
+.history-card-stats span{display:flex;justify-content:space-between;padding:6px 7px;background:rgba(0,0,0,.08);border-radius:7px}
+.card-title-2{font:900 21px Outfit;text-transform:uppercase}
 .mobile-top{display:none}
- .glass{background:#0d1119;border:1px solid var(--line);border-radius:16px}.history-grid .card-container{width:220px;height:320px}.history-grid .card-content{padding:30px 18px}.history-grid .card-photo{width:112px;height:112px;top:34px}.history-card-info{position:relative;z-index:2;min-width:0}.history-card-kicker{font-size:8px;color:var(--gold);font-weight:900;letter-spacing:1.5px;text-transform:uppercase}.history-card-name{font:900 27px/.95 Outfit;text-transform:uppercase;letter-spacing:-1px;margin:5px 0 3px}.history-card-role{font-size:9px;color:#7e8798;font-weight:800;letter-spacing:1px}.history-card-date{font-size:9px;color:#596274;margin-top:7px}.history-metrics{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:15px}.history-metric{background:#080b11;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:9px}.history-metric span{display:block;font-size:7px;color:#687184;font-weight:900;letter-spacing:.8px;text-transform:uppercase}.history-metric b{display:block;font:800 18px Outfit;margin-top:2px}.history-metric.highlight b{color:var(--gold)}.history-tactical{margin-top:12px;padding:10px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05)}.history-tactical span{font-size:7px;color:#687184;font-weight:900;letter-spacing:.8px;text-transform:uppercase}.history-tactical strong{display:block;font-size:11px;margin-top:4px;color:#e7eaf0}.history-card-actions{display:flex;gap:7px;margin-top:12px}.history-card-actions .btn{padding:9px 11px;font-size:9px}.history-card-title{font:900 22px Outfit;text-transform:uppercase}.history-card-meta{font-size:8px;color:#697386;font-weight:900;letter-spacing:1px}.history-card-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;font-weight:900}.history-card-stats span{display:flex;justify-content:space-between;padding:6px 7px;background:rgba(0,0,0,.08);border-radius:7px} @media(max-width:1180px){.app{grid-template-columns:230px 1fr}.main{padding:22px}.hero{grid-template-columns:270px 1fr}.kpis{grid-template-columns:repeat(3,1fr)}.grid-main{grid-template-columns:1fr}.history-grid{grid-template-columns:1fr}.history-card{grid-template-columns:220px 1fr}}
+@media(max-width:1180px){.app{grid-template-columns:230px 1fr}.main{padding:22px}.hero{grid-template-columns:270px 1fr}
+.kpis{grid-template-columns:repeat(3,1fr)}.grid-main{grid-template-columns:1fr}.history-grid{grid-template-columns:1fr}
+.history-card{grid-template-columns:200px 1fr}}
 @media(max-width:760px){
-  html,body{width:100%;overflow-x:hidden}
-  .app{display:block;width:100%;min-width:0}
+  .app{display:block}
   .rail{position:fixed;left:0;top:0;bottom:0;width:min(86vw,320px);transform:translateX(-110%);transition:transform .25s ease;z-index:80;overflow-y:auto;padding:18px 14px}
   .rail.open{transform:translateX(0)}
-  .mobile-top{display:flex;position:sticky;top:0;z-index:50;width:100%;padding:9px 11px;background:rgba(5,6,10,.92);backdrop-filter:blur(15px);border-bottom:1px solid var(--line);align-items:center;justify-content:space-between;gap:8px}
-  .mobile-brand{display:flex;align-items:center;gap:8px;min-width:0}
-  .mobile-brand .brand-mark{width:34px;height:34px;font-size:19px;border-radius:10px;flex:none}
+  .mobile-top{display:flex;position:sticky;top:0;z-index:50;padding:9px 11px;background:rgba(5,6,10,.92);backdrop-filter:blur(15px);border-bottom:1px solid var(--line);align-items:center;justify-content:space-between;gap:8px}
+  .mobile-brand{display:flex;align-items:center;gap:8px}
+  .mobile-brand .brand-mark{width:34px;height:34px;font-size:19px;border-radius:10px}
   .mobile-brand b{font:900 13px Outfit;font-style:italic}
-  .mobile-brand div:last-child{font-size:6px!important}
-  .mobile-actions{display:flex;align-items:center;gap:6px}
-  .mobile-import{display:inline-flex!important;align-items:center;justify-content:center;white-space:nowrap}
-  .main{width:100%;min-width:0;padding:13px 10px 28px}
-  .topbar{align-items:stretch;flex-direction:column;gap:10px;margin-bottom:14px}
-  .eyebrow{font-size:8px;letter-spacing:1.5px}
-  .title{font-size:clamp(31px,10vw,42px);letter-spacing:-1.5px;word-break:break-word}
-  .sub{font-size:9px;line-height:1.5}
-  .actions{width:100%;justify-content:space-between;gap:6px;flex-wrap:wrap}
-  .actions .btn{flex:0 1 auto}
-  .status-pill{font-size:7px;padding:6px 8px}
+  .main{padding:13px 10px 28px}
+  .topbar{flex-direction:column;gap:10px;margin-bottom:14px}
+  .title{font-size:clamp(31px,10vw,42px)}
+  .actions{width:100%;justify-content:space-between;flex-wrap:wrap}.actions .btn{flex:1 1 130px}
   .hero{grid-template-columns:1fr;gap:10px}
-  .profile-panel{min-height:auto;padding:14px}
-  .profile-head{gap:8px}
-  .ovr{font-size:50px}
-  .avatar,.profile-panel .avatar{width:86px;height:86px;border-radius:14px}
-  .player-name{font-size:22px;margin-top:13px}
-  .statgrid{gap:6px;margin-top:13px}
-  .stat{padding:8px}
-  .stat b{font-size:18px}
-  .analysis-panel{min-height:auto;padding:14px}
-  .panel-kicker{font-size:8px;gap:6px;align-items:flex-start}
-  .report{font-size:11px;line-height:1.6;max-height:none;overflow:visible}
-  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:10px}
-  .kpi{padding:11px 10px;min-width:0}
-  .kpi .v{font-size:18px;white-space:nowrap}
-  .kpi .hint{font-size:7px}
+  .profile-panel,.analysis-panel{padding:14px;min-height:auto}
+  .report{max-height:none;overflow:visible}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .kpi .v{font-size:18px}
   .grid-main{grid-template-columns:1fr;gap:10px}
-  .chart-panel,.pitch-panel{padding:12px}
-  .chart-wrap{height:220px;margin-top:8px}
-  .pitch-wrap{height:min(82vw,360px);margin-top:8px}
-  .section-title{font-size:8px;line-height:1.4}
-  .footnote{font-size:7px;line-height:1.4}
-  .collection-panel{padding:13px}
-  .collection-head{align-items:flex-start;flex-direction:column;gap:10px;margin-bottom:12px}
-  .collection-head h2{font-size:27px}
-  .collection-head .actions{width:100%}
-  .history-grid{grid-template-columns:1fr;gap:10px}
-  .history-card{grid-template-columns:1fr;gap:12px;padding:12px;min-height:0}
-  .history-card .card-container{width:min(220px,72vw);height:min(320px,105vw);margin:0 auto}
-  .history-card .card-photo{width:112px;height:112px}
-  .history-card-info{width:100%}
-  .history-card-name{font-size:23px}
-  .history-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-  .history-card-actions{flex-wrap:wrap}
-  .history-card-actions .btn{flex:1 1 120px}
-}
-@media(max-width:420px){
-  .mobile-import{font-size:8px!important;padding:9px 9px!important}
-  .mobile-top .btn{font-size:8px;padding:9px 9px}
-  .main{padding-left:8px;padding-right:8px}
-  .kpis{gap:6px}
-  .kpi .v{font-size:16px}
-  .pitch-wrap{height:82vw}
-  .history-card .card-container{width:190px;height:276px}
-  .history-card .card-photo{width:98px;height:98px}
+  .chart-panel,.pitch-panel,.zones-panel{padding:12px}
+  .chart-wrap{height:220px}
+  .history-card{grid-template-columns:1fr;gap:12px;padding:12px}
+  .card-container{width:min(220px,72vw);height:min(320px,105vw);margin:0 auto}
+  .history-card-actions{flex-wrap:wrap}.history-card-actions .btn{flex:1 1 130px}
+  .zone-row{grid-template-columns:78px 1fr 56px;font-size:9px}
 }
 </style>
 </head>
 <body>
-<div class="mobile-top"><div class="mobile-brand"><div class="brand-mark">P</div><div><b>PELADA PRO</b><div style="font-size:7px;color:#687184;letter-spacing:1.4px;font-weight:900">PRO TACTICAL SUITE</div></div></div><div class="mobile-actions"><button class="btn btn-gold mobile-import" id="mobileImportBtn" type="button">IMPORTAR CSV</button><button class="btn" id="mobileMenuBtn" type="button">MENU</button></div></div>
+
+<div class="mobile-top">
+  <div class="mobile-brand"><div class="brand-mark">P</div><div><b>PELADA PRO</b><div style="font-size:6px;color:#687184;letter-spacing:1.4px;font-weight:900">PRO TACTICAL SUITE</div></div></div>
+  <div style="display:flex;gap:6px">
+    <button class="btn btn-gold" id="mobileImportBtn" type="button">IMPORTAR CSV</button>
+    <button class="btn" id="mobileMenuBtn" type="button">MENU</button>
+  </div>
+</div>
+
 <div class="app">
 <aside class="rail" id="mobileDrawer">
-  <div class="brand"><div class="brand-mark">P</div><div><h1>PELADA<span style="color:var(--gold)">PRO</span></h1><p>PRO TACTICAL SUITE</p></div></div>
-  <div class="rail-section">
-    <label class="label">Nome do atleta</label><input id="nameIn" class="field" placeholder="Ex: João Silva">
-    <div class="grid2" style="margin-top:10px"><div><label class="label">Posição</label><select id="posIn" class="field"><option value="ATA">Atacante</option><option value="MEI">Meio-Campo</option><option value="DEF">Zagueiro</option></select></div><div><label class="label">Ataque p/</label><select id="sideIn" class="field"><option value="up">Cima</option><option value="down">Baixo</option></select></div></div>
-    <div class="upload"><label class="label">Imagem do atleta</label><input id="photoIn" type="file" accept="image/*" class="field" style="padding:7px"></div>
+  <div class="brand"><div class="brand-mark">P</div><div><h1>PELADA<span style="color:var(--gold)">PRO</span></h1><p>PRO TACTICAL SUITE 5.0</p></div></div>
+
+  <div><label class="label">Nome do atleta</label><input id="nameIn" class="field" placeholder="Ex: João Silva"></div>
+  <div class="grid2" style="margin-top:10px">
+    <div><label class="label">Posição</label><select id="posIn" class="field">
+      <option value="ATA">Atacante</option><option value="MEI" selected>Meio-Campo</option><option value="DEF">Zagueiro</option>
+    </select></div>
+    <div><label class="label">Atacando para</label><select id="sideIn" class="field">
+      <option value="up">Cima</option><option value="down">Baixo</option>
+    </select></div>
   </div>
-  <div style="margin-top:16px"><label class="filebtn">IMPORTAR DADOS DO TRACKR<input id="csvFileInput" type="file" accept=".csv,.txt,text/csv,text/plain,application/vnd.ms-excel"></label></div>
-  <nav class="nav"><button data-tab="dashboard" class="tab-btn active">▣ &nbsp; DASHBOARD</button><button data-tab="history" class="tab-btn">◈ &nbsp; MINHA COLEÇÃO</button></nav>
-  <div class="rail-foot">PELADA PRO ELITE<br>Performance intelligence para futebol amador.</div>
+  <div style="margin-top:10px"><label class="label">Imagem do atleta</label><input id="photoIn" type="file" accept="image/*" class="field" style="padding:7px"></div>
+  <div style="margin-top:16px"><label class="filebtn">IMPORTAR DADOS DO TRACKR<input id="csvFileInput" type="file" accept=".csv,.txt,text/csv,text/plain"></label></div>
+
+  <nav class="nav">
+    <button data-tab="dashboard" class="tab-btn active">▣ &nbsp; DASHBOARD</button>
+    <button data-tab="history" class="tab-btn">◈ &nbsp; MINHA COLEÇÃO</button>
+  </nav>
+  <div class="rail-foot">PELADA PRO ELITE 5.0<br>Performance intelligence para futebol amador.<br>Campo padrão futebol 7: 45 × 25 m.</div>
 </aside>
 <div id="mobileOverlay" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:70"></div>
+
 <main class="main">
 <section id="tab-dashboard">
-  <div class="topbar"><div><div class="eyebrow">PELADA PRO / PERFORMANCE INTELLIGENCE</div><h2 class="title" id="titleName">NOVO ATLETA</h2><div class="sub"><span id="dateShow">AGUARDANDO DADOS...</span> &nbsp;·&nbsp; <span id="posShow">STATUS: OFFLINE</span></div></div><div class="actions"><span id="sessionStatus" class="status-pill">AGUARDANDO CSV</span><button id="btnSave" onclick="saveSession()" class="btn btn-green hidden">SALVAR CARD</button></div></div>
+  <div class="topbar">
+    <div>
+      <div class="eyebrow">PELADA PRO / PERFORMANCE INTELLIGENCE</div>
+      <h2 class="title" id="titleName">NOVO ATLETA</h2>
+      <div class="sub"><span id="dateShow">AGUARDANDO DADOS...</span> &nbsp;·&nbsp; <span id="posShow">STATUS: OFFLINE</span></div>
+    </div>
+    <div class="actions">
+      <span id="sessionStatus" class="status-pill">AGUARDANDO CSV</span>
+      <button id="btnSave" onclick="saveSession()" class="btn btn-green hidden">SALVAR CARD</button>
+    </div>
+  </div>
+
   <div class="hero">
     <div class="profile-panel">
-      <div class="profile-head"><div><div class="mini-role">OVERALL</div><div class="ovr" id="cardOvr">--</div><div class="ovr-label">RATING</div></div><img id="cardPhoto" class="avatar" src="https://via.placeholder.com/200" alt="Foto do atleta"></div>
-      <div class="player-name" id="cardName">PLAYER</div><div class="player-role" id="cardPos">POSIÇÃO</div>
-      <div class="statgrid"><div class="stat gold"><span>VEL</span><b id="s-vel">--</b></div><div class="stat"><span>DRI</span><b id="s-dri">--</b></div><div class="stat"><span>ATA</span><b id="s-ata">--</b></div><div class="stat"><span>DEF</span><b id="s-def">--</b></div><div class="stat"><span>PAS</span><b id="s-pas">--</b></div><div class="stat"><span>FIS</span><b id="s-fis">--</b></div></div>
-      <div style="margin-top:18px;font-size:8px;color:#596274;line-height:1.5">O rating é uma leitura estimada a partir da trajetória, intensidade e perfil posicional selecionado.</div>
+      <div class="profile-head">
+        <div><div class="mini-role">OVERALL</div><div class="ovr" id="cardOvr">--</div><div class="ovr-label">RATING</div></div>
+        <img id="cardPhoto" class="avatar" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzE1MWEyNiIvPjx0ZXh0IHg9IjEwMCIgeT0iMTEwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM2OTcyODYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkZPVE88L3RleHQ+PC9zdmc+" alt="Foto do atleta">
+      </div>
+      <div class="player-name" id="cardName">PLAYER</div>
+      <div class="player-role" id="cardPos">POSIÇÃO</div>
+      <div class="statgrid">
+        <div class="stat gold"><span>VEL</span><b id="s-vel">--</b></div>
+        <div class="stat"><span>INT</span><b id="s-dri">--</b></div>
+        <div class="stat"><span>ATA</span><b id="s-ata">--</b></div>
+        <div class="stat"><span>DEF</span><b id="s-def">--</b></div>
+        <div class="stat"><span>VOL</span><b id="s-pas">--</b></div>
+        <div class="stat"><span>FIS</span><b id="s-fis">--</b></div>
+      </div>
+      <div style="margin-top:18px;font-size:8px;color:#596274;line-height:1.5">O rating é uma leitura estimada a partir da trajetória GPS, intensidade e perfil posicional selecionado. Não mede técnica com bola.</div>
     </div>
-    <div class="analysis-panel"><div class="panel-kicker"><span><strong>IA TÁTICA</strong> / RELATÓRIO DE PERFORMANCE</span><span id="hudRole">—</span></div><div id="aiReport" class="report">Importe um CSV do Trackr para gerar a análise premium. O sistema cruza posição escolhida, trajetória GPS e dados de movimento do dispositivo.</div></div>
+    <div class="analysis-panel">
+      <div class="panel-kicker"><span><strong>IA TÁTICA</strong> / RELATÓRIO DE PERFORMANCE</span><span id="hudRole">—</span></div>
+      <div id="aiReport" class="report">Importe um CSV do Trackr para gerar a análise. O sistema cruza posição escolhida, trajetória GPS e dados de intensidade do dispositivo.</div>
+    </div>
   </div>
+
   <div class="kpis">
     <div class="kpi accent"><div class="k">Overall</div><div class="v" id="hudOvr">—</div><div class="hint">rating estimado</div></div>
-    <div class="kpi"><div class="k">Distância</div><div class="v" id="hudDistance">—</div><div class="hint">trajetória GPS</div></div>
-    <div class="kpi"><div class="k">Pico GPS</div><div class="v" id="hudGps">—</div><div class="hint">referência espacial</div></div>
-    <div class="kpi"><div class="k">Pico Trackr</div><div class="v" id="hudTrackr">—</div><div class="hint">intensidade estimada</div></div>
-    <div class="kpi"><div class="k">Movimento</div><div class="v" id="hudMoving">—</div><div class="hint"><span id="hudExplosive">0</span> ações explosivas</div></div>
+    <div class="kpi"><div class="k">Tempo</div><div class="v" id="hudDuration">—</div><div class="hint">duração analisada</div></div>
+    <div class="kpi"><div class="k">Distância</div><div class="v" id="hudDistance">—</div><div class="hint">integrada por Doppler</div></div>
+    <div class="kpi"><div class="k">Pico GPS</div><div class="v" id="hudGps">—</div><div class="hint">velocidade real</div></div>
+    <div class="kpi"><div class="k">Movimento</div><div class="v" id="hudMoving">—</div><div class="hint">do período ativo</div></div>
+    <div class="kpi"><div class="k">Sprints</div><div class="v" id="hudSprints">—</div><div class="hint"><span id="hudImpact">0</span> impactos &gt;3 g</div></div>
   </div>
+
   <div class="grid-main">
-    <div class="chart-panel"><div class="section-title">CARGA DE VELOCIDADE <strong>/ TRACKR x GPS</strong></div><div class="chart-wrap"><canvas id="loadChart"></canvas></div></div>
-    <div class="pitch-panel"><div class="section-title">MAPA DE OCUPAÇÃO <strong>/ TRAJETÓRIA + INTENSIDADE</strong></div><div class="pitch-wrap"><svg viewBox="0 0 920 560" preserveAspectRatio="none"><defs><linearGradient id="pitchGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#132b52"/><stop offset="100%" stop-color="#07182f"/></linearGradient></defs><path d="M110,510 L810,510 L660,100 L260,100 Z" fill="url(#pitchGrad)" stroke="rgba(255,255,255,.65)" stroke-width="2"/><line x1="185" y1="305" x2="735" y2="305" stroke="rgba(255,255,255,.4)" stroke-width="2"/><ellipse cx="460" cy="305" rx="80" ry="35" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"/><rect x="410" y="85" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><rect x="410" y="510" width="100" height="15" fill="none" stroke="white" stroke-width="2"/><path d="M280,100 L640,100 L600,200 L320,200 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/><path d="M280,510 L640,510 L600,410 L320,410 Z" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/><circle id="startMarkerOuter" cx="460" cy="305" r="13" fill="rgba(245,158,11,.18)" stroke="rgba(245,158,11,.95)" stroke-width="3"/><circle id="startMarkerInner" cx="460" cy="305" r="6" fill="white" stroke="white" stroke-width="1"/></svg><div id="heatmapContainer"></div></div><div class="footnote">O ponto inicial é o centro do campo. O GPS só move a trajetória quando o Trackr confirma deslocamento; ruído parado é congelado e a intensidade do dispositivo colore o mapa.</div></div>
+    <div class="chart-panel"><div class="section-title">CARGA DE VELOCIDADE <strong>/ GPS POR AMOSTRA</strong></div><div class="chart-wrap"><canvas id="loadChart"></canvas></div></div>
+    <div class="pitch-panel">
+      <div class="section-title">MAPA DE OCUPAÇÃO <strong>/ CAMPO 45 × 25 M</strong></div>
+      <div class="pitch-wrap" id="pitchWrap">
+        <svg id="pitchSvg" viewBox="0 0 920 560" preserveAspectRatio="none" aria-label="Campo de futebol 7">
+          <defs>
+            <linearGradient id="turf" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1d5c3a"/><stop offset="100%" stop-color="#124a2c"/>
+            </linearGradient>
+          </defs>
+          <g id="pitchLayer"></g>
+        </svg>
+        <canvas id="heatCanvas"></canvas>
+      </div>
+      <div class="legend">
+        <span><i style="background:#2380ff"></i>parado</span>
+        <span><i style="background:#22dc78"></i>caminhando</span>
+        <span><i style="background:#f5eb28"></i>trote</span>
+        <span><i style="background:#ff9114"></i>corrida</span>
+        <span><i style="background:#e11919"></i>sprint</span>
+      </div>
+      <div class="footnote" id="mapNote">A trajetória é desenhada relativa ao ponto de partida, no centro do campo. A cor representa a velocidade GPS de cada amostra.</div>
+    </div>
+  </div>
+
+  <div class="zones-panel" style="margin-top:18px">
+    <div class="section-title">DISTRIBUIÇÃO DE INTENSIDADE <strong>/ ZONAS DE VELOCIDADE</strong></div>
+    <div id="zonesWrap" style="margin-top:12px"><p class="footnote">Importe um CSV para ver as zonas.</p></div>
   </div>
 </section>
-<section id="tab-history" class="hidden"><div class="collection-panel"><div class="collection-head"><div><div class="eyebrow">ARQUIVO DE PERFORMANCE</div><h2>Minha Coleção</h2><p>Cards salvos localmente neste navegador.</p></div><div class="actions"><button id="btnClearHistory" onclick="clearHistory()" class="btn hidden">EXCLUIR TODOS</button><button onclick="switchTab('dashboard')" class="btn btn-gold">NOVO RELATÓRIO</button></div></div><div id="historyGrid" class="history-grid"></div></div></section>
-</main></div>
+
+<section id="tab-history" class="hidden">
+  <div class="collection-panel">
+    <div class="collection-head">
+      <div><div class="eyebrow">ARQUIVO DE PERFORMANCE</div><h2>Minha Coleção</h2><p>Cards salvos localmente neste navegador.</p></div>
+      <div class="actions"><button id="btnClearHistory" onclick="clearHistory()" class="btn hidden">EXCLUIR TODOS</button><button onclick="switchTab('dashboard')" class="btn btn-gold">NOVO RELATÓRIO</button></div>
+    </div>
+    <div id="historyGrid" class="history-grid"></div>
+  </div>
+</section>
+</main>
+</div>
+
 <script>
+/* =========================================================================
+   PELADA PRO ELITE 5.0
+   - Campo padrão futebol 7: 50 x 30 m (total) com 45 x 25 m de linha de jogo
+   - UMA única função de projeção (SVG e canvas usam a mesma)
+   - Parser aceita CSV 4.x (MPU) e 5.0 (GPS Doppler)
+   ========================================================================= */
 
-    // =========================
-    // Estado
-    // =========================
-    let heatmapInstance;
-    let loadChart;
-    let currentData = null;
-    let photoData = "https://via.placeholder.com/200";
+// -------------------- CAMPO --------------------
+// Geometria em metros; centros oficiais do futebol 7 (CBF)
+const FIELD = {
+  totalW: 50, totalH: 30,      // área total com as margens
+  lineW: 45, lineH: 25,        // linhas de jogo
+  goalW: 3,                    // largura do gol (futsal/7)
+  areaD: 6, areaW: 16,         // área: profundidade x largura
+  centerR: 3,
+  penD: 5
+};
+const FIELD_OX = (FIELD.totalW - FIELD.lineW) / 2;  // 2.5 m
+const FIELD_OY = (FIELD.totalH - FIELD.lineH) / 2;  // 2.5 m
+const VIEW_W = 920, VIEW_H = 560;                   // viewBox do SVG
+const SCALE = Math.min(VIEW_W / FIELD.totalW, VIEW_H / FIELD.totalH); // px por metro
 
-    // =========================
-    // Helpers
-    // =========================
-    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+// metros -> coordenadas do viewBox (fonte única de verdade)
+function m2v(xm, ym) {
+  const w = FIELD.totalW * SCALE, h = FIELD.totalH * SCALE;
+  return { x: (VIEW_W - w) / 2 + xm * SCALE, y: (VIEW_H - h) / 2 + ym * SCALE };
+}
+// metros (com Y para baixo, igual ao viewBox) -> canvas
+function m2c(xm, ym, cw, ch) {
+  const p = m2v(xm, ym);
+  return { x: (p.x / VIEW_W) * cw, y: (p.y / VIEW_H) * ch };
+}
+// Limita um ponto em metros aos limites do campo (clamp em espaço métrico)
+function clampMeters(xm, ym) {
+  return { x: clamp(xm, 0, FIELD.totalW), y: clamp(ym, 0, FIELD.totalH) };
+}
 
-    function safeToNumber(x) {
-      const n = parseFloat(x);
-      return Number.isFinite(n) ? n : null;
+function desenharCampo() {
+  const g = document.getElementById('pitchLayer');
+  if (!g) return;
+  const P = (xm, ym) => { const q = m2v(xm, ym); return q.x + ',' + q.y; };
+
+  const x0 = FIELD_OX, y0 = FIELD_OY;
+  const x1 = FIELD.totalW - FIELD_OX, y1 = FIELD.totalH - FIELD_OY;
+  const cx = FIELD.totalW / 2, cy = FIELD.totalH / 2;
+  const areaTop = y0 + FIELD.areaD, areaBot = y1 - FIELD.areaD;
+  const areaL = cx - FIELD.areaW / 2, areaR = cx + FIELD.areaW / 2;
+  const goalL = cx - FIELD.goalW / 2, goalR = cx + FIELD.goalW / 2;
+
+  let s = '';
+  // grama com faixas
+  const faixas = 8, fw = FIELD.totalW / faixas;
+  for (let i = 0; i < faixas; i++) {
+    const a = m2v(i * fw, 0), b = m2v((i + 1) * fw, FIELD.totalH);
+    s += `<rect x="${a.x}" y="${a.y}" width="${b.x - a.x}" height="${b.y - a.y}" fill="${i % 2 ? '#17512f' : '#1b5c37'}"/>`;
+  }
+  s += `<rect x="0" y="0" width="${VIEW_W}" height="${VIEW_H}" fill="none"/>`;
+  // área total
+  const o = m2v(0, 0), o2 = m2v(FIELD.totalW, FIELD.totalH);
+  s += `<rect x="${o.x}" y="${o.y}" width="${o2.x - o.x}" height="${o2.y - o.y}" fill="url(#turf)" opacity="0.55"/>`;
+
+  const stroke = 'rgba(255,255,255,.72)';
+  const thin = 'rgba(255,255,255,.45)';
+  // linhas de jogo
+  s += `<rect x="${P(x0, y0).split(',')[0]}" y="${P(x0, y0).split(',')[1]}" width="${(x1 - x0) * SCALE}" height="${(y1 - y0) * SCALE}" fill="none" stroke="${stroke}" stroke-width="2.5"/>`;
+  // meio de campo + círculo central
+  const cA = m2v(x0, cy), cB = m2v(x1, cy);
+  s += `<line x1="${cA.x}" y1="${cA.y}" x2="${cB.x}" y2="${cB.y}" stroke="${stroke}" stroke-width="2.5"/>`;
+  const cc = m2v(cx, cy);
+  s += `<ellipse cx="${cc.x}" cy="${cc.y}" rx="${FIELD.centerR * SCALE}" ry="${FIELD.centerR * SCALE}" fill="none" stroke="${stroke}" stroke-width="2.5"/>`;
+  s += `<circle cx="${cc.x}" cy="${cc.y}" r="3" fill="${stroke}"/>`;
+
+  // áreas (topo e base)
+  const aTL = m2v(areaL, y0), aTR = m2v(areaR, y0), aBR = m2v(areaR, areaTop), aBL = m2v(areaL, areaTop);
+  s += `<rect x="${aTL.x}" y="${aTL.y}" width="${aTR.x - aTL.x}" height="${aBL.y - aTL.y}" fill="none" stroke="${thin}" stroke-width="2"/>`;
+  const bTL = m2v(areaL, areaBot), bTR = m2v(areaR, areaBot), bBR = m2v(areaR, y1), bBL = m2v(areaL, y1);
+  s += `<rect x="${bTL.x}" y="${bTL.y}" width="${bTR.x - bTL.x}" height="${bBR.y - bTL.y}" fill="none" stroke="${thin}" stroke-width="2"/>`;
+
+  // gols
+  const gTL = m2v(goalL, y0 - 1), gBR = m2v(goalR, y0);
+  s += `<rect x="${gTL.x}" y="${gTL.y}" width="${gBR.x - gTL.x}" height="${y0 - (y0 - 1)}" fill="rgba(255,255,255,.25)" stroke="${stroke}" stroke-width="2"/>`;
+  const g2T = m2v(goalL, y1), g2B = m2v(goalR, y1 + 1);
+  s += `<rect x="${g2T.x}" y="${g2T.y}" width="${g2B.x - g2T.x}" height="${g2B.y - g2T.y}" fill="rgba(255,255,255,.25)" stroke="${stroke}" stroke-width="2"/>`;
+
+  // marcas de canto
+  [ [x0, y0, 1, 1], [x1, y0, -1, 1], [x0, y1, 1, -1], [x1, y1, -1, -1] ].forEach(([px, py, sx, sy]) => {
+    const q = m2v(px, py);
+    s += `<path d="M ${q.x + sx * 12} ${q.y} A 12 12 0 0 ${(sx * sy > 0 ? 0 : 1)} ${q.x} ${q.y + sy * 12}" fill="none" stroke="${thin}" stroke-width="2"/>`;
+  });
+
+  // marcador de início (centro)
+  s += `<circle id="startMarkerOuter" cx="${cc.x}" cy="${cc.y}" r="13" fill="rgba(245,181,27,.18)" stroke="rgba(245,181,27,.95)" stroke-width="3"/>`;
+  s += `<circle id="startMarkerInner" cx="${cc.x}" cy="${cc.y}" r="5" fill="#fff"/>`;
+  g.innerHTML = s;
+}
+
+// -------------------- ESTADO --------------------
+let loadChart = null;
+let currentData = null;
+let photoData = '';
+const HIST_KEY = 'pelada_elite_h_v5';
+
+const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+function safeToNumber(x) { const n = parseFloat(x); return Number.isFinite(n) ? n : null; }
+function formatTimePTBR(horaUTC, fallbackMs) {
+  if (typeof horaUTC === 'string' && horaUTC.includes(':')) return horaUTC;
+  if (typeof fallbackMs === 'number' && fallbackMs > 0) return new Date(fallbackMs).toLocaleTimeString('pt-BR');
+  return '--:--:--';
+}
+function fmtDur(sec) {
+  sec = Math.max(0, Math.round(sec || 0));
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return m + ':' + String(s).padStart(2, '0');
+}
+function median(values) {
+  if (!values || !values.length) return 0;
+  const a = [...values].sort((x, y) => x - y), m = Math.floor(a.length / 2);
+  return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
+}
+
+// -------------------- TABS / DRAWER --------------------
+function switchTab(tab) {
+  document.querySelectorAll('[data-tab]').forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-tab') === tab));
+  document.getElementById('tab-dashboard').classList.toggle('hidden', tab !== 'dashboard');
+  document.getElementById('tab-history').classList.toggle('hidden', tab !== 'history');
+}
+document.querySelectorAll('[data-tab]').forEach(btn => {
+  btn.addEventListener('click', () => { switchTab(btn.getAttribute('data-tab')); if (window.innerWidth <= 760) closeDrawer(); });
+});
+const sidebar = document.getElementById('mobileDrawer');
+const overlay = document.getElementById('mobileOverlay');
+function openDrawer() { overlay.classList.remove('hidden'); sidebar.classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeDrawer() { overlay.classList.add('hidden'); sidebar.classList.remove('open'); document.body.style.overflow = ''; }
+document.getElementById('mobileMenuBtn')?.addEventListener('click', openDrawer);
+overlay?.addEventListener('click', closeDrawer);
+
+// -------------------- LEITURA DE ARQUIVO --------------------
+function readCSVFile(file) {
+  const status = document.getElementById('sessionStatus');
+  if (status) { status.classList.remove('status-ok'); status.textContent = 'LENDO ARQUIVO...'; }
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const text = String(ev.target.result || '');
+      if (!text.trim()) throw new Error('arquivo vazio');
+      processCSV(text);
+    } catch (err) {
+      console.error(err);
+      if (status) status.textContent = 'ERRO AO LER CSV';
+      alert('Não foi possível ler este arquivo: ' + err.message);
     }
-
-    function formatTimePTBR(horaUTC, fallbackMs) {
-      if (typeof horaUTC === 'string' && horaUTC.includes(':')) return horaUTC;
-      if (typeof fallbackMs === 'number' && fallbackMs > 0) return new Date(fallbackMs).toLocaleTimeString('pt-BR');
-      return '--:--:--';
-    }
-
-    // =========================
-    // Tabs
-    // =========================
-    function switchTab(tab) {
-      document.querySelectorAll('[data-tab]').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-tab') === tab);
-      });
-      document.getElementById('tab-dashboard').classList.toggle('hidden', tab !== 'dashboard');
-      document.getElementById('tab-history').classList.toggle('hidden', tab !== 'history');
-    }
-
-    document.querySelectorAll('[data-tab]').forEach(btn => {
-      btn.addEventListener('click', () => { switchTab(btn.getAttribute('data-tab')); if (window.innerWidth <= 760) closeDrawer(); });
-    });
-
-    // =========================
-    // Mobile drawer
-    // =========================
-    const sidebar = document.getElementById('mobileDrawer');
-    const overlay = document.getElementById('mobileOverlay');
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-
-    function openDrawer() {
-      overlay.classList.remove('hidden');
-      sidebar.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeDrawer() {
-      overlay.classList.add('hidden');
-      sidebar.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    mobileMenuBtn?.addEventListener('click', openDrawer);
-    overlay?.addEventListener('click', closeDrawer);
-
-    // =========================
-    // Heatmap INIT (CORES DATA FACTORY)
-    // =========================
-    function initHeatmap() {
-      const container = document.getElementById('heatmapContainer');
-      heatmapInstance = h337.create({
-        container,
-        radius: 35,
-        blur: 0.85,
-        maxOpacity: 0.7,
-        gradient: { '.2': 'blue', '.4': 'lime', '.6': 'yellow', '.95': 'red' }
-      });
-    }
-
-    // =========================
-    // Inputs
-    // =========================
-    function readCSVFile(file) {
-      const status = document.getElementById('sessionStatus');
-      if (status) { status.classList.remove('status-ok'); status.textContent = 'LENDO ARQUIVO...'; }
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        try {
-          const text = String(ev.target.result || '');
-          if (!text.trim()) throw new Error('arquivo vazio');
-          processCSV(text);
-        } catch (err) {
-          console.error(err);
-          if (status) status.textContent = 'ERRO AO LER CSV';
-          alert('Não foi possível ler este arquivo. Baixe o CSV do ESP novamente e tente importar pela opção Arquivos/Downloads.');
-        }
-      };
-      reader.onerror = () => {
-        if (status) status.textContent = 'ERRO AO LER ARQUIVO';
-        alert('O navegador não conseguiu acessar o arquivo. Verifique a permissão de arquivos e tente novamente.');
-      };
-      reader.readAsText(file, 'UTF-8');
-    }
-
-    function bindDesktopInputs() {
-      document.getElementById('photoIn').addEventListener('change', (e) => {
-        const f = e.target.files && e.target.files[0];
-        if (!f) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          photoData = ev.target.result;
-          document.getElementById('cardPhoto').src = photoData;
-        };
-        reader.readAsDataURL(f);
-      });
-
-      document.getElementById('nameIn').addEventListener('input', (e) => {
-        const n = e.target.value || "PLAYER";
-        document.getElementById('titleName').innerText = n;
-        document.getElementById('cardName').innerText = n;
-      });
-
-      const csvInput = document.getElementById('csvFileInput');
-      csvInput.addEventListener('change', (e) => {
-        const file = e.target.files && e.target.files[0];
-        if (!file) return;
-        readCSVFile(file);
-        e.target.value = '';
-      });
-      document.getElementById('mobileImportBtn')?.addEventListener('click', () => {
-        document.getElementById('csvFileInput')?.click();
-      });
-    }
-
-    function bindMobileInputs() {
-      const nameM = document.getElementById('nameIn_m');
-      const posM = document.getElementById('posIn_m');
-      const sideM = document.getElementById('sideIn_m');
-      const photoM = document.getElementById('photoIn_m');
-      const csvM = document.getElementById('csvFileInput_m');
-
-      function sync() {
-        if (nameM) document.getElementById('nameIn').value = nameM.value;
-        if (posM) document.getElementById('posIn').value = posM.value;
-        if (sideM) document.getElementById('sideIn').value = sideM.value;
-        if (nameM) {
-          const n = nameM.value || "PLAYER";
-          document.getElementById('titleName').innerText = n;
-          document.getElementById('cardName').innerText = n;
-        }
-      }
-
-      [nameM, posM, sideM].forEach(el => el?.addEventListener('input', sync));
-      posM?.addEventListener('change', sync);
-      sideM?.addEventListener('change', sync);
-
-      photoM?.addEventListener('change', (e) => {
-        const f = e.target.files && e.target.files[0];
-        if (!f) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          photoData = ev.target.result;
-          document.getElementById('cardPhoto').src = photoData;
-        };
-        reader.readAsDataURL(f);
-      });
-
-      csvM?.addEventListener('change', (e) => {
-        const file = e.target.files && e.target.files[0];
-        if (!file) return;
-        readCSVFile(file);
-        e.target.value = '';
-      });
-    }
-
-    // =========================
-    // PARSER DUPLO (JSON + TXT)
-    // =========================
-    function parsePeladaExcelLike(text) {
-      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-      const headerIndex = lines.findIndex(l => l.startsWith("Tempo_ms,") && l.includes("Latitude"));
-      if (headerIndex < 0) return { error: "Header 3.3 não encontrado. Use o CSV gerado pelo Firmware 3.3." };
-
-      const header = lines[headerIndex].split(',');
-      const idx = (name) => header.indexOf(name);
-      const required = ["Latitude","Longitude","Velocidade_GPS_kmh","Velocidade_MPU_kmh","Tempo_ms"];
-      const missing = required.filter(k => idx(k) < 0);
-      if (missing.length) return { error: "CSV incompatível. Campos ausentes: " + missing.join(", ") };
-
-      const dataRows = [];
-      for (let i = headerIndex + 1; i < lines.length; i++) {
-        const line = lines[i];
-        if (line === "STOP") break;
-        if (line.startsWith("TOTAL_") || line.startsWith("VEL_") || line.startsWith("TEMPO_")) continue;
-
-        const row = line.split(',');
-        if (row.length < header.length) continue;
-
-        const lat = safeToNumber(row[idx("Latitude")]);
-        const lng = safeToNumber(row[idx("Longitude")]);
-        if (lat === null || lng === null || lat === 0 || lng === 0) continue;
-
-        dataRows.push({
-          lat,
-          lng,
-          gpsKmh: safeToNumber(row[idx("Velocidade_GPS_kmh")]) ?? 0,
-          mpuKmh: safeToNumber(row[idx("Velocidade_MPU_kmh")]) ?? 0,
-          mpuMps: safeToNumber(row[idx("Velocidade_MPU_mps")]) ?? 0,
-          accel: safeToNumber(row[idx("AccelDinamica_ms2")]) ?? 0,
-          accelPeak: safeToNumber(row[idx("PicoAccelDinamica_ms2")]) ?? 0,
-          motion: safeToNumber(row[idx("Movimento")]) ?? 0,
-          timeMs: safeToNumber(row[idx("Tempo_ms")]) ?? 0,
-          horaUTC: idx("Hora_UTC") >= 0 ? row[idx("Hora_UTC")] : "",
-          fix: idx("GPS_FIX") >= 0 ? safeToNumber(row[idx("GPS_FIX")]) ?? 0 : 0,
-          dist: idx("Distancia_m") >= 0 ? safeToNumber(row[idx("Distancia_m")]) ?? 0 : 0
-        });
-      }
-
-      const stats = { distTotal: 0, velMaxMPU: 0, velMaxGPS: 0, velMediaGPS: 0 };
-      lines.forEach(l => {
-        if (l.startsWith("TOTAL_DISTANCIA=")) stats.distTotal = parseFloat(l.split('=')[1]) || 0;
-        if (l.startsWith("VEL_MAX_MPU=")) stats.velMaxMPU = parseFloat(l.split('=')[1]) || 0;
-        if (l.startsWith("VEL_MAX_GPS=")) stats.velMaxGPS = parseFloat(l.split('=')[1]) || 0;
-        if (l.startsWith("VEL_MEDIA_GPS=")) stats.velMediaGPS = parseFloat(l.split('=')[1]) || 0;
-      });
-
-      if (!stats.distTotal && dataRows.length) stats.distTotal = Math.max(...dataRows.map(r => r.dist));
-      if (!stats.velMaxMPU && dataRows.length) stats.velMaxMPU = Math.max(...dataRows.map(r => r.mpuKmh));
-      if (!stats.velMaxGPS && dataRows.length) stats.velMaxGPS = Math.max(...dataRows.map(r => r.gpsKmh));
-
-      return { dataRows, stats };
-    }
-
-    // =========================
-    // PROJEÇÃO TÁTICA — INÍCIO SEMPRE NO CENTRO
-    // O primeiro bloco estável de GPS vira o ponto de partida (centro do campo).
-    // A partir dele, cada deslocamento é desenhado relativo ao ponto inicial.
-    // =========================
-    function getMapAnchor(rows) {
-      const n = Math.min(10, rows.length);
-      if (!n) return { lat: 0, lng: 0 };
-      // Mediana reduz o efeito de um primeiro ponto GPS ainda instável.
-      const lats = rows.slice(0, n).map(r => r.lat).sort((a,b) => a-b);
-      const lngs = rows.slice(0, n).map(r => r.lng).sort((a,b) => a-b);
-      const mid = Math.floor(n / 2);
-      const lat = n % 2 ? lats[mid] : (lats[mid-1] + lats[mid]) / 2;
-      const lng = n % 2 ? lngs[mid] : (lngs[mid-1] + lngs[mid]) / 2;
-      return { lat, lng };
-    }
-
-    function projectToPitch(lat, lng, originLat, originLng) {
-      const SVG_W = 920;
-      const SVG_H = 560;
-      const CX = SVG_W / 2;
-      const CY = 305; // centro real do campo (linha do meio)
-
-      // Escala para GPS converter para pixels do SVG
-      const scale = 520000; 
-
-      const dx = (lng - originLng) * scale;
-      const dy = (lat - originLat) * scale;
-
-      // Inverter Y (latitude sobe, pixels descem)
-      let x = CX + dx;
-      let y = CY - dy;
-
-      // Perspectiva 3D suave para casar com o trapézio azul
-      const perspective = clamp(0.7 + (y / SVG_H) * 0.4, 0.6, 1.2);
-      x = CX + (x - CX) * perspective;
-
-      return { x, y };
-    }
-
-    // =========================
-    // FILTRO DE TRAJETÓRIA GPS GUIADO PELO TRACKR
-    // - Parado: congela a posição visual e reaprende o ponto GPS de repouso.
-    // - Em movimento: mede o deslocamento relativo ao último ponto estável.
-    // - Rejeita saltos isolados sem apagar deslocamentos reais de poucos metros.
-    // =========================
-    function median(values) {
-      if (!values.length) return 0;
-      const a = [...values].sort((x,y) => x-y);
-      const m = Math.floor(a.length / 2);
-      return a.length % 2 ? a[m] : (a[m-1] + a[m]) / 2;
-    }
-
-    function buildFilteredTrajectory(rows, origin) {
-      const CENTER = { x: 460, y: 305 }; // linha central + centro do círculo do campo
-      const projected = rows.map(r => ({ ...projectToPitch(r.lat, r.lng, origin.lat, origin.lng), row: r }));
-      if (!projected.length) return [{ ...CENTER, value: 0, moving: false }];
-
-      let visual = { ...CENTER };
-      let segmentVisualStart = { ...CENTER };
-      let segmentGpsStart = { x: projected[0].x, y: projected[0].y };
-      let wasMoving = false;
-      let movingConfirm = 0;
-      let smoothOffset = { x: 0, y: 0 };
-      let lastRawOffset = { x: 0, y: 0 };
-      const stationaryWindow = [];
-      const result = [{ ...CENTER, value: 0, moving: false, sourceIndex: 0 }];
-
-      function stableGpsAnchor(fallback) {
-        if (!stationaryWindow.length) return { x: fallback.x, y: fallback.y };
-        return {
-          x: median(stationaryWindow.map(p => p.x)),
-          y: median(stationaryWindow.map(p => p.y))
-        };
-      }
-
-      projected.forEach((p, i) => {
-        const r = p.row;
-        const movingSignal = (Number(r.motion) === 1) || Number(r.mpuKmh) >= 1.0;
-
-        if (!movingSignal) {
-          movingConfirm = 0;
-          stationaryWindow.push({ x: p.x, y: p.y });
-          if (stationaryWindow.length > 30) stationaryWindow.shift();
-
-          // Ao parar, a posição visual fica exatamente onde terminou o deslocamento.
-          // O GPS pode passear alguns metros sem arrastar o atleta no mapa.
-          if (wasMoving) {
-            wasMoving = false;
-            segmentVisualStart = { ...visual };
-          }
-          return;
-        }
-
-        movingConfirm++;
-        if (!wasMoving) {
-          // O GPS de repouso continua sendo a referência. Não reiniciamos
-          // a referência no 3º ponto móvel, pois isso apagaria os primeiros
-          // metros do deslocamento real.
-          if (movingConfirm < 3) return;
-          wasMoving = true;
-          segmentVisualStart = { ...visual };
-          segmentGpsStart = stableGpsAnchor(p);
-          smoothOffset = { x: 0, y: 0 };
-          lastRawOffset = { x: 0, y: 0 };
-        }
-
-        let rawOffset = { x: p.x - segmentGpsStart.x, y: p.y - segmentGpsStart.y };
-        const jump = Math.hypot(rawOffset.x - lastRawOffset.x, rawOffset.y - lastRawOffset.y);
-
-        // ~42 px representam cerca de 8–9 m nesta projeção. Um salto maior
-        // em uma única amostra é tratado como ruído; se persistir, as próximas
-        // amostras aproximam a trajetória normalmente.
-        if (jump > 42 && Number(r.gpsKmh) < 18) return;
-        lastRawOffset = rawOffset;
-
-        // Suavização leve: reduz tremor, sem usar limiar rígido de 5 m.
-        // Assim um deslocamento real pequeno não desaparece.
-        const alpha = 0.34;
-        smoothOffset.x += (rawOffset.x - smoothOffset.x) * alpha;
-        smoothOffset.y += (rawOffset.y - smoothOffset.y) * alpha;
-
-        visual = clampPointToPitch({
-          x: segmentVisualStart.x + smoothOffset.x,
-          y: segmentVisualStart.y + smoothOffset.y,
-          value: r.mpuKmh
-        });
-
-        result.push({
-          x: visual.x, y: visual.y,
-          value: clamp(Number(r.mpuKmh) || 0, 0, 25),
-          moving: true, sourceIndex: i
-        });
-      });
-
-      return result;
-    }
-
-    function calculateDurationSec(rows) {
-      if (rows.length < 2) return rows.length ? 0.1 : 0;
-      let ms = 0;
-      for (let i = 1; i < rows.length; i++) {
-        const dt = Number(rows[i].timeMs) - Number(rows[i-1].timeMs);
-        // Tempo_ms reinicia quando há nova retomada da gravação.
-        // Soma apenas intervalos positivos plausíveis entre amostras.
-        if (dt > 0 && dt <= 2000) ms += dt;
-      }
-      return Math.max(1, ms / 1000);
-    }
-
-    function getAttCount(points, side) {
-      const mid = 305; // meio do SVG azul
-      let count = 0;
-      for (const p of points) {
-        if (side === 'up') { if (p.y < mid) count++; }
-        else { if (p.y > mid) count++; }
-      }
-      return count;
-    }
-
-    // =========================
-    // PERFIL TÁTICO POR POSIÇÃO
-    // =========================
-    function getRoleProfile(role) {
-      return {
-        ATA: {
-          name: 'Atacante',
-          focus: 'profundidade, aceleração, ocupação do terço ofensivo e ações explosivas',
-          good: 'Para um atacante, o sistema valoriza picos de velocidade, presença no setor ofensivo e repetição de ações de alta intensidade.',
-          low: 'Poucas ações explosivas ou pouca presença no setor ofensivo reduzem a leitura de profundidade.',
-          weights: { speed: 0.35, attack: 0.30, explos: 0.25, volume: 0.10 }
-        },
-        MEI: {
-          name: 'Meio-Campo',
-          focus: 'volume de deslocamento, equilíbrio entre setores, intensidade e participação contínua',
-          good: 'Para um meio-campista, o sistema valoriza constância de movimento, equilíbrio entre campo ofensivo e defensivo e capacidade de repetir ações.',
-          low: 'Baixo volume de movimento ou concentração excessiva em apenas um setor reduzem a leitura de participação global.',
-          weights: { speed: 0.15, attack: 0.20, explos: 0.20, volume: 0.45 }
-        },
-        DEF: {
-          name: 'Zagueiro',
-          focus: 'cobertura, ocupação do setor defensivo, recuperação e deslocamentos controlados',
-          good: 'Para um zagueiro, o sistema valoriza presença no setor defensivo, volume suficiente para coberturas e acelerações de recuperação.',
-          low: 'Pouca presença no setor defensivo ou excesso de picos ofensivos pode indicar um perfil diferente do esperado para a posição.',
-          weights: { speed: 0.10, attack: 0.15, explos: 0.20, volume: 0.55 }
-        }
-      }[role] || {
-        name: 'Atleta', focus: 'movimento geral', good: '', low: '',
-        weights: { speed: 0.25, attack: 0.25, explos: 0.25, volume: 0.25 }
-      };
-    }
-
-    function buildTacticalDiagnosis(d) {
-      const p = getRoleProfile(d.role);
-      const attackPct = d.mIA.attackHalfRatio * 100;
-      const defensePct = d.mIA.defenseHalfRatio * 100;
-      const centerPct = d.mIA.centerRatio * 100;
-      const movingPct = d.mIA.movingPct;
-      const sprintScore = clamp((d.mIA.sprints / Math.max(1, d.durationSec / 90)) * 100, 0, 100);
-      const speedScore = clamp((d.vMaxMPU / 20) * 100, 0, 100);
-      const volumeScore = clamp((movingPct * 1.2), 0, 100);
-      const attackScore = d.mIA.attackHalfRatio * 100;
-      const explosScore = clamp((d.mIA.explosiveActions / Math.max(1, d.durationSec / 30)) * 100, 0, 100);
-
-      let roleScore;
-      if (d.role === 'ATA') {
-        roleScore = speedScore * p.weights.speed + attackScore * p.weights.attack + explosScore * p.weights.explos + volumeScore * p.weights.volume;
-      } else if (d.role === 'DEF') {
-        roleScore = speedScore * p.weights.speed + defensePct *  p.weights.attack + explosScore * p.weights.explos + volumeScore * p.weights.volume;
-      } else {
-        const balanceScore = 100 - Math.min(100, Math.abs(attackPct - defensePct) * 1.25);
-        roleScore = speedScore * p.weights.speed + balanceScore * p.weights.attack + explosScore * p.weights.explos + volumeScore * p.weights.volume;
-      }
-
-      const level = roleScore >= 80 ? 'Elite' : roleScore >= 65 ? 'Competitivo' : roleScore >= 50 ? 'Em Desenvolvimento' : 'Baixa Amostra';
-      let tacticalText = '';
-
-      if (d.role === 'ATA') {
-        if (attackPct >= 55 && d.mIA.sprints >= 2) tacticalText = 'O perfil mostra boa ocupação do setor ofensivo combinada com ações explosivas, compatível com um atacante de profundidade.';
-        else if (attackPct >= 45) tacticalText = 'Há presença relevante no setor ofensivo, mas a amostra ainda indica espaço para aumentar a frequência das ações explosivas.';
-        else tacticalText = 'A trajetória ficou pouco concentrada no setor ofensivo para uma leitura típica de atacante; a amostra sugere participação mais recuada ou circulação ampla.';
-      } else if (d.role === 'MEI') {
-        const balance = Math.abs(attackPct - defensePct);
-        if (balance <= 20 && movingPct >= 45) tacticalText = 'O deslocamento está relativamente equilibrado entre os dois setores, com participação contínua — perfil compatível com meio-campista de ida e volta.';
-        else if (movingPct >= 45) tacticalText = 'O volume de movimento é bom, porém a trajetória ficou mais concentrada em um dos setores do campo.';
-        else tacticalText = 'O volume de deslocamento foi moderado; para um meio-campista, a amostra sugere maior necessidade de participação contínua entre os setores.';
-      } else {
-        if (defensePct >= 55 && volumeScore >= 45) tacticalText = 'A maior permanência no setor defensivo, combinada com deslocamento suficiente, é compatível com um zagueiro realizando coberturas e recuperações.';
-        else if (defensePct >= 45) tacticalText = 'A trajetória mantém presença defensiva relevante, embora haja circulação significativa fora do setor de referência.';
-        else tacticalText = 'A trajetória ficou pouco concentrada no setor defensivo; isso pode representar uma atuação mais adiantada ou uma amostra curta para caracterizar o papel do zagueiro.';
-      }
-
-      return { p, level, roleScore, tacticalText, attackPct, defensePct, centerPct, sprintScore, speedScore, volumeScore, explosScore };
-    }
-
-    function processCSV(text) {
-      const parsed = parsePeladaExcelLike(text);
-      if (parsed.error) return alert(parsed.error);
-      const rows = parsed.dataRows;
-      if (rows.length < 5) return alert("Arquivo com dados insuficientes (mínimo 5 coordenadas GPS válidas).");
-
-      // O ponto inicial da sessão fica no centro real do campo (460,305).
-      // A trajetória visual usa GPS apenas quando o Trackr confirma movimento.
-      const origin = getMapAnchor(rows);
-      const points = buildFilteredTrajectory(rows, origin);
-      const speedsMPU = [], speedsGPS = [], times = [];
-      let mpuSum = 0, gpsSum = 0;
-      let standingCount = 0, movingCount = 0, sprintCount = 0, inSprint = false;
-      let maxAccel = 0, explosiveActions = 0;
-      let attackHalfCount = 0, defenseHalfCount = 0, centerCount = 0;
-
-      rows.forEach(r => {
-        speedsMPU.push(r.mpuKmh);
-        speedsGPS.push(r.gpsKmh);
-        times.push(formatTimePTBR(r.horaUTC, r.timeMs));
-
-        mpuSum += r.mpuKmh;
-        gpsSum += r.gpsKmh;
-        maxAccel = Math.max(maxAccel, r.accelPeak, r.accel);
-
-        const isMoving = (r.motion === 1 || r.mpuKmh >= 1.0);
-        if (!isMoving) standingCount++;
-        else movingCount++;
-
-        if (r.accel >= 3.0 || r.accelPeak >= 3.0) explosiveActions++;
-
-        if (r.mpuKmh >= 15.0) {
-          if (!inSprint) { sprintCount++; inSprint = true; }
-        } else {
-          inSprint = false;
-        }
-      });
-
-      // Setores táticos calculados pela trajetória filtrada, não pelo GPS bruto.
-      const tacticalPoints = points.filter(p => p.moving);
-      const sectorBase = tacticalPoints.length ? tacticalPoints : points;
-      sectorBase.forEach(p => {
-        if (p.y < 285) attackHalfCount++;
-        else if (p.y > 325) defenseHalfCount++;
-        else centerCount++;
-      });
-
-      const side = document.getElementById('sideIn').value;
-      const role = document.getElementById('posIn').value;
-      const vMaxMPU = parsed.stats.velMaxMPU || Math.max(...speedsMPU);
-      const vMaxGPS = parsed.stats.velMaxGPS || Math.max(...speedsGPS);
-      const vMeanMPU = mpuSum / rows.length;
-      const vMeanGPS = gpsSum / rows.length;
-      const attRatio = points.length ? (getAttCount(points, side) / points.length) : 0;
-
-      const dist = parsed.stats.distTotal || 0;
-      const stats = {
-        vel: clamp(Math.round((vMaxMPU / 25) * 99), 35, 99),
-        dri: clamp(Math.round(vMeanMPU * 2.2 + 35), 35, 99),
-        ata: clamp(Math.round(attRatio * 99), 35, 99),
-        def: clamp(Math.round((1 - attRatio) * 99), 35, 99),
-        fis: clamp(Math.round((dist / 65) * 99), 35, 99),
-        pas: clamp(Math.round(vMeanMPU * 1.6 + 40), 35, 99)
-      };
-
-      const roleForScore = getRoleProfile(role);
-      const roleVolume = clamp((movingCount / Math.max(1, rows.length)) * 100, 0, 100);
-      const roleExplos = clamp((explosiveActions / Math.max(1, rows.length * 0.08)) * 100, 0, 100);
-      let ovr = role === 'ATA'
-        ? (stats.vel * 0.35 + stats.ata * 0.30 + stats.fis * 0.10 + roleExplos * 0.25)
-        : role === 'DEF'
-          ? (stats.def * 0.35 + stats.fis * 0.35 + stats.vel * 0.10 + roleVolume * 0.20)
-          : (stats.pas * 0.30 + stats.fis * 0.30 + stats.vel * 0.10 + roleVolume * 0.30);
-
-      // Tempo acumulado robusto, inclusive quando Tempo_ms reinicia entre retomadas.
-      const durationSec = calculateDurationSec(rows);
-
-      currentData = {
-        name: document.getElementById('nameIn').value || "PLAYER",
-        role,
-        date: new Date().toLocaleDateString('pt-BR'),
-        ovr: Math.round(ovr),
-        stats,
-        points,
-        mapAnchor: origin,
-        speedsMPU,
-        speedsGPS,
-        times,
-        photo: photoData,
-        vMaxMPU,
-        vMaxGPS,
-        vMeanMPU,
-        vMeanGPS,
-        durationSec,
-        mIA: {
-          standing: standingCount,
-          moving: movingCount,
-          movingPct: rows.length ? (movingCount / rows.length) * 100 : 0,
-          sprints: sprintCount,
-          explosiveActions,
-          attackHalfRatio: sectorBase.length ? (attackHalfCount / sectorBase.length) : 0,
-          defenseHalfRatio: sectorBase.length ? (defenseHalfCount / sectorBase.length) : 0,
-          centerRatio: sectorBase.length ? (centerCount / sectorBase.length) : 0,
-          dist,
-          maxAccel
-        }
-      };
-
-      updateDashboard();
-    }
-
-    // =========================
-    // HEATMAP RESPONSIVO — CAMPO IMAGINÁRIO
-    // Tudo que vier do GPS é projetado e, depois, limitado ao desenho do campo.
-    // Assim nenhum ponto consegue escapar da área de jogo, inclusive no celular.
-    // =========================
-    function clampPointToPitch(p) {
-      const SVG_W = 920, SVG_H = 560;
-      // Trapézio do campo desenhado no SVG:
-      // topo: 260..660 | base: 110..810 | y: 100..510
-      const y = clamp(Number(p.y) || 305, 100, 510);
-      const t = (y - 100) / 410;
-      const left = 260 + (110 - 260) * t;
-      const right = 660 + (810 - 660) * t;
-      const margin = 5;
-      const x = clamp(Number(p.x) || 460, left + margin, right - margin);
-      return { x, y, value: clamp(Number(p.value) || 0, 0, 25) };
-    }
-
-    function renderHeatmap(points) {
-      const container = document.getElementById('heatmapContainer');
-      if (!container || !points?.length) return;
-
-      let canvas = container.querySelector('canvas.pitch-heat-canvas');
-      if (!canvas) {
-        container.innerHTML = '';
-        canvas = document.createElement('canvas');
-        canvas.className = 'pitch-heat-canvas';
-        container.appendChild(canvas);
-      }
-
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      if (!w || !h) {
-        requestAnimationFrame(() => renderHeatmap(points));
-        return;
-      }
-
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(w * dpr);
-      canvas.height = Math.round(h * dpr);
-      canvas.style.width = w + 'px';
-      canvas.style.height = h + 'px';
-      const ctx = canvas.getContext('2d');
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, w, h);
-
-      const SVG_W = 920, SVG_H = 560;
-      const pitchToCanvas = p => ({ x: (p.x / SVG_W) * w, y: (p.y / SVG_H) * h });
-
-      // GARANTIA DE CENTRALIZACAO DO INICIO
-      // O mapa e relativo ao ponto inicial da sessao. Isso tambem corrige
-      // cards antigos ou sessoes salvas com uma projecao anterior: o primeiro
-      // ponto e sempre deslocado para o centro real do campo (460,305)
-      // antes de aplicar o recorte/perspectiva.
-      const rawPoints = points.map(p => ({
-        x: Number(p.x) || 460,
-        y: Number(p.y) || 305,
-        value: Number(p.value) || 0
-      }));
-      const anchorX = rawPoints.length ? rawPoints[0].x : 460;
-      const anchorY = rawPoints.length ? rawPoints[0].y : 305;
-      const offsetX = 460 - anchorX;
-      const offsetY = 305 - anchorY;
-      const pitchPoints = rawPoints.map(p => clampPointToPitch({
-        x: p.x + offsetX,
-        y: p.y + offsetY,
-        value: p.value
-      }));
-
-      // Linha de trajetória: deixa claro como o atleta saiu do ponto inicial.
-      // O primeiro ponto útil fica no centro por definição da projeção.
-      if (pitchPoints.length > 1) {
-        ctx.save();
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.beginPath();
-        pitchPoints.forEach((p, i) => {
-          const q = pitchToCanvas(p);
-          if (i === 0) ctx.moveTo(q.x, q.y);
-          else ctx.lineTo(q.x, q.y);
-        });
-        ctx.strokeStyle = 'rgba(255,255,255,0.18)';
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([4, 5]);
-        ctx.stroke();
-        ctx.restore();
-      }
-
-      // Agrupa os registros para manter o mapa leve no celular.
-      const cols = 28, rows = 18;
-      const bins = Array.from({ length: cols * rows }, () => ({ sum: 0, count: 0, peak: 0 }));
-      // Não deixa milhares de amostras parado criarem um hotspot falso no centro.
-      // O calor vem apenas de pontos de deslocamento com intensidade útil.
-      const heatPoints = pitchPoints.filter((p, i) => i > 0 && p.value >= 0.15);
-      // Pequeno ponto de origem: mostra visualmente de onde a trajetória saiu,
-      // sem transformar o repouso inteiro em hotspot.
-      const originHeat = { x: 460, y: 305, value: heatPoints.length ? Math.min(0.65, Math.max(0.25, heatPoints[0].value * 0.18)) : 0.35 };
-      const heatSource = [originHeat, ...(heatPoints.length ? heatPoints : pitchPoints.slice(1))];
-      for (const raw of heatSource) {
-        const nx = raw.x / SVG_W, ny = raw.y / SVG_H;
-        const cx = clamp(Math.floor(nx * cols), 0, cols - 1);
-        const cy = clamp(Math.floor(ny * rows), 0, rows - 1);
-        const b = bins[cy * cols + cx];
-        b.sum += raw.value;
-        b.count++;
-        b.peak = Math.max(b.peak, raw.value);
-      }
-
-      const sessionValues = bins.filter(b => b.count).map(b => b.sum / b.count).sort((a,b) => a-b);
-      const p85 = sessionValues.length ? sessionValues[Math.floor((sessionValues.length - 1) * 0.85)] : 1;
-      const scaleMax = Math.max(1.2, p85, Math.max(...sessionValues, 0) * 0.72);
-
-      function heatColor(v, alpha) {
-        const stops = [
-          [0.00, 35, 125, 255],
-          [0.22, 0, 205, 255],
-          [0.42, 35, 220, 120],
-          [0.60, 245, 235, 40],
-          [0.78, 255, 145, 20],
-          [1.00, 225, 25, 25]
-        ];
-        let a = stops[0], b = stops[stops.length - 1];
-        for (let i = 0; i < stops.length - 1; i++) {
-          if (v >= stops[i][0] && v <= stops[i+1][0]) { a = stops[i]; b = stops[i+1]; break; }
-        }
-        const t = b[0] === a[0] ? 0 : (v - a[0]) / (b[0] - a[0]);
-        const r = Math.round(a[1] + (b[1]-a[1]) * t);
-        const g = Math.round(a[2] + (b[2]-a[2]) * t);
-        const bl = Math.round(a[3] + (b[3]-a[3]) * t);
-        return `rgba(${r},${g},${bl},${alpha})`;
-      }
-
-      const radius = Math.max(20, Math.min(w, h) * 0.085);
-      ctx.globalCompositeOperation = 'lighter';
-      for (let cy = 0; cy < rows; cy++) {
-        for (let cx = 0; cx < cols; cx++) {
-          const b = bins[cy * cols + cx];
-          if (!b.count) continue;
-          const avg = b.sum / b.count;
-          const speedNorm = clamp(avg / scaleMax, 0, 1);
-          const density = clamp(b.count / Math.max(1, heatSource.length / 45), 0, 1);
-          const v = clamp(speedNorm * .58 + density * .42, 0, 1);
-          const alpha = 0.16 + Math.pow(v, 0.72) * 0.68;
-          const x0 = ((cx + .5) / cols) * SVG_W;
-          const y0 = ((cy + .5) / rows) * SVG_H;
-          const q = clampPointToPitch({ x: x0, y: y0, value: avg });
-          const x = (q.x / SVG_W) * w;
-          const y = (q.y / SVG_H) * h;
-          const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
-          const color = heatColor(v, alpha);
-          grad.addColorStop(0, color);
-          grad.addColorStop(.28, heatColor(v, alpha * .72));
-          grad.addColorStop(.62, heatColor(v, alpha * .28));
-          grad.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          ctx.arc(x, y, radius, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-      ctx.globalCompositeOperation = 'source-over';
-
-      // O marcador inicial fica no SVG, não no canvas.
-      // Assim ele usa exatamente a mesma escala/transformação do desenho
-      // do campo em qualquer tamanho de tela (desktop ou celular).
-      const startOuter = document.getElementById('startMarkerOuter');
-      const startInner = document.getElementById('startMarkerInner');
-      if (startOuter) startOuter.setAttribute('cx', '460');
-      if (startOuter) startOuter.setAttribute('cy', '305');
-      if (startInner) startInner.setAttribute('cx', '460');
-      if (startInner) startInner.setAttribute('cy', '305');
-    }
-    function updateDashboard() {
-      const d = currentData;
-      if (!d) return;
-
-      // Compatibilidade/segurança para sessões antigas e para qualquer CSV parcial.
-      d.mIA = d.mIA || {};
-      const totalIA = (Number(d.mIA.standing) || 0) + (Number(d.mIA.moving) || 0);
-      d.mIA.movingPct = Number.isFinite(Number(d.mIA.movingPct))
-        ? Number(d.mIA.movingPct)
-        : (totalIA ? ((Number(d.mIA.moving) || 0) / totalIA) * 100 : 0);
-      d.mIA.explosiveActions = Number(d.mIA.explosiveActions) || 0;
-      d.mIA.sprints = Number(d.mIA.sprints) || 0;
-      d.mIA.dist = Number(d.mIA.dist) || 0;
-      d.mIA.maxAccel = Number(d.mIA.maxAccel) || 0;
-      d.mIA.attackHalfRatio = Number.isFinite(Number(d.mIA.attackHalfRatio)) ? Number(d.mIA.attackHalfRatio) : 0;
-      d.mIA.defenseHalfRatio = Number.isFinite(Number(d.mIA.defenseHalfRatio)) ? Number(d.mIA.defenseHalfRatio) : 0;
-      d.mIA.centerRatio = Number.isFinite(Number(d.mIA.centerRatio)) ? Number(d.mIA.centerRatio) : 0;
-
-      document.getElementById('cardOvr').innerText = d.ovr;
-      document.getElementById('cardPos').innerText = d.role;
-      document.getElementById('cardName').innerText = d.name;
-      document.getElementById('titleName').innerText = d.name;
-      document.getElementById('s-vel').innerText = d.stats.vel;
-      document.getElementById('s-dri').innerText = d.stats.dri;
-      document.getElementById('s-ata').innerText = d.stats.ata;
-      document.getElementById('s-def').innerText = d.stats.def;
-      document.getElementById('s-pas').innerText = d.stats.pas;
-      document.getElementById('s-fis').innerText = d.stats.fis;
-      document.getElementById('dateShow').innerText = d.date;
-      document.getElementById('posShow').innerText = `GPS: ${d.vMaxGPS.toFixed(1)} km/h | Trackr: ${d.vMaxMPU.toFixed(1)} km/h`;
-      document.getElementById('btnSave').classList.remove('hidden');
-
-      renderHeatmap(d.points);
-      renderChart(d.speedsMPU, d.times, d.speedsGPS);
-
-      const total = d.mIA.standing + d.mIA.moving;
-      const pParado = total ? ((d.mIA.standing / total) * 100).toFixed(1) : "0.0";
-      const pAtivo = total ? ((d.mIA.moving / total) * 100).toFixed(1) : "0.0";
-
-      const td = buildTacticalDiagnosis(d);
-      let report = `
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-          <div class="bg-white/5 rounded-2xl p-3">
-            <div class="text-[10px] text-slate-500 uppercase font-bold">Posição analisada</div>
-            <div class="text-lg font-black text-amber-400">${td.p.name}</div>
-            <div class="text-[11px] text-slate-400 mt-1">Foco: ${td.p.focus}</div>
-          </div>
-          <div class="bg-white/5 rounded-2xl p-3">
-            <div class="text-[10px] text-slate-500 uppercase font-bold">Nível tático estimado</div>
-            <div class="text-lg font-black">${td.level}</div>
-            <div class="text-[11px] text-slate-400 mt-1">Índice posicional: ${td.roleScore.toFixed(0)}/100</div>
-          </div>
-          <div class="bg-white/5 rounded-2xl p-3">
-            <div class="text-[10px] text-slate-500 uppercase font-bold">Setor predominante</div>
-            <div class="text-lg font-black">${td.attackPct >= td.defensePct ? 'Ofensivo' : 'Defensivo'}</div>
-            <div class="text-[11px] text-slate-400 mt-1">Ofensivo ${td.attackPct.toFixed(1)}% · Defensivo ${td.defensePct.toFixed(1)}%</div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <p>🛰️ <b>GPS — Posicionamento:</b></p>
-            <ul class="list-disc ml-4 opacity-80">
-              <li>Distância espacial: ${d.mIA.dist.toFixed(1)} m</li>
-              <li>Pico GPS: ${d.vMaxGPS.toFixed(1)} km/h</li>
-              <li>O GPS define onde o atleta esteve no campo.</li>
-            </ul>
-          </div>
-          <div>
-            <p>⚡ <b>Trackr — Intensidade:</b></p>
-            <ul class="list-disc ml-4 opacity-80">
-              <li>Pico Trackr: ${d.vMaxMPU.toFixed(1)} km/h</li>
-              <li>Média Trackr: ${d.vMeanMPU.toFixed(1)} km/h</li>
-              <li>Ações explosivas: ${d.mIA.explosiveActions}</li>
-              <li>Picos Trackr ≥ 15 km/h: ${d.mIA.sprints}</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="mt-3 pt-3 border-t border-white/10">
-          <p>🧠 <b>Diagnóstico Tático — ${td.p.name}:</b> ${td.tacticalText}</p>
-          <p class="mt-2 opacity-80">Distribuição espacial: <b>${td.attackPct.toFixed(1)}%</b> setor ofensivo · <b>${td.centerPct.toFixed(1)}%</b> zona central · <b>${td.defensePct.toFixed(1)}%</b> setor defensivo.</p>
-          <p class="mt-2 opacity-80">Atividade: <b>${d.mIA.movingPct.toFixed(1)}%</b> do período em movimento. Pico de aceleração dinâmica: <b>${d.mIA.maxAccel.toFixed(2)} m/s²</b>.</p>
-          <p class="mt-2 text-[11px] text-slate-500">${td.p.good} ${td.p.low} A leitura é inferida por posição GPS + intensidade do dispositivo; sem dados de bola, passes, duelos ou eventos, ela não identifica sozinha a ação tática específica.</p>
-          <p class="mt-2 opacity-70">Tempo analisado: ${d.durationSec.toFixed(1)} s.</p>
-        </div>
-      `;
-      document.getElementById('aiReport').innerHTML = report;
-    }
-
-    function renderChart(speedsMPU, times, speedsGPS) {
-      if (loadChart) loadChart.destroy();
-      const ctx = document.getElementById('loadChart').getContext('2d');
-      const step = Math.max(1, Math.ceil(speedsMPU.length / 60));
-      const idxs = speedsMPU.map((_, i) => i).filter(i => i % step === 0);
-
-      loadChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: idxs.map(i => times[i]),
-          datasets: [
-            {
-              label: 'Trackr',
-              data: idxs.map(i => speedsMPU[i]),
-              borderColor: '#f59e0b',
-              backgroundColor: 'rgba(245,158,11,0.08)',
-              fill: true,
-              tension: 0.25,
-              pointRadius: 0
-            },
-            {
-              label: 'GPS',
-              data: idxs.map(i => speedsGPS[i]),
-              borderColor: '#38bdf8',
-              backgroundColor: 'transparent',
-              fill: false,
-              tension: 0.2,
-              pointRadius: 0,
-              borderDash: [5, 4]
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: true,
-              labels: { color: '#94a3b8', boxWidth: 10 }
-            }
-          },
-          scales: {
-            x: { display: false },
-            y: {
-              display: true,
-              beginAtZero: true,
-              ticks: { color: '#64748b', callback: v => `${v} km/h` },
-              grid: { color: 'rgba(255,255,255,0.05)' }
-            }
-          }
-        }
-      });
-    }
-
-    function saveSession() {
-      if (!currentData) return;
-      let h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
-      const snapshot = JSON.parse(JSON.stringify(currentData));
-      const td = buildTacticalDiagnosis(snapshot);
-      snapshot.tacticalText = td.tacticalText;
-      snapshot.tacticalLevel = td.level;
-      snapshot.tacticalScore = td.roleScore;
-      h.unshift(snapshot);
-      localStorage.setItem('pelada_elite_h', JSON.stringify(h.slice(0, 100)));
-      alert("Card Salvo!");
-      renderHistory();
-      switchTab('history');
-    }
-
-    function renderHistory() {
-      const h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
-      const g = document.getElementById('historyGrid');
-      const clearBtn = document.getElementById('btnClearHistory');
-      if (clearBtn) clearBtn.classList.toggle('hidden', !h.length);
-      if (!h.length) { g.innerHTML = "<p class='col-span-full text-center py-20'>Nenhum registro.</p>"; return; }
-      g.innerHTML = h.map((card, i) => {
-        const stats = card.stats || {};
-        const mia = card.mIA || {};
-        const role = getRoleProfile(card.role || 'MEI');
-        const attack = Number(mia.attackHalfRatio || 0) * 100;
-        const defense = Number(mia.defenseHalfRatio || 0) * 100;
-        const center = Number(mia.centerRatio || 0) * 100;
-        const moving = Number.isFinite(Number(mia.movingPct)) ? Number(mia.movingPct) : 0;
-        const sector = attack >= defense ? 'Ofensivo' : 'Defensivo';
-        const tacticalText = card.tacticalText || (attack >= defense ? 'Maior presença no setor ofensivo.' : 'Maior presença no setor defensivo.');
-        const photo = card.photo || 'https://via.placeholder.com/200';
-        return `
-        <div class="glass history-card">
-          <div class="card-container">
-            <div class="card-bg"></div>
-            <img src="${photo}" class="card-photo" onerror="this.style.display='none'">
-            <div class="card-content">
-              <div class="ovr">${Number(card.ovr || 0)}</div>
-              <div class="history-card-meta">${role.name}</div>
-              <div class="mt-auto">
-                <div class="history-card-title">${card.name || 'PLAYER'}</div>
-                <div class="history-card-stats">
-                  <span>VEL <b>${stats.vel ?? '--'}</b></span><span>DRI <b>${stats.dri ?? '--'}</b></span>
-                  <span>ATA <b>${stats.ata ?? '--'}</b></span><span>DEF <b>${stats.def ?? '--'}</b></span>
-                  <span>PAS <b>${stats.pas ?? '--'}</b></span><span>FIS <b>${stats.fis ?? '--'}</b></span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="history-card-info">
-            <div class="history-card-kicker">RELATÓRIO SALVO</div>
-            <div class="history-card-name">${card.name || 'PLAYER'}</div>
-            <div class="history-card-role">${role.name.toUpperCase()} · OVERALL ${Number(card.ovr || 0)}</div>
-            <div class="history-card-date">${card.date || '--'} · ${Number(card.durationSec || 0).toFixed(0)}s analisados</div>
-            <div class="history-metrics">
-              <div class="history-metric highlight"><span>Distância</span><b>${Number(mia.dist || 0).toFixed(1)} m</b></div>
-              <div class="history-metric"><span>Pico GPS</span><b>${Number(card.vMaxGPS || 0).toFixed(1)} km/h</b></div>
-              <div class="history-metric"><span>Pico Trackr</span><b>${Number(card.vMaxMPU || 0).toFixed(1)} km/h</b></div>
-              <div class="history-metric"><span>Movimento</span><b>${moving.toFixed(0)}%</b></div>
-              <div class="history-metric"><span>Ações explosivas</span><b>${Number(mia.explosiveActions || 0)}</b></div>
-              <div class="history-metric"><span>Picos ≥15</span><b>${Number(mia.sprints || 0)}</b></div>
-            </div>
-            <div class="history-tactical"><span>Leitura tática</span><strong>${sector} · ${attack.toFixed(0)}% OF / ${center.toFixed(0)}% MEIO / ${defense.toFixed(0)}% DEF</strong></div>
-            <div class="history-card-actions"><button onclick="loadCard(${i})" class="btn btn-gold">VER RELATÓRIO COMPLETO</button><button onclick="deleteCard(${i})" class="btn">EXCLUIR</button></div>
-          </div>
-        </div>`;
-      }).join('');
-    }
-
-    function deleteCard(i) {
-      const h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
-      if (!h[i]) return;
-      const nome = h[i].name || 'este card';
-      if (!confirm(`Excluir ${nome} da Minha Coleção?`)) return;
-      h.splice(i, 1);
-      localStorage.setItem('pelada_elite_h', JSON.stringify(h));
-      renderHistory();
-    }
-
-    function clearHistory() {
-      const h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
-      if (!h.length) return;
-      if (!confirm(`Excluir os ${h.length} cards salvos da Minha Coleção?`)) return;
-      localStorage.removeItem('pelada_elite_h');
-      renderHistory();
-    }
-
-    function loadCard(i) {
-      const h = JSON.parse(localStorage.getItem('pelada_elite_h') || '[]');
-      currentData = h[i];
-
-      // Compatibilidade com cards antigos salvos pelo dashboard anterior.
-      if (currentData && !Array.isArray(currentData.speedsMPU)) {
-        const oldSpeeds = Array.isArray(currentData.speeds) ? currentData.speeds : [];
-        currentData.speedsMPU = oldSpeeds.map(v => (Number(v) || 0) * 3.6);
-        currentData.speedsGPS = oldSpeeds.map(() => 0);
-        currentData.vMaxMPU = Number(currentData.vMaxHW || 0) * 3.6;
-        currentData.vMaxGPS = 0;
-        currentData.vMeanMPU = currentData.speedsMPU.length
-          ? currentData.speedsMPU.reduce((a,b) => a + b, 0) / currentData.speedsMPU.length
-          : 0;
-        currentData.vMeanGPS = 0;
-        currentData.mIA = currentData.mIA || {};
-        currentData.mIA.moving = currentData.mIA.running || 0;
-        currentData.mIA.standing = currentData.mIA.standing || 0;
-        currentData.mIA.sprints = currentData.mIA.sprints || 0;
-        currentData.mIA.dist = currentData.mIA.dist || 0;
-        currentData.mIA.maxAccel = currentData.mIA.maxAccel || 0;
-        currentData.durationSec = Math.max(1, oldSpeeds.length * 0.1);
-      }
-
-      updateDashboard();
-      switchTab('dashboard');
-    }
-
-    window.addEventListener('resize', () => {
-      if (currentData?.points?.length) renderHeatmap(currentData.points);
-    });
-
-    window.onload = () => {
-      initHeatmap();
-      renderHistory();
-      bindDesktopInputs();
-      bindMobileInputs();
-      if (currentData?.points?.length) requestAnimationFrame(() => renderHeatmap(currentData.points));
-    };
-
-    window.switchTab = switchTab;
-    window.saveSession = saveSession;
-    window.loadCard = loadCard;
-  
-
-    // =========================
-    // PREMIUM HUD LAYER
-    // =========================
-    function updatePremiumHUD(){
-      if(!currentData) return;
-      const d=currentData;
-      const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
-      const mins=Math.floor((d.durationSec||0)/60), secs=Math.round((d.durationSec||0)%60);
-      const duration=`${mins}:${String(secs).padStart(2,'0')}`;
-      const roleNames={ATA:'ATACANTE',MEI:'MEIO-CAMPO',DEF:'ZAGUEIRO'};
-      const role=roleNames[d.role]||d.role||'ATLETA';
-      const moving=(d.mIA?.movingPct||0);
-      const dist=(d.mIA?.dist||0);
-      const explosive=d.mIA?.explosiveActions||0;
-      set('hudRole',role); set('hudDuration',duration); set('hudDistance',`${dist.toFixed(0)} m`);
-      set('hudMoving',`${moving.toFixed(0)}%`); set('hudGps',`${(d.vMaxGPS||0).toFixed(1)} km/h`);
-      set('hudTrackr',`${(d.vMaxMPU||0).toFixed(1)} km/h`); set('hudExplosive',explosive);
-      set('hudOvr',d.ovr); set('hudDate',d.date||'—');
-      const status=document.getElementById('sessionStatus');
-      if(status){status.textContent='ANÁLISE CONCLUÍDA';status.className='status-pill status-ok';}
-    }
-    setInterval(updatePremiumHUD,350);
-
+  };
+  reader.onerror = () => { if (status) status.textContent = 'ERRO AO LER ARQUIVO'; alert('O navegador não conseguiu acessar o arquivo.'); };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function ligarInputs() {
+  document.getElementById('photoIn').addEventListener('change', (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => { photoData = ev.target.result; document.getElementById('cardPhoto').src = photoData; };
+    reader.readAsDataURL(f);
+  });
+  document.getElementById('nameIn').addEventListener('input', (e) => {
+    const n = e.target.value || 'PLAYER';
+    document.getElementById('titleName').innerText = n;
+    document.getElementById('cardName').innerText = n;
+  });
+  const csv = document.getElementById('csvFileInput');
+  csv.addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) readCSVFile(file);
+    e.target.value = '';
+  });
+  document.getElementById('mobileImportBtn')?.addEventListener('click', () => document.getElementById('csvFileInput')?.click());
+}
 </script>
+
 <script>
-// Mobile mirror inputs kept compatible with the original data engine.
-(function(){
-  const add=(id,el)=>{const x=document.getElementById(id); if(x&&el) x.addEventListener('change',el)};
-  const sync=()=>{const n=document.getElementById('nameIn_m');const p=document.getElementById('posIn_m');const s=document.getElementById('sideIn_m');if(n)document.getElementById('nameIn').value=n.value;if(p)document.getElementById('posIn').value=p.value;if(s)document.getElementById('sideIn').value=s.value;};
+/* =========================================================================
+   PARSER — aceita firmware 4.x (MPU) e 5.0 (GPS Doppler)
+   ========================================================================= */
+function parsePelada(text) {
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const headerIndex = lines.findIndex(l => l.startsWith('Tempo_ms,') && l.includes('Latitude'));
+  if (headerIndex < 0) return { error: 'Cabeçalho de dados não encontrado. Use o CSV gerado pelo Trackr.' };
+
+  const header = lines[headerIndex].split(',');
+  const idx = (n) => header.indexOf(n);
+  const required = ['Tempo_ms', 'Latitude', 'Longitude', 'Velocidade_GPS_kmh'];
+  const missing = required.filter(k => idx(k) < 0);
+  if (missing.length) return { error: 'CSV incompatível. Campos ausentes: ' + missing.join(', ') };
+
+  // filtro de Kalman simplificado sobre o raio de distância (suaviza pontos)
+  const dataRows = [];
+  for (let i = headerIndex + 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (line === 'STOP' || /^[A-Z_]+=/.test(line) || line.startsWith('RECOVERY_')) continue;
+    const row = line.split(',');
+    if (row.length < header.length) continue;
+
+    const lat = safeToNumber(row[idx('Latitude')]);
+    const lng = safeToNumber(row[idx('Longitude')]);
+    if (lat === null || lng === null || lat === 0 || lng === 0) continue;
+
+    const g = (name) => idx(name) >= 0 ? (safeToNumber(row[idx(name)]) ?? 0) : 0;
+    const mpuKmh = g('Velocidade_MPU_kmh');
+    const gpsKmh = g('Velocidade_GPS_kmh');
+
+    dataRows.push({
+      lat, lng,
+      gpsKmh,
+      mpuKmh,
+      speed: gpsKmh > 0 ? gpsKmh : mpuKmh,        // velocidade usada no mapa/gráfico
+      accelGps: g('Aceleracao_GPS_ms2'),
+      accelLin: g('AccelLinear_ms2'),
+      accel: g('AccelDinamica_ms2'),
+      accelPeak: g('PicoAccelBruto_g') * 9.80665 || g('PicoAccelDinamica_ms2'),
+      impactG: g('PicoAccelBruto_g'),
+      playerLoadRow: g('PlayerLoad'),
+      zona: idx('Zona') >= 0 ? safeToNumber(row[idx('Zona')]) : null,
+      motion: g('Movimento'),
+      timeMs: g('Tempo_ms'),
+      horaUTC: idx('Hora_UTC') >= 0 ? row[idx('Hora_UTC')] : '',
+      fix: g('GPS_FIX'),
+      vbat: g('VBAT')
+    });
+  }
+  if (!dataRows.length) return { error: 'Nenhuma amostra com coordenada válida foi encontrada.' };
+
+  // rodapé (aceita nomes 4.x e 5.0)
+  const footer = {};
+  lines.forEach(l => {
+    const m = l.match(/^([A-Z_0-9Á-Ú]+)=(.*)$/);
+    if (m) footer[m[1]] = isNaN(parseFloat(m[2])) ? m[2] : parseFloat(m[2]);
+  });
+
+  const maxOf = (k) => dataRows.reduce((a, r) => Math.max(a, r[k]), 0);
+  let distTotal = footer.TOTAL_DISTANCIA || 0;
+  if (!distTotal) { // integra Doppler a 10 Hz como reserva
+    for (let i = 1; i < dataRows.length; i++) {
+      const dt = (dataRows[i].timeMs - dataRows[i - 1].timeMs) / 1000;
+      if (dt > 0 && dt < 1) distTotal += (dataRows[i].speed / 3.6) * dt;
+    }
+  }
+
+  const stats = {
+    distTotal,
+    velMaxGPS: footer.VEL_MAX_GPS || maxOf('gpsKmh'),
+    velMaxMPU: footer.VEL_MAX_MPU || maxOf('mpuKmh'),
+    velMedia: footer.VEL_MEDIA || footer.VEL_MEDIA_GPS || 0,
+    sprints: footer.SPRINTS ?? null,
+    corridas: footer.CORRIDAS_ALTA_INTENSIDADE ?? null,
+    aceleracoes: footer.ACELERACOES ?? null,
+    desaceleracoes: footer.DESACELERACOES ?? null,
+    impactos: footer.IMPACTOS ?? null,
+    playerLoad: footer.PLAYERLOAD ?? null,
+    tempoGravado: footer.TEMPO_GRAVADO ?? null,
+    zonas: [0, 1, 2, 3, 4].map(z => ({
+      tempo: footer['TEMPO_' + ZONA_NOME[z]] ?? null,
+      dist: footer['DIST_' + ZONA_NOME[z]] ?? null
+    })),
+    temRodape: Object.keys(footer).length > 0
+  };
+  return { dataRows, stats, footer };
+}
+</script>
+
+<script>
+/* =========================================================================
+   PROJEÇÃO — ponto de partida no centro do campo; GPS relativo a ele
+   ========================================================================= */
+function getMapAnchor(rows) {
+  const n = Math.min(10, rows.length);
+  return { lat: median(rows.slice(0, n).map(r => r.lat)), lng: median(rows.slice(0, n).map(r => r.lng)) };
+}
+
+// Converte lat/lng em METROS relativos ao ponto de partida, com Y para baixo (sul = +Y)
+function projectToMeters(lat, lng, oLat, oLng) {
+  const mLat = 111132.92;
+  const mLng = 111319.49 * Math.cos(oLat * Math.PI / 180);
+  return { x: (lng - oLng) * mLng, y: -(lat - oLat) * mLat };
+}
+
+// Trajetória com filtro de repouso: parado congela, em movimento acumula deslocamento
+function buildTrajectory(rows, origin) {
+  const centerX = FIELD.totalW / 2, centerY = FIELD.totalH / 2;
+  let visual = { x: centerX, y: centerY };
+  let segStart = { x: centerX, y: centerY };
+  const out = [{ x: visual.x, y: visual.y, value: 0, moving: false, raw: 0 }];
+
+  let wasMoving = false, confirm = 0, smooth = { x: 0, y: 0 }, lastRaw = { x: 0, y: 0 };
+  let anchor = null;
+
+  rows.forEach((r, i) => {
+    const movingSignal = (Number(r.motion) === 1) || r.speed >= 1.5;
+    const m = projectToMeters(r.lat, r.lng, origin.lat, origin.lng);
+
+    if (!movingSignal) {
+      confirm = 0;
+      if (wasMoving) { wasMoving = false; segStart = { ...visual }; }
+      out.push({ x: visual.x, y: visual.y, value: 0, moving: false, raw: 0 });
+      return;
+    }
+
+    confirm++;
+    if (!wasMoving) {
+      if (confirm < 3) { out.push({ x: visual.x, y: visual.y, value: 0, moving: false, raw: 0 }); return; }
+      wasMoving = true;
+      segStart = { ...visual };
+      anchor = { x: m.x, y: m.y };
+      smooth = { x: 0, y: 0 }; lastRaw = { x: 0, y: 0 };
+    }
+
+    const raw = { x: m.x - anchor.x, y: m.y - anchor.y };
+    const jump = Math.hypot(raw.x - lastRaw.x, raw.y - lastRaw.y);
+    // Salto acima de ~8 m em 100 ms sem velocidade compatível = ruído
+    if (jump > 8 && r.speed < 18) { out.push({ x: visual.x, y: visual.y, value: 0, moving: false, raw: 0 }); return; }
+    lastRaw = raw;
+
+    const alpha = 0.34;
+    smooth.x += (raw.x - smooth.x) * alpha;
+    smooth.y += (raw.y - smooth.y) * alpha;
+
+    const p = clampMeters(segStart.x + smooth.x, segStart.y + smooth.y);
+    visual = p;
+    out.push({ x: p.x, y: p.y, value: clamp(r.speed || 0, 0, 30), moving: true, raw: r.speed || 0 });
+  });
+  return out;
+}
+
+function calculateDurationSec(rows) {
+  if (rows.length < 2) return rows.length ? 0.1 : 0;
+  let ms = 0;
+  for (let i = 1; i < rows.length; i++) {
+    const dt = Number(rows[i].timeMs) - Number(rows[i - 1].timeMs);
+    if (dt > 0 && dt <= 2000) ms += dt;
+  }
+  return Math.max(1, ms / 1000);
+}
+
+// Lado do ataque: 'up' = atacando para o topo do mapa; 'down' = para a base
+function setorDe(p, side) {
+  const cy = FIELD.totalH / 2;
+  const ataqueY = side === 'up' ? p.y < cy : p.y > cy;
+  return ataqueY ? 'ataque' : 'defesa';
+}
+
+const ZONA_NOME = ['PARADO', 'CAMINHANDO', 'TROTE', 'CORRIDA', 'SPRINT'];
+const ZONA_COR = ['#2380ff', '#22dc78', '#f5eb28', '#ff9114', '#e11919'];
+function zonaDe(v) {
+  if (v < 2) return 0;
+  if (v < 7) return 1;
+  if (v < 14) return 2;
+  if (v < 20) return 3;
+  return 4;
+}
+</script>
+
+<script>
+/* =========================================================================
+   PERFIL TÁTICO
+   ========================================================================= */
+function getRoleProfile(role) {
+  return {
+    ATA: { name: 'Atacante', focus: 'profundidade, aceleração, ocupação do terço ofensivo e ações explosivas',
+      weights: { speed: 0.35, attack: 0.30, explos: 0.25, volume: 0.10 } },
+    MEI: { name: 'Meio-Campo', focus: 'volume de deslocamento, equilíbrio entre setores, intensidade e participação contínua',
+      weights: { speed: 0.15, attack: 0.20, explos: 0.20, volume: 0.45 } },
+    DEF: { name: 'Zagueiro', focus: 'cobertura, ocupação do setor defensivo, recuperação e deslocamentos controlados',
+      weights: { speed: 0.10, attack: 0.15, explos: 0.20, volume: 0.55 } }
+  }[role] || { name: 'Atleta', focus: 'movimento geral', weights: { speed: .25, attack: .25, explos: .25, volume: .25 } };
+}
+
+function buildTacticalDiagnosis(d) {
+  const p = getRoleProfile(d.role);
+  const attackPct = d.mIA.attackHalfRatio * 100;
+  const defensePct = d.mIA.defenseHalfRatio * 100;
+  const centerPct = d.mIA.centerRatio * 100;
+  const movingPct = d.mIA.movingPct;
+  const amostraCurta = d.durationSec < 180;
+
+  const sprintRate = d.mIA.sprints / Math.max(1, d.durationSec / 90);
+  const sprintScore = clamp(sprintRate * 100, 0, 100);
+  const speedScore = clamp((d.vMaxGPS / 22) * 100, 0, 100);
+  const volumeScore = clamp(movingPct * 1.2, 0, 100);
+  const explosScore = clamp((d.mIA.explosiveActions / Math.max(1, d.durationSec / 30)) * 100, 0, 100);
+
+  let roleScore;
+  if (d.role === 'ATA') {
+    roleScore = speedScore * p.weights.speed + attackPct * p.weights.attack + explosScore * p.weights.explos + volumeScore * p.weights.volume;
+  } else if (d.role === 'DEF') {
+    roleScore = speedScore * p.weights.speed + defensePct * p.weights.attack + explosScore * p.weights.explos + volumeScore * p.weights.volume;
+  } else {
+    const balanceScore = 100 - Math.min(100, Math.abs(attackPct - defensePct) * 1.25);
+    roleScore = speedScore * p.weights.speed + balanceScore * p.weights.attack + explosScore * p.weights.explos + volumeScore * p.weights.volume;
+  }
+  if (amostraCurta) roleScore *= 0.75;
+
+  const level = roleScore >= 80 ? 'Elite' : roleScore >= 65 ? 'Competitivo' : roleScore >= 50 ? 'Em Desenvolvimento' : 'Baixa Amostra';
+  let tacticalText = '';
+  if (d.role === 'ATA') {
+    if (attackPct >= 55 && d.mIA.sprints >= 2) tacticalText = 'Boa ocupação do setor ofensivo combinada com ações explosivas, compatível com atacante de profundidade.';
+    else if (attackPct >= 45) tacticalText = 'Há presença relevante no setor ofensivo, mas a frequência de ações explosivas ainda pode subir.';
+    else tacticalText = 'A trajetória ficou pouco concentrada no setor ofensivo; sugere participação mais recuada ou circulação ampla.';
+  } else if (d.role === 'MEI') {
+    const balance = Math.abs(attackPct - defensePct);
+    if (balance <= 20 && movingPct >= 45) tacticalText = 'Deslocamento equilibrado entre os dois setores, com participação contínua — perfil de meio-campista de ida e volta.';
+    else if (movingPct >= 45) tacticalText = 'O volume de movimento é bom, porém a trajetória ficou mais concentrada em um dos setores.';
+    else tacticalText = 'O volume de deslocamento foi moderado; a amostra sugere maior participação contínua entre setores.';
+  } else {
+    if (defensePct >= 55 && volumeScore >= 45) tacticalText = 'Maior permanência no setor defensivo com deslocamento suficiente — compatível com zagueiro em coberturas e recuperações.';
+    else if (defensePct >= 45) tacticalText = 'A trajetória mantém presença defensiva relevante, embora haja circulação fora do setor de referência.';
+    else tacticalText = 'A trajetória ficou pouco concentrada no setor defensivo; pode indicar atuação adiantada ou amostra curta.';
+  }
+  if (amostraCurta) tacticalText += ' Atenção: a amostra é curta (menos de 3 minutos de dados válidos) e o índice foi penalizado.';
+
+  return { p, level, roleScore, tacticalText, attackPct, defensePct, centerPct, sprintScore, speedScore, volumeScore, explosScore, amostraCurta };
+}
+</script>
+
+<script>
+/* =========================================================================
+   RENDER — mapa, gráfico, zonas, dashboard
+   ========================================================================= */
+function renderHeatmap(points) {
+  const wrap = document.getElementById('pitchWrap');
+  const canvas = document.getElementById('heatCanvas');
+  if (!wrap || !canvas || !points || !points.length) return;
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  if (!w || !h) { requestAnimationFrame(() => renderHeatmap(points)); return; }
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.round(w * dpr);
+  canvas.height = Math.round(h * dpr);
+  const g2d = canvas.getContext('2d');   // nunca chamar de 'ctx'
+  g2d.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g2d.clearRect(0, 0, w, h);
+
+  // 1) trajetória (mesma transformação do SVG)
+  const pts = points.map(p => m2c(p.x, p.y, w, h));
+  const scales = points.map(p => p.value);
+  const maxV = Math.max(1, ...scales);
+
+  if (pts.length > 1) {
+    g2d.save();
+    for (let i = 1; i < pts.length; i++) {
+      if (points[i].moving) g2d.strokeStyle = 'rgba(255,255,255,.30)';
+      else g2d.strokeStyle = 'rgba(255,255,255,.07)';
+      g2d.lineWidth = 1.4;
+      g2d.beginPath(); g2d.moveTo(pts[i - 1].x, pts[i - 1].y); g2d.lineTo(pts[i].x, pts[i].y); g2d.stroke();
+    }
+    g2d.restore();
+  }
+
+  // 2) calor — grade em METROS, célula quadrada (não distorce em nenhuma tela)
+  const celM = 2.0;                                  // 2 m por célula
+  const cols = Math.ceil(FIELD.totalW / celM);
+  const rows = Math.ceil(FIELD.totalH / celM);
+  const bins = new Array(cols * rows).fill(null);
+  for (const p of points) {
+    if (!p.moving) continue;
+    const cx = clamp(Math.floor(p.x / celM), 0, cols - 1);
+    const cy = clamp(Math.floor(p.y / celM), 0, rows - 1);
+    const i = cy * cols + cx;
+    if (!bins[i]) bins[i] = { sum: 0, n: 0 };
+    bins[i].sum += p.value; bins[i].n++;
+  }
+  const celPx = celM * SCALE * (w / VIEW_W);          // tamanho da célula no canvas
+  const radius = Math.max(10, celPx * 1.9);
+
+  // escala: usa o percentil 90 das velocidades para não achatar tudo
+  const sorted = points.filter(p => p.moving).map(p => p.value).sort((a, b) => a - b);
+  const p90 = sorted.length ? sorted[Math.floor((sorted.length - 1) * 0.9)] : maxV;
+  const scaleMax = Math.max(4, p90);
+  const maxCount = Math.max(1, ...bins.filter(Boolean).map(b => b.n));
+
+  g2d.globalCompositeOperation = 'lighter';
+  for (let cy = 0; cy < rows; cy++) {
+    for (let cx = 0; cx < cols; cx++) {
+      const b = bins[cy * cols + cx];
+      if (!b) continue;
+      const avg = b.sum / b.n;
+      const dens = clamp(b.n / maxCount, 0, 1);
+      const v = clamp((avg / scaleMax) * 0.6 + dens * 0.4, 0, 1);
+      const q = m2c((cx + .5) * celM, (cy + .5) * celM, w, h);
+      const alpha = 0.14 + Math.pow(v, .75) * 0.62;
+      const grad = g2d.createRadialGradient(q.x, q.y, 0, q.x, q.y, radius);
+      grad.addColorStop(0, heatColor(v, alpha));
+      grad.addColorStop(.35, heatColor(v, alpha * .7));
+      grad.addColorStop(.7, heatColor(v, alpha * .24));
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      g2d.fillStyle = grad;
+      g2d.beginPath(); g2d.arc(q.x, q.y, radius, 0, Math.PI * 2); g2d.fill();
+    }
+  }
+  g2d.globalCompositeOperation = 'source-over';
+
+  // 3) marcador de início por cima
+  const c0 = m2c(FIELD.totalW / 2, FIELD.totalH / 2, w, h);
+  g2d.beginPath(); g2d.arc(c0.x, c0.y, 7, 0, Math.PI * 2);
+  g2d.fillStyle = 'rgba(245,181,27,.95)'; g2d.fill();
+}
+
+function heatColor(v, alpha) {
+  const stops = [
+    [0.00, 35, 128, 255], [0.22, 34, 220, 120], [0.42, 245, 235, 40],
+    [0.62, 255, 145, 20], [0.82, 255, 90, 40], [1.00, 225, 25, 25]
+  ];
+  let a = stops[0], b = stops[stops.length - 1];
+  for (let i = 0; i < stops.length - 1; i++) {
+    if (v >= stops[i][0] && v <= stops[i + 1][0]) { a = stops[i]; b = stops[i + 1]; break; }
+  }
+  const t = b[0] === a[0] ? 0 : (v - a[0]) / (b[0] - a[0]);
+  return `rgba(${Math.round(a[1] + (b[1] - a[1]) * t)},${Math.round(a[2] + (b[2] - a[2]) * t)},${Math.round(a[3] + (b[3] - a[3]) * t)},${alpha})`;
+}
+
+function renderChart(speeds, times) {
+  if (loadChart) { loadChart.destroy(); loadChart = null; }
+  const el = document.getElementById('loadChart');
+  if (!el || !speeds.length) return;
+  const step = Math.max(1, Math.ceil(speeds.length / 80));
+  const idxs = speeds.map((_, i) => i).filter(i => i % step === 0);
+  loadChart = new Chart(el.getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: idxs.map(i => times[i]),
+      datasets: [{
+        label: 'Velocidade GPS', data: idxs.map(i => speeds[i]),
+        borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.08)',
+        fill: true, tension: .25, pointRadius: 0, borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      plugins: { legend: { display: true, labels: { color: '#94a3b8', boxWidth: 10 } } },
+      scales: {
+        x: { display: false },
+        y: { beginAtZero: true, suggestedMax: 24, ticks: { color: '#64748b', callback: v => v + ' km/h' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
+  });
+}
+
+function renderZones(d) {
+  const wrap = document.getElementById('zonesWrap');
+  if (!wrap) return;
+  const z = d.zones || [];
+  const totalT = z.reduce((a, x) => a + (x.tempo || 0), 0) || 1;
+  let html = '';
+  for (let i = 0; i < 5; i++) {
+    const tempo = z[i]?.tempo || 0, dist = z[i]?.dist || 0;
+    const pct = (tempo / totalT) * 100;
+    html += `<div class="zone-row">
+      <span>${ZONA_NOME[i]}</span>
+      <span class="bar"><i style="width:${pct.toFixed(1)}%;background:${ZONA_COR[i]}"></i></span>
+      <span class="num">${fmtDur(tempo)}</span>
+    </div>
+    <div style="font-size:9px;color:#6b7587;margin:-6px 0 8px 106px">${Math.round(dist)} m percorridos</div>`;
+  }
+  html += `<div class="zone-row" style="margin-top:14px"><span>SEM GPS</span><span class="bar"><i style="width:${(((d.mIA.semGpsTempo || 0) / totalT) * 100).toFixed(1)}%;background:#4a5568"></i></span><span class="num">${fmtDur(d.mIA.semGpsTempo || 0)}</span></div>`;
+  if (d.stats.impactos != null) {
+    html += `<p class="footnote" style="margin-top:14px">Impactos acima de 3 g: <b>${d.stats.impactos}</b> &middot; PlayerLoad: <b>${(d.stats.playerLoad ?? 0).toFixed(1)}</b> &middot; Acelerações: <b>${d.stats.aceleracoes ?? 0}</b> &middot; Desacelerações: <b>${d.stats.desaceleracoes ?? 0}</b></p>`;
+  }
+  wrap.innerHTML = html;
+}
+</script>
+
+<script>
+function processCSV(text) {
+  const parsed = parsePelada(text);
+  if (parsed.error) { alert(parsed.error); document.getElementById('sessionStatus').textContent = 'CSV INVÁLIDO'; return; }
+  const rows = parsed.dataRows;
+  if (rows.length < 10) { alert('Arquivo com dados insuficientes (mínimo 10 amostras).'); return; }
+
+  const origin = getMapAnchor(rows);
+  const points = buildTrajectory(rows, origin);
+
+  const speeds = rows.map(r => r.speed);
+  const times = rows.map(r => formatTimePTBR(r.horaUTC, r.timeMs));
+  const side = document.getElementById('sideIn').value;
+  const role = document.getElementById('posIn').value;
+
+  // zonas: usa o rodapé quando existir; senão calcula das amostras
+  let zonas = parsed.stats.zonas;
+  const semRodapeZonas = zonas.every(z => z.tempo == null && z.dist == null);
+  if (semRodapeZonas) {
+    zonas = [0, 1, 2, 3, 4].map(() => ({ tempo: 0, dist: 0 }));
+    for (let i = 1; i < rows.length; i++) {
+      const dt = (rows[i].timeMs - rows[i - 1].timeMs) / 1000;
+      if (!(dt > 0 && dt < 1)) continue;
+      const z = zonaDe(rows[i].speed);
+      zonas[z].tempo += dt;
+      zonas[z].dist += (rows[i].speed / 3.6) * dt;
+    }
+  }
+
+  let standing = 0, moving = 0, sprints = 0, explosive = 0, maxAccel = 0;
+  let attackCount = 0, defenseCount = 0, centerCount = 0;
+  let inSprint = false;
+  rows.forEach(r => {
+    const mov = (Number(r.motion) === 1) || r.speed >= 1.5;
+    if (mov) moving++; else standing++;
+    maxAccel = Math.max(maxAccel, r.accelPeak || 0, r.accelLin || 0, r.accel || 0);
+    if (r.accelGps >= 2.0 || r.accelLin >= 2.0) explosive++;
+    if (r.speed >= 20) { if (!inSprint) { sprints++; inSprint = true; } } else inSprint = false;
+  });
+
+  const cy = FIELD.totalH / 2;
+  points.filter(p => p.moving).forEach(p => {
+    const setor = setorDe(p, side);
+    if (setor === 'ataque') { if (p.y < cy) attackCount++; }
+    if (Math.abs(p.y - cy) < 3) centerCount++;
+    if (setor === 'defesa') defenseCount++;
+  });
+  const sectorBase = Math.max(1, points.filter(p => p.moving).length);
+  const attackRatio = attackCount / sectorBase;
+  const defenseRatio = defenseCount / sectorBase;
+  const centerRatio = centerCount / sectorBase;
+
+  const durationSec = parsed.stats.tempoGravado && parsed.stats.tempoGravado > 0
+    ? parsed.stats.tempoGravado : calculateDurationSec(rows);
+  const vMaxGPS = parsed.stats.velMaxGPS || Math.max(...speeds);
+  const vMeanGPS = parsed.stats.velMedia || (speeds.reduce((a, b) => a + b, 0) / speeds.length);
+  const dist = parsed.stats.distTotal || 0;
+  const semGpsTempo = semRodapeZonas ? (zonas[0].tempo * 0) : 0;
+
+  const stats = {
+    vel: clamp(Math.round((vMaxGPS / 22) * 99), 35, 99),
+    dri: clamp(Math.round((moving / rows.length) * 99), 35, 99),
+    ata: clamp(Math.round(attackRatio * 99), 35, 99),
+    def: clamp(Math.round(defenseRatio * 99), 35, 99),
+    pas: clamp(Math.round((vMeanGPS / 12) * 99), 35, 99),
+    fis: clamp(Math.round((dist / 2600) * 99), 35, 99)
+  };
+
+  const roleExplos = clamp((explosive / Math.max(1, rows.length * 0.08)) * 100, 0, 100);
+  const roleVolume = clamp((moving / Math.max(1, rows.length)) * 100, 0, 100);
+  let ovr = role === 'ATA'
+    ? (stats.vel * .35 + stats.ata * .30 + stats.fis * .10 + roleExplos * .25)
+    : role === 'DEF'
+      ? (stats.def * .35 + stats.fis * .35 + stats.vel * .10 + roleVolume * .20)
+      : (stats.pas * .30 + stats.fis * .30 + stats.vel * .10 + roleVolume * .30);
+  if (durationSec < 180) ovr *= 0.75;
+
+  currentData = {
+    schema: 5,
+    name: document.getElementById('nameIn').value || 'PLAYER',
+    role,
+    side,
+    date: new Date().toLocaleDateString('pt-BR'),
+    ovr: Math.round(ovr),
+    stats,
+    points,
+    speeds,
+    times,
+    zones: zonas,
+    photo: photoData,
+    vMaxGPS, vMeanGPS,
+    durationSec,
+    mIA: {
+      standing, moving,
+      movingPct: rows.length ? (moving / rows.length) * 100 : 0,
+      sprints: parsed.stats.sprints ?? sprints,
+      explosiveActions: explosive,
+      attackHalfRatio: attackRatio,
+      defenseHalfRatio: defenseRatio,
+      centerRatio: centerRatio,
+      dist,
+      maxAccel,
+      semGpsTempo
+    }
+  };
+  updateDashboard();
+}
+</script>
+
+<script>
+function updateDashboard() {
+  const d = currentData;
+  if (!d) return;
+
+  document.getElementById('cardOvr').innerText = d.ovr;
+  document.getElementById('cardPos').innerText = d.role;
+  document.getElementById('cardName').innerText = d.name;
+  document.getElementById('titleName').innerText = d.name;
+  ['vel', 'dri', 'ata', 'def', 'pas', 'fis'].forEach(k => {
+    const el = document.getElementById('s-' + k); if (el) el.innerText = d.stats[k];
+  });
+  document.getElementById('dateShow').innerText = d.date;
+  document.getElementById('posShow').innerText = `Pico GPS: ${d.vMaxGPS.toFixed(1)} km/h | Média: ${d.vMeanGPS.toFixed(1)} km/h`;
+  document.getElementById('btnSave').classList.remove('hidden');
+
+  renderHeatmap(d.points);
+  renderChart(d.speeds, d.times);
+  renderZones(d);
+
+  const td = buildTacticalDiagnosis(d);
+  const roleNames = { ATA: 'ATACANTE', MEI: 'MEIO-CAMPO', DEF: 'ZAGUEIRO' };
+  const report = `
+    <div class="box">
+      <div style="font-size:10px;color:#8a93a5;font-weight:900;letter-spacing:1px">POSIÇÃO ANALISADA</div>
+      <div style="font:800 17px Outfit;color:var(--gold)">${td.p.name}</div>
+      <div style="font-size:11px;color:#9aa5b6;margin-top:3px">Foco: ${td.p.focus}</div>
+    </div>
+    <div class="box" style="margin-top:8px">
+      <div style="font-size:10px;color:#8a93a5;font-weight:900;letter-spacing:1px">NÍVEL TÁTICO ESTIMADO</div>
+      <div style="font:800 17px Outfit">${td.level}</div>
+      <div style="font-size:11px;color:#9aa5b6;margin-top:3px">Índice posicional: ${td.roleScore.toFixed(0)}/100</div>
+    </div>
+    <div class="box" style="margin-top:8px">
+      <div style="font-size:10px;color:#8a93a5;font-weight:900;letter-spacing:1px">DISTRIBUIÇÃO NO CAMPO</div>
+      <div style="font:800 17px Outfit">${td.attackPct >= td.defensePct ? 'Setor ofensivo' : 'Setor defensivo'}</div>
+      <div style="font-size:11px;color:#9aa5b6;margin-top:3px">Ofensivo ${td.attackPct.toFixed(1)}% · Central ${td.centerPct.toFixed(1)}% · Defensivo ${td.defensePct.toFixed(1)}%</div>
+    </div>
+
+    <h4>GPS — Posicionamento</h4>
+    <ul>
+      <li>Distância percorrida: <b>${d.mIA.dist.toFixed(0)} m</b></li>
+      <li>Pico de velocidade: <b>${d.vMaxGPS.toFixed(1)} km/h</b></li>
+      <li>Tempo em movimento: <b>${d.mIA.movingPct.toFixed(1)}%</b></li>
+      <li>Sprints (≥20 km/h): <b>${d.mIA.sprints}</b></li>
+    </ul>
+
+    <h4>Intensidade do dispositivo</h4>
+    <ul>
+      <li>Ações explosivas: <b>${d.mIA.explosiveActions}</b></li>
+      <li>Pico de aceleração: <b>${d.mIA.maxAccel.toFixed(2)} m/s²</b></li>
+      ${d.stats.impactos != null ? `<li>Impactos acima de 3 g: <b>${d.stats.impactos}</b></li>` : ''}
+      ${d.stats.playerLoad != null ? `<li>PlayerLoad: <b>${Number(d.stats.playerLoad).toFixed(1)}</b></li>` : ''}
+      ${d.stats.aceleracoes != null ? `<li>Acelerações / desacelerações: <b>${d.stats.aceleracoes} / ${d.stats.desaceleracoes}</b></li>` : ''}
+    </ul>
+
+    <h4>Diagnóstico tático — ${td.p.name}</h4>
+    <p>${td.tacticalText}</p>
+    <p style="font-size:11px;color:#7a8497;margin-top:8px">A leitura é inferida por trajetória GPS e intensidade do dispositivo. Sem dados de bola, passes ou duelos, ela não identifica a ação tática específica.</p>
+    <p style="opacity:.7;margin-top:8px">Tempo analisado: ${fmtDur(d.durationSec)} (${d.durationSec.toFixed(1)} s).</p>
+  `;
+  document.getElementById('aiReport').innerHTML = report;
+
+  const mapNote = document.getElementById('mapNote');
+  if (mapNote) mapNote.innerHTML = `Campo de futebol 7 (45 × 25 m) com grade de 2 m por célula. A trajetória é relativa ao ponto de partida, no centro. ${d.points.filter(p => p.moving).length} de ${d.points.length} amostras com deslocamento confirmado.`;
+
+  // KPIs
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('hudRole', roleNames[d.role] || 'ATLETA');
+  set('hudOvr', d.ovr);
+  set('hudDuration', fmtDur(d.durationSec));
+  set('hudDistance', d.mIA.dist.toFixed(0) + ' m');
+  set('hudGps', d.vMaxGPS.toFixed(1) + ' km/h');
+  set('hudMoving', d.mIA.movingPct.toFixed(0) + '%');
+  set('hudSprints', d.mIA.sprints);
+  set('hudImpact', d.stats.impactos ?? 0);
+  const status = document.getElementById('sessionStatus');
+  if (status) { status.textContent = 'ANÁLISE CONCLUÍDA'; status.className = 'status-pill status-ok'; }
+}
+
+// -------------------- HISTÓRICO --------------------
+function saveSession() {
+  if (!currentData) return;
+  let h;
+  try { h = JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch (e) { h = []; }
+  const snap = JSON.parse(JSON.stringify(currentData));
+  // sem foto no histórico: base64 estoura a cota de 5 MB do navegador
+  delete snap.photo;
+  if (snap.points && snap.points.length > 1500) snap.points = snap.points.filter((_, i) => i % 2 === 0);
+  snap.tacticalText = buildTacticalDiagnosis(snap).tacticalText;
+  h.unshift(snap);
+  try {
+    localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0, 60)));
+  } catch (e) {
+    alert('A memória do navegador está cheia. Exclua cards antigos e tente novamente.');
+    return;
+  }
+  renderHistory();
+  switchTab('history');
+}
+
+function renderHistory() {
+  let h;
+  try { h = JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch (e) { h = []; }
+  const g = document.getElementById('historyGrid');
+  const clearBtn = document.getElementById('btnClearHistory');
+  if (clearBtn) clearBtn.classList.toggle('hidden', !h.length);
+  if (!h.length) { g.innerHTML = "<p style='grid-column:1/-1;text-align:center;padding:60px 0;color:#697386'>Nenhum registro salvo.</p>"; return; }
+
+  g.innerHTML = h.map((card, i) => {
+    const stats = card.stats || {}, mia = card.mIA || {};
+    const role = getRoleProfile(card.role || 'MEI');
+    const attack = Number(mia.attackHalfRatio || 0) * 100;
+    const defense = Number(mia.defenseHalfRatio || 0) * 100;
+    const center = Number(mia.centerRatio || 0) * 100;
+    const moving = Number(mia.movingPct || 0);
+    return `
+    <div class="history-card">
+      <div class="card-container">
+        <div class="card-bg"></div>
+        <div class="card-content">
+          <div class="ovr">${Number(card.ovr || 0)}</div>
+          <div style="font-size:8px;font-weight:900;letter-spacing:1px">${role.name}</div>
+          <div style="margin-top:auto">
+            <div class="card-title-2">${card.name || 'PLAYER'}</div>
+            <div class="history-card-stats">
+              <span>VEL <b>${stats.vel ?? '--'}</b></span><span>INT <b>${stats.dri ?? '--'}</b></span>
+              <span>ATA <b>${stats.ata ?? '--'}</b></span><span>DEF <b>${stats.def ?? '--'}</b></span>
+              <span>VOL <b>${stats.pas ?? '--'}</b></span><span>FIS <b>${stats.fis ?? '--'}</b></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="history-card-info">
+        <div class="history-card-kicker">RELATÓRIO SALVO</div>
+        <div class="history-card-name">${card.name || 'PLAYER'}</div>
+        <div class="history-card-role">${role.name.toUpperCase()} · OVERALL ${Number(card.ovr || 0)}</div>
+        <div class="history-card-date">${card.date || '--'} · ${fmtDur(card.durationSec || 0)} analisados</div>
+        <div class="history-metrics">
+          <div class="history-metric highlight"><span>Distância</span><b>${Number(mia.dist || 0).toFixed(0)} m</b></div>
+          <div class="history-metric"><span>Pico GPS</span><b>${Number(card.vMaxGPS || 0).toFixed(1)} km/h</b></div>
+          <div class="history-metric"><span>Movimento</span><b>${moving.toFixed(0)}%</b></div>
+          <div class="history-metric"><span>Sprints</span><b>${Number(mia.sprints || 0)}</b></div>
+        </div>
+        <div class="history-tactical"><span>Leitura tática</span><strong>${attack.toFixed(0)}% OF / ${center.toFixed(0)}% MEIO / ${defense.toFixed(0)}% DEF</strong></div>
+        <div class="history-card-actions">
+          <button onclick="loadCard(${i})" class="btn btn-gold">VER RELATÓRIO</button>
+          <button onclick="deleteCard(${i})" class="btn">EXCLUIR</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function deleteCard(i) {
+  let h; try { h = JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch (e) { return; }
+  if (!h[i]) return;
+  if (!confirm(`Excluir ${h[i].name || 'este card'} da Minha Coleção?`)) return;
+  h.splice(i, 1);
+  localStorage.setItem(HIST_KEY, JSON.stringify(h));
+  renderHistory();
+  if (currentData && currentData.name === h[i]?.name) { /* nada a fazer */ }
+}
+
+function clearHistory() {
+  let h; try { h = JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch (e) { h = []; }
+  if (!h.length) return;
+  if (!confirm(`Excluir os ${h.length} cards salvos da Minha Coleção?`)) return;
+  localStorage.removeItem(HIST_KEY);
+  renderHistory();
+}
+
+function loadCard(i) {
+  let h; try { h = JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch (e) { return; }
+  const card = h[i];
+  if (!card) return;
+  if (!Array.isArray(card.speeds) || !Array.isArray(card.points) || !card.zones) {
+    alert('Este card foi salvo em uma versão antiga do app e não pode ser reaberto. Importe o CSV novamente.');
+    return;
+  }
+  currentData = card;
+  updateDashboard();
+  switchTab('dashboard');
+}
+</script>
+
+<script>
+(function init() {
+  desenharCampo();
+  ligarInputs();
+  renderHistory();
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      desenharCampo();
+      if (currentData?.points?.length) renderHeatmap(currentData.points);
+    }, 180);
+  });
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => { desenharCampo(); if (currentData?.points?.length) renderHeatmap(currentData.points); }, 320);
+  });
+  window.switchTab = switchTab;
+  window.saveSession = saveSession;
+  window.loadCard = loadCard;
+  window.clearHistory = clearHistory;
+  window.deleteCard = deleteCard;
 })();
 </script>
 </body>
